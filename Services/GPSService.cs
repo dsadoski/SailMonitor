@@ -27,7 +27,10 @@ namespace SailMonitor.Services
                 {
                     await Task.Delay(1000); // Wait for 1 second
                     var location = await Geolocation.Default.GetLocationAsync();
-                    OnLocationReceived.Invoke(location);
+                    if (OnLocationReceived != null)
+                    {
+                        OnLocationReceived.Invoke(location);
+                    }
                 }
             }
             catch (Exception ex)
