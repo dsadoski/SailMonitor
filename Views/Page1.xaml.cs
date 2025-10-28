@@ -1,4 +1,4 @@
-﻿namespace SailMonitor.Views;
+﻿namespace SailMonitor;
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -10,11 +10,21 @@ public partial class Page1 : ContentView
     private readonly UdpListenerService _udpService;
     private readonly GPSService _gpsService;
     private readonly NmeaService _nmeaService;
+    public CompassDrawable CompassDrawable { get; set; }
 
     public Page1(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService)
     {
 
         InitializeComponent();
+        CompassDrawable = new CompassDrawable
+        {
+            PieAngles = new List<float> { 0f, 60f, 120f }, // example wedges
+            PieWidthDegrees = 5f
+        };
+        GraphicsOverlay.Drawable = CompassDrawable;
+
+        // Redraw when needed
+        GraphicsOverlay.Invalidate();
 
         _udpService = udpService;
         _gpsService = gpsService;
@@ -60,7 +70,8 @@ public partial class Page1 : ContentView
 
     private void UpdateUI()
     {
-        HeadingLabel.Text = $"{record.COG:F2}";
+        
+        HeadingLabel.Text = $"{record.headingMag:F2}";
         SpeedWaterLabel.Text = $"{record.SOW:F2}";
         SpeedGroundLabel.Text = $"{record.SOG:F2}";
         DepthLabel.Text = $"{record.depth:F2}";
@@ -68,14 +79,23 @@ public partial class Page1 : ContentView
         AWDLabel.Text = $"{record.windAppDir:F2}";
         TWSLabel.Text = $"{record.windTrueSpeed:F2}";
         TWDLabel.Text = $"{record.windTrueDir:F2}";
-
+        CompassDrawable.Heading = (float)record.headingMag;
+        CompassDrawable.ApparentWind = (float)record.windAppDir;
+        CompassDrawable.TrueWind = (float)record.windTrueDir;
+        GraphicsOverlay.Invalidate();
         //_drawable.Direction = (float)record.windTrueDir;
         //WindRoseView.Invalidate();
     }
 
-    private void OnIsVisibleChanged(object sender, EventArgs e)
+    public void SetRotation(float degrees)
     {
-    
+        CompassDrawable.RotationDegrees = degrees;
+        GraphicsOverlay.Invalidate();
     }
+
+    // Optional: update wedges dynamically
+  
+
+
 
 }

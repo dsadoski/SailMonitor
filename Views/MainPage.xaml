@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SailMonitor.MainPage">
+    <VerticalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center">
+
+        <!-- The "Carousel-like" CollectionView -->
+        <CollectionView
+            x:Name="Pager"
+            ItemsSource="{Binding DisplayedPage}"
+            ItemsLayout="HorizontalList"
+            HorizontalScrollBarVisibility="Never"
+            HeightRequest="900"
+            SelectionMode="Single"
+            Margin="0,0,0,10">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <ContentView Content="{Binding .}" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Navigation buttons -->
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+            <Button Text="◀ Prev" Clicked="Prev_Clicked" />
+            <Button Text="Next ▶" Clicked="Next_Clicked" />
+        </HorizontalStackLayout>
+
+       
+    </VerticalStackLayout>
+
+</ContentPage>
