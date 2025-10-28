@@ -91,7 +91,14 @@ namespace SailMonitor.Models
             P.ErrMessage = ErrMessage;
             P.waterTemp = waterTemp;
             P.voltage = voltage;
-            P.location = location;
+            if (location != null)
+            {
+                P.location = new Location(location);
+            }
+            else
+            {
+                location = new Location();
+            }
             return P;
 
         }

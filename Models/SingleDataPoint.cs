@@ -10,6 +10,8 @@ namespace SailMonitor.Models
     {   
         public double Value { get; set; }
 
+        
+
         public DateTime dateTime { get; set; }
 
 
@@ -17,7 +19,7 @@ namespace SailMonitor.Models
         public SingleDataPoint(double value)
         {
             
-            Value = value;
+            Value = value;            
             dateTime = DateTime.Now;
         }
     }

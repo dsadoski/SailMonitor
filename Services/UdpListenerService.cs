@@ -18,7 +18,7 @@ namespace SailMonitor.Services
 
         public event Action<Record>? OnMessageReceived;
         Setup  setup = new Setup();
-        Record record;
+        public Record record;
         bool isInitialized = false;
 
         public UdpListenerService(int port)

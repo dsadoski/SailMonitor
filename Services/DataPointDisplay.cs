@@ -30,13 +30,33 @@ namespace SailMonitor.Services
         }
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+            try
+            {
+                float width = dirtyRect.Width;
+                float height = dirtyRect.Height;
+                float centerX = width / 2;
+                float centerY = height / 2;
+                canvas.SaveState();
+                canvas.FillColor = Colors.Transparent;
+                canvas.StrokeColor = Colors.Black;
+                canvas.StrokeSize = 2;
+                canvas.FillRectangle(dirtyRect);
+                canvas.RestoreState();
+                canvas.DrawString($"AWS", 0,100,dirtyRect.Width *.4f, dirtyRect.Height*.2f, HorizontalAlignment.Left,VerticalAlignment.Top);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in DataPointDisplay.Draw: {ex.Message}");
+            }
+            //canvas.Translate(centerX, centerY);
+
             // Draw the line of history
 
             // draw the title
 
             // draw the latest value
 
-            throw new NotImplementedException();
+
         }
     }
 }

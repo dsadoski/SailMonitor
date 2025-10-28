@@ -4,22 +4,7 @@
              x:Class="SailMonitor.MainPage">
     <VerticalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center">
 
-        <!-- The "Carousel-like" CollectionView -->
-        <CollectionView
-            x:Name="Pager"
-            ItemsSource="{Binding DisplayedPage}"
-            ItemsLayout="HorizontalList"
-            HorizontalScrollBarVisibility="Never"
-            HeightRequest="900"
-            SelectionMode="Single"
-            Margin="0,0,0,10">
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <ContentView Content="{Binding .}" />
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <ContentView x:Name="content" ></ContentView>
 
         <!-- Navigation buttons -->
         <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">

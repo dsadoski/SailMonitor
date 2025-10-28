@@ -12,14 +12,34 @@ namespace SailMonitor.Models
 
         public string name { get; set; } = "";
 
+        public double Max { get; set; }
+        public double Min { get; set; }
+
         public FieldData(string Name)
         {   
             name = Name;
             DataPoints = new List<SingleDataPoint>();
+
         }
 
         public void AddDataPoint(double value)
         {
+            if(DataPoints.Count ==0)
+            {
+                Max = value;
+                Min = value;
+            }
+            else
+            {
+                if(value > Max)
+                {
+                    Max = value;
+                }
+                if(value < Min)
+                {
+                    Min = value;
+                }
+            }
             DataPoints.Add(new SingleDataPoint(value));
         }
     }

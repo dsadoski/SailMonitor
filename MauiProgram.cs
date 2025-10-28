@@ -22,7 +22,7 @@ namespace SailMonitor
 #endif
             builder.Services.AddSingleton(sp => new UdpListenerService(port: 10110));
             builder.Services.AddSingleton(sp => new GPSService());
-            builder.Services.AddTransient(sp => new NmeaService(setup));
+            builder.Services.AddSingleton(sp => new NmeaService(setup));
 
             return builder.Build();
         }
