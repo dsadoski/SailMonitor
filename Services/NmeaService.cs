@@ -216,10 +216,6 @@ namespace SailMonitor.Services
                 //D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
                 record.windTrueSpeed = DoubleGet(stray[5]);
             }
-
-
-
-            int i;
             return record.Copy();
 
         }
@@ -258,17 +254,9 @@ namespace SailMonitor.Services
 
             record.windAppDir = DoubleGet(stray[1]);
 
-            //double T;// for conversion at a later date
-            int i;
-
             record.windAppSpeed = DoubleGet(stray[3]);
             // sending radians, so testing
             double T = DoubleGet(stray[6]);
-            /*record.ErrMessage = (T* (180/Math.PI)).ToString()+", ";
-            record.ErrMessage += (T*.1 * (180 / Math.PI)).ToString() + ", ";
-            record.ErrMessage += (T * .01 * (180 / Math.PI)).ToString() + ", ";
-            record.ErrMessage*/
-            //Arduino Pukes on PI, so doing it here
 
             record.windAppDir = T * (180 / Math.PI);
 
@@ -291,9 +279,6 @@ namespace SailMonitor.Services
     Speed, knots
     Heading, degrees Magnetic
     Heading, degrees True*/
-
-            int i;
-
             if (stray.Length < 9) return record.Copy();
 
             //D.Speed.D.Clear();
@@ -330,7 +315,7 @@ namespace SailMonitor.Services
             if (stray.Length < 3) return record.Copy();
             //D.Vpw.D.Clear();
 
-            /**if(stray[2].equals("N"))D.Vpw.D.SPDKTS=DoubleGet(stray[1]);
+            /*if(stray[2].equals("N"))D.Vpw.D.SPDKTS=DoubleGet(stray[1]);
              if(stray[2].equals("M"))D.Vpw.D.SPDMS=DoubleGet(stray[1]);*/
 
 
@@ -344,8 +329,6 @@ namespace SailMonitor.Services
         {
             /*Track made good and speed over ground*/
             if (stray.Length < 3) return record.Copy();
-
-            double T;
 
             if (S.UseGPSHEADING == false)
             {
@@ -375,8 +358,6 @@ namespace SailMonitor.Services
         {
             /*Track made good and speed over ground*/
             if (stray.Length < 3) return record.Copy();
-
-            double T;
 
             if (S.UseGPSHEADING == false)
             {

@@ -1,4 +1,5 @@
 ﻿
+
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -11,32 +12,98 @@ public partial class Page2 : ContentView, IContentViewHost
     private Record record = new Record();
     
     List<DataPointDisplay> dataPointDisplays =new List<DataPointDisplay>();
-    List<GraphicsView> graphicsViews = new List<GraphicsView>();
+    
+
     public Page2()
     {
 		InitializeComponent();
         try
         {
-           
 
+
+
+            for (int i = 0; i < 4; i++)
+            {
+                MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            }
 
             for (int i = 0; i < 3; i++)
-                MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-
-            for (int i = 0; i < 2; i++)
+            {
                 MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
 
             // Redraw when needed
             dataPointDisplays.Add(new DataPointDisplay("AWS", "F1"));
             dataPointDisplays.Add(new DataPointDisplay("AWD", "F1"));
+            int rowcount = 0;
+            int colcount = 0;
 
             foreach (var display in dataPointDisplays)
             {
-                var view = new GraphicsView
+                var cellGrid = new Grid
+                {
+                    WidthRequest = 200,
+                    HeightRequest = 200,
+                    Padding = 5
+                };
+
+                // Add a background GraphicsView (fills the whole cell)
+                display.graphicsView= new GraphicsView
                 {
                     Drawable = display,
-                    HeightRequest = 400,
-                    WidthRequest = 400
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill
+                };
+
+                // Add labels (foreground content)
+                display.topLeft = new Label
+                {
+                    Text = "Top Left",
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.Start,
+                    FontSize = 18,
+                    Margin = new Thickness(6)
+                };
+
+                display.bottomLeft = new Label
+                {
+                    Text = "Bottom Left",
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.End,
+                    FontSize = 18,
+                    Margin = new Thickness(6)
+                };
+
+                display.bottomRight = new Label
+                {
+                    Text = "Bottom Right",
+                    HorizontalOptions = LayoutOptions.End,
+                    VerticalOptions = LayoutOptions.End,
+                    FontSize = 18,
+                    Margin = new Thickness(6)
+                };
+
+                display.center = new Label
+                {
+                    Text = "Center",
+                    HorizontalOptions = LayoutOptions.Center,
+                    FontSize = 72,
+                    VerticalOptions = LayoutOptions.Center
+                };
+
+                // Add elements — GraphicsView first (so it's behind)
+                cellGrid.Children.Add(display.graphicsView);
+                cellGrid.Children.Add(display.topLeft);
+                cellGrid.Children.Add(display.bottomLeft);
+                cellGrid.Children.Add(display.bottomRight);
+                cellGrid.Children.Add(display.center);
+
+
+                /* var view = new GraphicsView
+                {
+                    Drawable = display,
+                    HeightRequest = 200,
+                    WidthRequest = 200
                 };
 
                 var border = new Border
@@ -46,10 +113,15 @@ public partial class Page2 : ContentView, IContentViewHost
                     Content = view,
                     Margin = 0,
                     Padding = 2
-                };
+                };*/
 
-
-                MainGrid.Add(border);
+                MainGrid.Add(cellGrid,colcount,rowcount);
+                colcount++;
+                if(colcount >= 3)
+                {
+                    colcount = 0;
+                    rowcount++;
+                }
             }
 
 
@@ -69,7 +141,8 @@ public partial class Page2 : ContentView, IContentViewHost
 
         foreach (var view in graphicsViews)
         {
-            view.Invalidate();
+            //view.Invalidate();
+            
         }   
 
     }
@@ -94,8 +167,15 @@ public partial class Page2 : ContentView, IContentViewHost
         UpdateRecord("AWS", record.windAppSpeed);
         UpdateRecord("AWD", record.windAppDir);
 
+        foreach (var display in dataPointDisplays)
+        {
+            display.UpdateUI();
+        }
+
         if (eventName == "RefreshData")
         {
         }
+
+        UpdateUI();
     }
 }

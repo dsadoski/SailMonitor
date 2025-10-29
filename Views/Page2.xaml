@@ -7,7 +7,8 @@ x:Name="MainGrid"
 Padding="10"
 RowSpacing="6"
 ColumnSpacing="6"
-       HeightRequest="700">
+       HeightRequest="700"
+        WidthRequest="900">
 
         <!-- Row 0 -->
        

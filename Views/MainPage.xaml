@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.MainPage">
     <VerticalStackLayout Padding="10" Spacing="10" HorizontalOptions="Center">
-
-        <ContentView x:Name="content" ></ContentView>
-
         <!-- Navigation buttons -->
         <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
             <Button Text="◀ Prev" Clicked="Prev_Clicked" />
             <Button Text="Next ▶" Clicked="Next_Clicked" />
         </HorizontalStackLayout>
+
+        <ContentView x:Name="content" ></ContentView>
+
+       
 
        
     </VerticalStackLayout>

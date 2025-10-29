@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace SailMonitor.Models
 {
     public class FieldData
@@ -15,6 +17,8 @@ namespace SailMonitor.Models
         public double Max { get; set; }
         public double Min { get; set; }
 
+        public double current;
+
         public FieldData(string Name)
         {   
             name = Name;
@@ -24,7 +28,8 @@ namespace SailMonitor.Models
 
         public void AddDataPoint(double value)
         {
-            if(DataPoints.Count ==0)
+            current = value;
+            if (DataPoints.Count ==0)
             {
                 Max = value;
                 Min = value;

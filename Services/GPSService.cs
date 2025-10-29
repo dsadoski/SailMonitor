@@ -13,7 +13,7 @@ namespace SailMonitor.Services
         private CancellationTokenSource? _cts;
         private bool _isRunning;
         public event Action<Location>? OnLocationReceived;
-        bool isInitialized = false;
+        
 
         public async Task Start()
         {

@@ -385,7 +385,6 @@ namespace SailMonitor.Services
                         {
                             // Unhandled PGN
                             return record;
-                            break;
                         }
                 }
             }

@@ -7,6 +7,9 @@ namespace SailMonitor
     {
         public static MauiApp CreateMauiApp()
         {
+            
+            
+            
             var setup = new Models.Setup();
             var builder = MauiApp.CreateBuilder();
             builder

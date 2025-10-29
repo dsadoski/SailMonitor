@@ -24,6 +24,7 @@ namespace SailMonitor.Services
         public UdpListenerService(int port)
         {
             _port = port;
+            record = new Record();
         }
 
         public void Start()
