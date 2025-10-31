@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.Maui.Controls;
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -17,6 +18,7 @@ public partial class Page2 : ContentView, IContentViewHost
     public Page2()
     {
 		InitializeComponent();
+        this.BackgroundColor = Colors.White;
         try
         {
 
@@ -35,6 +37,9 @@ public partial class Page2 : ContentView, IContentViewHost
             // Redraw when needed
             dataPointDisplays.Add(new DataPointDisplay("AWS", "F1"));
             dataPointDisplays.Add(new DataPointDisplay("AWD", "F1"));
+            dataPointDisplays.Add(new DataPointDisplay("TWS", "F1"));
+            dataPointDisplays.Add(new DataPointDisplay("TWD", "F1"));
+            dataPointDisplays.Add(new DataPointDisplay("DPT", "F1"));
             int rowcount = 0;
             int colcount = 0;
 
@@ -97,23 +102,8 @@ public partial class Page2 : ContentView, IContentViewHost
                 cellGrid.Children.Add(display.bottomLeft);
                 cellGrid.Children.Add(display.bottomRight);
                 cellGrid.Children.Add(display.center);
+                
 
-
-                /* var view = new GraphicsView
-                {
-                    Drawable = display,
-                    HeightRequest = 200,
-                    WidthRequest = 200
-                };
-
-                var border = new Border
-                {
-                    Stroke = Colors.Black,
-                    StrokeThickness = 1,
-                    Content = view,
-                    Margin = 0,
-                    Padding = 2
-                };*/
 
                 MainGrid.Add(cellGrid,colcount,rowcount);
                 colcount++;
@@ -139,12 +129,6 @@ public partial class Page2 : ContentView, IContentViewHost
 
         var graphicsViews = MainGrid.Children.OfType<GraphicsView>().ToList();
 
-        foreach (var view in graphicsViews)
-        {
-            //view.Invalidate();
-            
-        }   
-
     }
 
     public void UpdateRecord(string name, double value)
@@ -166,10 +150,15 @@ public partial class Page2 : ContentView, IContentViewHost
         record = data.Copy();
         UpdateRecord("AWS", record.windAppSpeed);
         UpdateRecord("AWD", record.windAppDir);
+        UpdateRecord("TWS", record.windTrueSpeed);
+        UpdateRecord("TWD", record.windTrueDir);
+        UpdateRecord("DPT", record.depth);
 
         foreach (var display in dataPointDisplays)
         {
             display.UpdateUI();
+            display.graphicsView.Invalidate();
+
         }
 
         if (eventName == "RefreshData")

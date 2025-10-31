@@ -253,7 +253,7 @@ namespace SailMonitor.Services
                             double sog_mps = sog_raw * 0.01f;
                             double sog_kn = MetersPerSecondToKnots(sog_mps);
                             record.COG = cogDeg;
-                            record.SOG = sog_raw * 0.01f * 3.28084;
+                           // record.SOG = sog_raw * 0.01f * 3.28084;
                             // result = emitVTG(cogDeg, sog_kn);
                             break;
                         }

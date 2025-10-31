@@ -8,18 +8,16 @@ namespace SailMonitor.Models
 {
     public class SingleDataPoint
     {   
-        public double Value { get; set; }
-
-        
+        public double value { get; set; }
 
         public DateTime dateTime { get; set; }
 
 
 
-        public SingleDataPoint(double value)
+        public SingleDataPoint(double Value)
         {
             
-            Value = value;            
+            value = Value;            
             dateTime = DateTime.Now;
         }
     }

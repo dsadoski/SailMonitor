@@ -34,8 +34,40 @@ namespace SailMonitor.Services
                 return;
             }
             isInitialized = true;
-            _cts = new CancellationTokenSource();
-            _udpClient = new UdpClient(_port);
+
+            try
+            {
+                // Clean up if called twice or after a crash/reload
+                _udpClient?.Close();
+                _udpClient?.Dispose();
+                _udpClient = null;
+            }
+            catch { }
+
+
+            try
+            {
+                var endpoint = new IPEndPoint(IPAddress.Any, _port);
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                // Allow immediate rebinding even if the OS still thinks it’s in use
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+                _cts = new CancellationTokenSource();
+                _udpClient = new UdpClient();
+                _udpClient.Client = socket;
+                _udpClient.Client.Bind(endpoint);
+            }
+            catch (SocketException ex)
+            {
+                Console.WriteLine($"Socket bind failed: {ex.Message}");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"UDP Listener Initialization Error: {ex.Message}");
+                return;
+            }
             NmeaService nmeaService = new NmeaService(setup);
 
 
@@ -69,6 +101,7 @@ namespace SailMonitor.Services
         {
             _cts?.Cancel();
             _udpClient?.Close();
+            _udpClient?.Dispose();
         }
     }
 }

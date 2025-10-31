@@ -347,7 +347,7 @@ namespace SailMonitor.Services
             }
             if (S.UseGPSSOG == false)
             {
-                record.SOG = DoubleGet(stray[5]);
+                //record.SOG = DoubleGet(stray[5]);
             }
 
 
@@ -376,7 +376,8 @@ namespace SailMonitor.Services
             }
             if (S.UseGPSSOG == false)
             {
-                record.SOG = DoubleGet(stray[5]);
+                //record.SOG = DoubleGet(stray[5]);
+                //record.SOG = 5;
             }
 
 
@@ -437,7 +438,8 @@ namespace SailMonitor.Services
 
         public Record NMEA_SPD(string[] stray, Record record)
         {
-            record.SOG = DoubleGet(stray[1]);
+            //record.SOG = DoubleGet(stray[1]);
+            //record.SOG = 5;
             return record.Copy();
         }
 

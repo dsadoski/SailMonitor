@@ -7,9 +7,10 @@ namespace SailMonitor
     {
         public static MauiApp CreateMauiApp()
         {
-            
-            
-            
+
+
+
+
             var setup = new Models.Setup();
             var builder = MauiApp.CreateBuilder();
             builder
@@ -21,13 +22,22 @@ namespace SailMonitor
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
-            builder.Services.AddSingleton(sp => new UdpListenerService(port: 10110));
-            builder.Services.AddSingleton(sp => new GPSService());
-            builder.Services.AddSingleton(sp => new NmeaService(setup));
+            try
+            {
+                builder.Services.AddSingleton(sp => new UdpListenerService(port: 10110));
+                builder.Services.AddSingleton(sp => new GPSService());
+                builder.Services.AddSingleton(sp => new NmeaService(setup));
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MauiApp Creation Error: {ex.Message}");
+            }
 
             return builder.Build();
+
         }
     }
 }

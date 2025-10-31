@@ -27,8 +27,8 @@ namespace SailMonitor.Models
             Orientation = 1;
             KeepActive = true;
             UseGPSPOS = true;
-            UseGPSHEADING = false;
-            UseGPSSOG = false;
+            UseGPSHEADING = true;
+            UseGPSSOG = true;
             Fakewind = false;
         }
 

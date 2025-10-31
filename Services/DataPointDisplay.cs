@@ -1,6 +1,5 @@
 ﻿
 
-using Android.Security.Identity;
 using Microsoft.Maui;
 using SailMonitor.Models;
 using System;
@@ -41,18 +40,20 @@ namespace SailMonitor.Services
 
         public void AddDataPoint(double value)
         {
+            fieldData.current = value;
             if (fieldData.DataPoints.Count > 0)
             {
-                if(Math.Abs(new TimeSpan(DateTime.Now.Ticks - fieldData.DataPoints[fieldData.DataPoints.Count-1].dateTime.Ticks).TotalSeconds) >= 5)
+                TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - fieldData.DataPoints[fieldData.DataPoints.Count - 1].dateTime.Ticks);
+                if (Math.Abs(timeSpan.TotalSeconds)>= 5)
                 {
                     fieldData.AddDataPoint(value);
-                    graphicsView.Invalidate();
+                    //graphicsView.Invalidate();
                 }
             }
             else
             {
                 fieldData.AddDataPoint(value);
-                graphicsView.Invalidate();
+                //graphicsView.Invalidate();
             }
         }
         public void Draw(ICanvas Canvas, RectF DirtyRect)
@@ -62,29 +63,50 @@ namespace SailMonitor.Services
 
             try
             {
-               
+                if(fieldData.DataPoints.Count < 2)
+                {
+                    // Not enough data to draw
+                    return;
+                }
                 canvas.SaveState();
-                canvas.FillColor = Colors.Transparent;
+                //canvas.FillColor = Colors.White;
+                canvas.FillColor = new Color(0, 0, 0, 0.3f);
                 canvas.StrokeColor = Colors.Blue;
                 canvas.StrokeSize = 2;
                 canvas.FillRectangle(dirtyRect);
-                canvas.RestoreState();
-                canvas.FontSize = 12;
-                
 
+                float MaxY = (float)fieldData.Max * 1.1f;
+                float MinY = 0;// (float)fieldData.Min * 0.9f;
+                float rangeY = MaxY - MinY;
+                float yMult = dirtyRect.Height*.8f / rangeY;
+                int xStep = 1;
 
+                if (dirtyRect.Width > fieldData.DataPoints.Count)
+                {
+                    while (fieldData.DataPoints.Count > dirtyRect.Width * xStep)
+                    {
+                        xStep++;
+                    }
+                }
+
+                float lastY = dirtyRect.Height - ((float)(fieldData.DataPoints[0].value - MinY) * yMult);
+                float lastX = 0;
+
+                for (int i = xStep; i < fieldData.DataPoints.Count - 1; i += xStep)
+                {
+                    float curX = i;
+                    float curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
+                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f)+curY);
+                    lastX = curX;
+                    lastY = curY;
+
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in DataPointDisplay.Draw: {ex.Message}");
             }
-            //canvas.Translate(centerX, centerY);
-
-            // Draw the line of history
-
-            // draw the title
-
-            // draw the latest value
+            
         }
 
         public void UpdateUI()
@@ -93,48 +115,6 @@ namespace SailMonitor.Services
             bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
             bottomRight.Text = string.Format($"{{0:{precision}}}", fieldData.Max);
             center.Text = string.Format($"{{0:{precision}}}", fieldData.current);
-        }
-
-        public void DrawString(float x, float y, string font, float fontSize, string text)
-        {
-            DrawString(x, y, font, fontSize, text, HorizontalAlignment.Left);
-        }
-
-        public void DrawString(float x, float y,  string font, float fontSize, string text, HorizontalAlignment hAlign)
-        {
-            var fontToUse = fonts.Where(f => f.Name == font).FirstOrDefault();
-
-            if (fontToUse == null) return;
-
-            canvas.Font = fontToUse;
-            canvas.FontSize = fontSize;
-            
-            var size = canvas.GetStringSize("AWS", fontToUse, fontSize);
-
-            if(x==-1)
-            {
-                x= dirtyRect.Width - size.Width -5;
-            }
-            else if (x == -2)
-            {
-                x = (dirtyRect.Width - size.Width) / 2;
-            }
-
-            if (y == -1)
-            {
-                y = dirtyRect.Height - size.Height;
-            }
-            else if (y == -2)
-            {
-                y = (dirtyRect.Height - size.Height) / 2;
-            }
-
-
-
-            canvas.DrawString(text, x, y, hAlign);
-            
-
-
         }
     }
 }

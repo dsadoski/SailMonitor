@@ -25,29 +25,36 @@ namespace SailMonitor
 
         public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            _udpService = udpService;
-            _gpsService = gpsService;
-            _nmeaService = nmeaService;
+                _udpService = udpService;
+                _gpsService = gpsService;
+                _nmeaService = nmeaService;
 
-            
 
-            PageViews =new List<ContentView>
+
+                PageViews = new List<ContentView>
             {
                 new Page1(),
                 new Page2(),
                 new Page3()
             };
-            
-            content.Content = PageViews[currentIndex];
 
-            _udpService.OnMessageReceived += HandleUdpMessage;
-            _gpsService.OnLocationReceived += HandleGpsLocation;
+                content.Content = PageViews[currentIndex];
 
-            _udpService.Start();
-            _ = InitializeAsync();
+                _udpService.OnMessageReceived += HandleUdpMessage;
+                _gpsService.OnLocationReceived += HandleGpsLocation;
 
+                _udpService.Start();
+                _ = InitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in MainPage constructor: {ex.Message}");
+
+            }
         }
 
         private async Task InitializeAsync()
@@ -69,6 +76,7 @@ namespace SailMonitor
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                record = _udpService.record.Copy();
                 record.latitude = location.Latitude;
                 record.longitude = location.Longitude;
                 record.SOG = (location.Speed ?? 0.0) * 1.94384; // m/s → knots
@@ -81,10 +89,10 @@ namespace SailMonitor
                     // can we calc COG/SOG from  2 points?
 
 
-                    if (timeSpan.TotalSeconds > 5)
+                    if (Math.Abs(timeSpan.TotalSeconds) > 5)
                     {
                         double distance = _nmeaService.CalcDistanceNM(record.location, location); // in nautical miles
-                        record.SOG = distance / (timeSpan.TotalSeconds / 3600.0); // knots
+                        record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
                         double bearing = _nmeaService.CalcBearing(record.location, location);
                         record.headingTrue = bearing;
                         record.COG = bearing;
