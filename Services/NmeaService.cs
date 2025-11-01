@@ -13,16 +13,16 @@ namespace SailMonitor.Services
     {
         Setup S;
         public Boolean CalcWind;
-        public Record record;
+        //public Record record;
 
         public NmeaService(Setup s)
         {
             S = s.Copy();
             CalcWind = false;
-            record = new Record();
+            //record = new Record();
         }
 
-        public Record ParseSentence(string message)
+        public Record ParseSentence(string message, Record record)
         {
 
             CalcWind = false;

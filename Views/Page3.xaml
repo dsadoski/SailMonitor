@@ -30,6 +30,36 @@
     FontSize="18" 
     HorizontalTextAlignment="End" />
         </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="headingTrue: " HorizontalTextAlignment="Start" />
+            <Label x:Name="headingTrueLabel" 
+FontSize="18" 
+HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+                <Label Text="SOG: " HorizontalTextAlignment="Start" />
+                <Label x:Name="SOGLabel" 
+FontSize="18" 
+HorizontalTextAlignment="End" />
+            </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="COG: " HorizontalTextAlignment="Start" />
+            <Label x:Name="COGLabel" 
+FontSize="18" 
+HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="Water Temp: " HorizontalTextAlignment="Start" />
+            <Label x:Name="WaterTempLabel" 
+FontSize="18" 
+HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
+
+
     </VerticalStackLayout>
 
     <!--

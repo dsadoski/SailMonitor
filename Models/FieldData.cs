@@ -46,6 +46,11 @@ namespace SailMonitor.Models
                 }
             }
             DataPoints.Add(new SingleDataPoint(value));
+
+            DateTime dateTime =  DateTime.Now.AddHours(-1);
+
+            DataPoints = DataPoints.Where( d => d.dateTime.Ticks> dateTime.Ticks).ToList();
+
         }
     }
 }

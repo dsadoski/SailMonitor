@@ -78,36 +78,10 @@ namespace SailMonitor
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 //record = _udpService.record.Copy();
-                record.latitude = location.Latitude;
-                record.longitude = location.Longitude;
-                record.SOG = (location.Speed ?? 0.0) * 1.94384; // m/s → knots
-                record.COG = location.Course ?? 0.0;
-                record = _nmeaService.CalculateWind(record);
-                if (record.location != null)
-                {
-                    // can we calc COG/SOG from  2 points?
-                    TimeSpan timeSpan = new TimeSpan(location.Timestamp.Ticks - record.location.Timestamp.Ticks);
-                    // can we calc COG/SOG from  2 points?
+                _udpService.record.location = location;
+                _udpService.hasLocation = true;
 
 
-                    if (Math.Abs(timeSpan.TotalSeconds) > 5)
-                    {
-                        double distance = _nmeaService.CalcDistanceNM(record.location, location); // in nautical miles
-                        record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                        double bearing = _nmeaService.CalcBearing(record.location, location);
-                        record.headingTrue = bearing;
-                        record.COG = bearing;
-                        record.location = location;
-
-                    }
-                }
-                else
-                {
-                    record.location = new Location(location);
-                }
-                _udpService.record = record.Copy();
-
-                RaiseEventToCurrentView("GPSUpdate", record);
             });
         }
         private void Next_Clicked(object sender, EventArgs e)
