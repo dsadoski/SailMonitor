@@ -3,9 +3,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.Page3">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI! Page 3"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <HorizontalStackLayout>
+        <Label Text="latitude: " HorizontalTextAlignment="Start" />
+            <Label x:Name="latitudeLabel" 
+                FontSize="18" 
+                HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
+    
+    <HorizontalStackLayout>
+        <Label Text="longitude" HorizontalTextAlignment="Start" />
+        <Label x:Name="longitudeLabel" 
+                FontSize="18" 
+                HorizontalTextAlignment="End" />
+    </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="Depth: " HorizontalTextAlignment="Start" />
+            <Label x:Name="DepthLabel" 
+            FontSize="18" 
+            HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="HeadingMag: " HorizontalTextAlignment="Start" />
+            <Label x:Name="HeadingMagLabel" 
+    FontSize="18" 
+    HorizontalTextAlignment="End" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
+
+    <!--
+    <Label Text="longitude" HorizontalTextAlignment="Start" />
+        <Label Text="time" HorizontalTextAlignment="Start" />
+<Label Text="depth" HorizontalTextAlignment="Start" />
+        <Label Text="headingMag" HorizontalTextAlignment="Start" />
+<Label Text="headingTrue" HorizontalTextAlignment="Start" />
+        <Label Text="SOG" HorizontalTextAlignment="Start" />
+<Label Text="COG" HorizontalTextAlignment="Start" />
+        <Label Text="SOW" HorizontalTextAlignment="Start" />
+<Label Text="windTrueDir" HorizontalTextAlignment="Start" />
+        <Label Text="windTrueSpeed" HorizontalTextAlignment="Start" />
+<Label Text="windAppDir" HorizontalTextAlignment="Start" />
+        <Label Text="windAppSpeed" HorizontalTextAlignment="Start" />
+<Label Text="VPWSPD" HorizontalTextAlignment="Start" />
+        <Label Text="POLARDATA" HorizontalTextAlignment="Start" />
+<Label Text="Voltage" HorizontalTextAlignment="Start" />
+        <Label Text="Water Temp" HorizontalTextAlignment="Start" />
+<Label Text="Wind True Compass" HorizontalTextAlignment="Start" /> 
+
+    </VerticalStackLayout>-->
 </ContentView>

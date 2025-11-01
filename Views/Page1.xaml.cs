@@ -14,7 +14,7 @@ public partial class Page1 : ContentView, IContentViewHost
     {
 
         InitializeComponent();
-        this.BackgroundColor = Colors.White;
+        //this.BackgroundColor = Colors.White;
         CompassDrawable = new CompassDrawable
         {
             PieAngles = new List<float> { 0f, 60f, 120f }, // example wedges

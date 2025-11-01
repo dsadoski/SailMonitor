@@ -32,6 +32,7 @@ namespace SailMonitor
                 _udpService = udpService;
                 _gpsService = gpsService;
                 _nmeaService = nmeaService;
+                DeviceDisplay.KeepScreenOn = true;
 
 
 
@@ -67,7 +68,7 @@ namespace SailMonitor
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 record = n2krecord.Copy();
-                RaiseEventToCurrentView("UDPUpdate", record);
+                RaiseEventToCurrentView("UDPUpdate", n2krecord);
 
             });
         }
@@ -76,7 +77,7 @@ namespace SailMonitor
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                record = _udpService.record.Copy();
+                //record = _udpService.record.Copy();
                 record.latitude = location.Latitude;
                 record.longitude = location.Longitude;
                 record.SOG = (location.Speed ?? 0.0) * 1.94384; // m/s → knots
@@ -140,6 +141,15 @@ namespace SailMonitor
             if (content.Content is IContentViewHost activeView)
                 activeView.OnAppEvent(eventName, data);
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            // Restore normal sleep behavior when leaving
+            DeviceDisplay.KeepScreenOn = false;
+        }
+
 
     }
 }

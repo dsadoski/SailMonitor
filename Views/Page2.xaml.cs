@@ -18,7 +18,20 @@ public partial class Page2 : ContentView, IContentViewHost
     public Page2()
     {
 		InitializeComponent();
-        this.BackgroundColor = Colors.White;
+        //this.BackgroundColor = Colors.White;
+        var displayInfo = DeviceDisplay.MainDisplayInfo;
+
+        // width & height are in raw pixels
+        double width = displayInfo.Width;
+        double height = displayInfo.Height;
+
+        // convert to device-independent units (DIPs)
+        double screenWidth = width / displayInfo.Density;
+        double screenHeight = height / displayInfo.Density;
+
+        // example: set a view’s size
+        MainGrid.WidthRequest = screenWidth;
+        MainGrid.HeightRequest = screenHeight;
         try
         {
 
@@ -47,8 +60,8 @@ public partial class Page2 : ContentView, IContentViewHost
             {
                 var cellGrid = new Grid
                 {
-                    WidthRequest = 200,
-                    HeightRequest = 200,
+                    WidthRequest = screenWidth/4,
+                    HeightRequest = screenHeight/5,
                     Padding = 5
                 };
 
@@ -92,7 +105,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 {
                     Text = "Center",
                     HorizontalOptions = LayoutOptions.Center,
-                    FontSize = 72,
+                    FontSize = 36,
                     VerticalOptions = LayoutOptions.Center
                 };
 
@@ -148,6 +161,10 @@ public partial class Page2 : ContentView, IContentViewHost
     public void OnAppEvent(string eventName, Record data)
     {
         record = data.Copy();
+        if(record.windAppSpeed ==0)
+        {
+            return;
+        }
         UpdateRecord("AWS", record.windAppSpeed);
         UpdateRecord("AWD", record.windAppDir);
         UpdateRecord("TWS", record.windTrueSpeed);

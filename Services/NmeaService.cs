@@ -145,7 +145,11 @@ namespace SailMonitor.Services
 
                 if (stray[i + 1] == "f")
                 {
-                    record.depth = DoubleGet(stray[i]);
+                    double T = DoubleGet(stray[i]);
+                    if (T > 0)
+                    {
+                        record.depth = T;
+                    }
 
 
                 }

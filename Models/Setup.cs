@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Maui.Storage;
 
 namespace SailMonitor.Models
 {
@@ -22,14 +22,25 @@ namespace SailMonitor.Models
 
         public Setup()
         {
-            Port = 10110;
-            Night = false;
-            Orientation = 1;
-            KeepActive = true;
-            UseGPSPOS = true;
-            UseGPSHEADING = true;
-            UseGPSSOG = true;
+            Port = Preferences.Get("Port", 10110);
+            Night = Preferences.Get("Night", false);
+            Orientation = Preferences.Get("Orientation", 1);
+            KeepActive = Preferences.Get("KeepActive", true);
+            UseGPSPOS = Preferences.Get("UseGPSPOS", true);
+            UseGPSHEADING = Preferences.Get("UseGPSHEADING", true);
+            UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
             Fakewind = false;
+        }
+
+        public void Save()
+        {
+            Preferences.Set("Port", Port);
+            Preferences.Set("Night", Night);
+            Preferences.Set("Orientation", Orientation);
+            Preferences.Set("KeepActive", KeepActive);
+            Preferences.Set("UseGPSPOS", UseGPSPOS);
+            Preferences.Set("UseGPSHEADING", UseGPSHEADING);
+            Preferences.Set("UseGPSSOG", UseGPSSOG);
         }
 
         public Setup Copy()

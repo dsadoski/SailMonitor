@@ -35,28 +35,42 @@ namespace SailMonitor.Services
             }
             isInitialized = true;
 
-            try
+            if (OperatingSystem.IsAndroid())
             {
-                // Clean up if called twice or after a crash/reload
-                _udpClient?.Close();
-                _udpClient?.Dispose();
-                _udpClient = null;
+                try
+                {
+
+                    // Clean up if called twice or after a crash/reload
+                    _udpClient?.Close();
+                    _udpClient?.Dispose();
+                    _udpClient = null;
+                }
+                catch { }
             }
-            catch { }
 
 
             try
             {
-                var endpoint = new IPEndPoint(IPAddress.Any, _port);
-                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                // Allow immediate rebinding even if the OS still thinks it’s in use
-                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
                 _cts = new CancellationTokenSource();
-                _udpClient = new UdpClient();
-                _udpClient.Client = socket;
-                _udpClient.Client.Bind(endpoint);
+                if (OperatingSystem.IsAndroid())
+                {
+                    var endpoint = new IPEndPoint(IPAddress.Any, _port);
+                    var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                    // Allow immediate rebinding even if the OS still thinks it’s in use
+                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+                    
+                    _udpClient = new UdpClient();
+                    _udpClient.Client = socket;
+                    _udpClient.Client.Bind(endpoint);
+                }
+                else
+                {
+                    
+                    _udpClient = new UdpClient(_port);
+                }
+
             }
             catch (SocketException ex)
             {
@@ -83,7 +97,7 @@ namespace SailMonitor.Services
                         var record = n2KService.N2KParse(nMEA2000Message.PGN, nMEA2000Message.byteArray);*/
                         var record = nmeaService.ParseSentence(message);
 
-                        OnMessageReceived?.Invoke(record);
+                       OnMessageReceived?.Invoke(record);
                     }
                 }
                 catch (ObjectDisposedException)
