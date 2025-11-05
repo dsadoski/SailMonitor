@@ -78,7 +78,7 @@ namespace SailMonitor
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 //record = _udpService.record.Copy();
-                _udpService.record.location = location;
+                _udpService.record.location = new Location(location);
                 _udpService.hasLocation = true;
 
 

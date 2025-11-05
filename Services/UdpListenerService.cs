@@ -131,17 +131,20 @@ namespace SailMonitor.Services
             if (record.location != null)
             {
                 // can we calc COG/SOG from  2 points?
-                TimeSpan timeSpan = new TimeSpan(record.location.Timestamp.Ticks - record.location.Timestamp.Ticks);
+                TimeSpan timeSpan = new TimeSpan(record.location.Timestamp.Ticks - record.gpsTicks);
                 // can we calc COG/SOG from  2 points?
 
 
                 if (Math.Abs(timeSpan.TotalSeconds) > 5)
                 {
-                    double distance = nmeaService.CalcDistanceNM(record.location, record.location); // in nautical miles
+                    double distance = nmeaService.CalcDistanceNM(record); // in nautical miles
                     record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                    double bearing = nmeaService.CalcBearing(record.location, record.location);
+                    double bearing = nmeaService.CalcBearing(record);
                     record.headingTrue = bearing;
                     record.COG = bearing;
+                    record.latitude = record.location.Latitude;
+                    record.longitude = record.location.Longitude;
+                    record.gpsTicks = record.location.Timestamp.Ticks;
                 }
             }
             else

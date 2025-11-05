@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.Maui.Devices.Sensors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace SailMonitor.Models
         public int boatId;
         public double latitude;
         public double longitude;
+        public long gpsTicks;
         public long time;
         public double depth;
         public double headingMag;
@@ -34,6 +36,7 @@ namespace SailMonitor.Models
         public double voltage;
         public string ErrMessage;
         public Location location;
+        
 
 
 
@@ -46,6 +49,7 @@ namespace SailMonitor.Models
             boatId = 0;
             latitude = 0;
             longitude = 0;
+            gpsTicks = 0;
             time = 0;
             depth = 0;
             headingMag = 0;
@@ -63,8 +67,6 @@ namespace SailMonitor.Models
             waterTemp= 0;
             voltage = 0;
             location = new Location();
-
-
         }
 
         public Record Copy()
@@ -75,6 +77,7 @@ namespace SailMonitor.Models
             P.boatId = boatId;
             P.latitude = latitude;
             P.longitude = longitude;
+            P.gpsTicks = gpsTicks;
             P.time = time;
             P.depth = depth;
             P.headingMag = headingMag;
@@ -99,6 +102,7 @@ namespace SailMonitor.Models
             {
                 location = new Location();
             }
+            
             return P;
 
         }

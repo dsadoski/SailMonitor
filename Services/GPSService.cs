@@ -29,7 +29,7 @@ namespace SailMonitor.Services
                     var location = await Geolocation.Default.GetLocationAsync();
                     if (OnLocationReceived != null)
                     {
-                        OnLocationReceived.Invoke(location);
+                        OnLocationReceived.Invoke(new(location));
                     }
                 }
             }

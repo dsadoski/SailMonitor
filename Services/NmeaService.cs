@@ -184,12 +184,21 @@ namespace SailMonitor.Services
         {
 
 
-            if (stray.Length < 2) return record.Copy(); ;
+            if (stray.Length < 2) return record.Copy(); 
 
-            if (S.UseGPSHEADING == false)
+            double T= DoubleGet(stray[1]);
+
+            if (T != 0)
             {
-                record.headingTrue = DoubleGet(stray[1]);
-                CalcWind = true;
+
+                record.headingMag = T * .0001 * (180.0 / Math.PI);
+
+
+                //if (S.UseGPSHEADING == false)
+                {
+                    //record.headingTrue = DoubleGet(stray[1]);
+                    CalcWind = true;
+                }
             }
 
 
@@ -287,7 +296,7 @@ namespace SailMonitor.Services
 
             //D.Speed.D.Clear();
             record.SOW = DoubleGet(stray[5]);
-            record.headingMag = DoubleGet(stray[3]);
+            //record.headingMag = DoubleGet(stray[3]);
             CalcWind = true;
             return record.Copy();
         }
@@ -429,8 +438,13 @@ namespace SailMonitor.Services
         public Record NMEA_DPT(string[] stray, Record record)
         {
             // depth in Meters convert to feet
-            record.depth = DoubleGet(stray[1]);
-            record.depth = record.depth * 3.281;
+            double T = DoubleGet(stray[1]);
+            if (T >= 0)
+            {
+                record.depth = T;
+                record.depth = record.depth * 3.281;
+            }
+            
             return record.Copy();
         }
 
@@ -503,14 +517,13 @@ namespace SailMonitor.Services
         private const double EarthRadiusNm = 3440.065; // Earth radius in nautical miles
 
         public double CalcDistanceNM(
-            Location L1,
-            Location L2)
+           Record record)
         {
             // Convert degrees to radians
-            double lat1Rad = DegreesToRadians(L1.Latitude);
-            double lon1Rad = DegreesToRadians(L1.Longitude);
-            double lat2Rad = DegreesToRadians(L2.Latitude);
-            double lon2Rad = DegreesToRadians(L2.Longitude);
+            double lat1Rad = DegreesToRadians(record.latitude);
+            double lon1Rad = DegreesToRadians(record.longitude);
+            double lat2Rad = DegreesToRadians(record.location.Latitude);
+            double lon2Rad = DegreesToRadians(record.location.Longitude);
 
             // Differences
             double dLat = lat2Rad - lat1Rad;
@@ -529,14 +542,13 @@ namespace SailMonitor.Services
 
 
         public double CalcBearing(
-        Location A,
-        Location B)
+        Record record)
         {
             // Convert degrees to radians
-            double lat1Rad = DegreesToRadians(A.Latitude);
-            double lon1Rad = DegreesToRadians(A.Longitude);
-            double lat2Rad = DegreesToRadians(B.Latitude);
-            double lon2Rad = DegreesToRadians(B.Longitude);
+            double lat1Rad = DegreesToRadians(record.latitude);
+            double lon1Rad = DegreesToRadians(record.longitude);
+            double lat2Rad = DegreesToRadians(record.location.Latitude);
+            double lon2Rad = DegreesToRadians(record.location.Longitude);
 
             // Difference in longitude
             double dLon = lon2Rad - lon1Rad;
