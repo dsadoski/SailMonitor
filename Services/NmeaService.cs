@@ -11,13 +11,13 @@ namespace SailMonitor.Services
 {
     public class NmeaService
     {
-        Setup S;
+        Setup _setup;
         public Boolean CalcWind;
         //public Record record;
 
         public NmeaService(Setup s)
         {
-            S = s.Copy();
+            _setup = s;
             CalcWind = false;
             //record = new Record();
         }
@@ -170,7 +170,8 @@ namespace SailMonitor.Services
 
 
 
-            if (S.UseGPSHEADING == false) record.headingMag = DoubleGet(stray[1]);
+            //if (S.UseGPSHEADING == false) 
+                record.headingMag = DoubleGet(stray[1]);
             CalcWind = true;
             return record.Copy();
 
@@ -191,7 +192,7 @@ namespace SailMonitor.Services
             if (T != 0)
             {
 
-                record.headingMag = T * .0001 * (180.0 / Math.PI);
+                record.headingMag = T;// * .0001 * (180.0 / Math.PI);
 
 
                 //if (S.UseGPSHEADING == false)
@@ -223,7 +224,7 @@ namespace SailMonitor.Services
 
             // only use if youare getting SOG frominternal GPS
 
-            if (S.UseGPSSOG == false)
+            if (_setup.UseGPSSOG == false)
             {
                 record.windTrueDir = DoubleGet(stray[1]);
                 //D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
@@ -271,7 +272,7 @@ namespace SailMonitor.Services
             // sending radians, so testing
             double T = DoubleGet(stray[6]);
 
-            record.windAppDir = T * (180 / Math.PI);
+            record.windAppDir = T;
 
 
             if (stray[4] == "M")
@@ -332,7 +333,7 @@ namespace SailMonitor.Services
              if(stray[2].equals("M"))D.Vpw.D.SPDMS=DoubleGet(stray[1]);*/
 
 
-            if (S.UseGPSHEADING == false && S.UseGPSSOG == false) record.VPWSPD = DoubleGet(stray[1]);
+            if (_setup.UseGPSHEADING == false && _setup.UseGPSSOG == false) record.VPWSPD = DoubleGet(stray[1]);
 
 
             return record.Copy();
@@ -343,7 +344,7 @@ namespace SailMonitor.Services
             /*Track made good and speed over ground*/
             if (stray.Length < 3) return record.Copy();
 
-            if (S.UseGPSHEADING == false)
+            if (_setup.UseGPSHEADING == false)
             {
                 record.COG = DoubleGet(stray[1]);
 
@@ -358,7 +359,7 @@ namespace SailMonitor.Services
                 }
 
             }
-            if (S.UseGPSSOG == false)
+            if (_setup.UseGPSSOG == false)
             {
                 //record.SOG = DoubleGet(stray[5]);
             }
@@ -372,7 +373,7 @@ namespace SailMonitor.Services
             /*Track made good and speed over ground*/
             if (stray.Length < 3) return record.Copy();
 
-            if (S.UseGPSHEADING == false)
+            if (_setup.UseGPSHEADING == false)
             {
                 record.COG = DoubleGet(stray[1]);
 
@@ -387,7 +388,7 @@ namespace SailMonitor.Services
                 }
 
             }
-            if (S.UseGPSSOG == false)
+            if (_setup.UseGPSSOG == false)
             {
                 //record.SOG = DoubleGet(stray[5]);
                 //record.SOG = 5;
@@ -415,7 +416,7 @@ namespace SailMonitor.Services
             if (stray[6] == "V") return record.Copy();//not valid data
 
 
-            if (S.UseGPSHEADING == false)
+            if (_setup.UseGPSHEADING == false)
             {
                 record.latitude = DoubleGet(stray[1]);
                 if (stray[2] == "S") record.latitude = record.latitude * -1;
@@ -470,47 +471,37 @@ namespace SailMonitor.Services
 
         public Record CalculateWind(Record record)
         {
-            double AWS; // apparent wind speed
-            double AWA; // apparent wind angle
-            double TWS; // true wind speed
-            double TWA; // true wind angle
-            double HDG = 0; // vessel heading
-            double SOG = 0; // vessel speed over ground
-            AWS = record.windAppSpeed;
-            AWA = record.windAppDir;
-            if (record.headingTrue != 0)
-            {
-                HDG = record.headingTrue;
-            }
-            else if (record.headingMag != 0)
-            {
-                HDG = record.headingMag;
-            }
+
+            double deg2rad = Math.PI / 180.0;
+            // convert AWA (from) to "to" direction for velocity vector
+            double thetaA = (record.windAppDir + 180.0) * deg2rad;
+            double Va_x = record.windAppSpeed * Math.Cos(thetaA); // forward
+            double Va_y = record.windAppSpeed * Math.Sin(thetaA); // starboard
+            double Vb_x = 0;
             if (record.SOG != 0)
             {
-                SOG = record.SOG;
+                Vb_x = record.SOG;
             }
             else if (record.SOW != 0)
             {
-                SOG = record.SOW;
+                Vb_x = record.SOW;
             }
-            double AWArad = AWA * (Math.PI / 180);
-            double HDGrad = HDG * (Math.PI / 180);
-            double Xw = AWS * Math.Sin(AWArad);
-            double Yw = AWS * Math.Cos(AWArad);
-            double Xv = SOG * Math.Sin(HDGrad);
-            double Yv = SOG * Math.Cos(HDGrad);
-            double Xt = Xw + Xv;
-            double Yt = Yw + Yv;
-            TWS = Math.Sqrt((Xt * Xt) + (Yt * Yt));
-            TWA = Math.Atan2(Xt, Yt) * (180 / Math.PI);
-            if (TWA < 0)
-            {
-                TWA += 360;
-            }
+            
+            double Vb_y = 0.0;
+
+            double Vt_x = Va_x + Vb_x;
+            double Vt_y = Va_y + Vb_y;
+
+            double TWS = Math.Sqrt(Vt_x * Vt_x + Vt_y * Vt_y);
+
+            double thetaTto = Math.Atan2(Vt_y, Vt_x) * (180.0 / Math.PI); // -180..180
+            if (thetaTto < 0) thetaTto += 360.0;
+            double TWDFrom = (thetaTto + 180.0) % 360.0;
+
             record.windTrueSpeed = TWS;
-            record.windTrueDir = TWA;
-            record.windTrueCompass = (HDG + TWA) % 360;
+            record.windTrueDir = TWDFrom;
+            record.windTrueCompass = (record.headingMag + TWDFrom) % 360;
+           
             return record.Copy();
         }
 

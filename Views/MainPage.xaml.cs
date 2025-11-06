@@ -17,13 +17,15 @@ namespace SailMonitor
         private readonly GPSService _gpsService;
         private readonly NmeaService _nmeaService;
         public Record record = new Record();
+        private Setup _setup;
+        List<DataPointDisplay> dataPointDisplays = new List<DataPointDisplay>();
 
 
         //public ObservableCollection<ContentView> DisplayedPage { get; set; }
         public List<ContentView> PageViews { get; set; }
-        int currentIndex = 0;
+        int currentIndex = 1;
 
-        public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService)
+        public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService, Setup setup)
         {
             try
             {
@@ -32,19 +34,23 @@ namespace SailMonitor
                 _udpService = udpService;
                 _gpsService = gpsService;
                 _nmeaService = nmeaService;
+                _setup = setup;
                 DeviceDisplay.KeepScreenOn = true;
-
-
+                
 
                 PageViews = new List<ContentView>
-            {
-                new Page1(),
-                new Page2(),
-                new Page3()
-            };
+                {
+                    new PageSetup(),
+                    new Page1(),
+                    new Page2(),
+                    new Page3(),
+                    new Page4(),
+                };
 
+                SetColorScheme(_setup);
+                
                 content.Content = PageViews[currentIndex];
-
+                
                 _udpService.OnMessageReceived += HandleUdpMessage;
                 _gpsService.OnLocationReceived += HandleGpsLocation;
 
@@ -56,6 +62,16 @@ namespace SailMonitor
                 Debug.WriteLine($"Error in MainPage constructor: {ex.Message}");
 
             }
+        }
+
+        public void SetColorScheme(Setup setup)
+        {
+            this.BackgroundColor = setup.backColor;
+            foreach (ContentView view in PageViews)
+            {
+                SetColorsRecursively(view,setup);
+            }
+
         }
 
         private async Task InitializeAsync()
@@ -124,6 +140,53 @@ namespace SailMonitor
             DeviceDisplay.KeepScreenOn = false;
         }
 
+        public void SetColorsRecursively(IView view, Setup setup)
+        {
+            // Set background/foreground based on control type
+            switch (view)
+            {
+                case Label lbl:
+                    lbl.BackgroundColor = setup.backColor;
+                    lbl.TextColor = setup.foreColor;
+                    break;
+
+                case Button btn:
+                    btn.BackgroundColor = setup.backColor;
+                    btn.TextColor = setup.foreColor;
+                    break;
+
+                case Entry entry:
+                    entry.BackgroundColor = setup.backColor;
+                    entry.TextColor = setup.foreColor;
+                    break;
+
+                case Editor editor:
+                    editor.BackgroundColor = setup.backColor;
+                    editor.TextColor = setup.foreColor;
+                    break;
+
+                case Grid grid:
+                    grid.BackgroundColor = setup.backColor;
+                    break;
+
+                    case Microsoft.Maui.Controls.Switch swtch:
+                        swtch.BackgroundColor = setup.backColor;
+                        break;
+            }
+
+            // Now recurse if it’s a layout or content view
+            if (view is Layout layout)
+            {
+                foreach (var child in layout.Children)
+                {
+                    SetColorsRecursively(child, setup);
+                }
+            }
+            else if (view is ContentView contentView && contentView.Content != null)
+            {
+                SetColorsRecursively(contentView.Content, setup);
+            }
+        }
 
     }
 }

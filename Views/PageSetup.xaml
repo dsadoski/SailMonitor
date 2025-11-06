@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SailMonitor.PageSetup">
+    
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Port -->
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Port:" VerticalOptions="Center"/>
+                <Entry Text="" 
+                       x:Name="Port"
+                       Keyboard="Numeric"
+                       WidthRequest="100"
+                       Placeholder="Enter port"/>
+            </HorizontalStackLayout>
+
+            <!-- Switches -->
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Night Mode:" VerticalOptions="Center"/>
+            <Switch 
+                    x:Name="Night" Toggled="ToggleNight"/>
+        </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Keep Active:" VerticalOptions="Center"/>
+                <Switch x:Name="KeepActive" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Use GPS POS:" VerticalOptions="Center"/>
+                <Switch x:Name="UseGPSPOS" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Use GPS HEADING:" VerticalOptions="Center"/>
+                <Switch x:Name="UseGPSHEADING" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label Text="Use GPS SOG:" VerticalOptions="Center"/>
+                <Switch x:Name="UseGPSSOG" />
+            </HorizontalStackLayout>
+
+            <!-- CRUD Buttons -->
+            <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
+                <Button Text="Save" Clicked="Save" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    
+
+</ContentView>

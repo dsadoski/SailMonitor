@@ -13,7 +13,10 @@ public partial class Page2 : ContentView, IContentViewHost
     private Record record = new Record();
     
     List<DataPointDisplay> dataPointDisplays =new List<DataPointDisplay>();
-    
+    public CompassDrawable CompassDrawable { get; set; }
+
+    GraphicsView graphicsView;
+
 
     public Page2()
     {
@@ -127,6 +130,23 @@ public partial class Page2 : ContentView, IContentViewHost
                 }
             }
 
+            var comptGrid = new Grid
+            {
+                WidthRequest = screenWidth,
+                HeightRequest = screenHeight * 3/5,
+                Padding = 5
+            };
+            CompassDrawable = new CompassDrawable();
+            graphicsView = new GraphicsView
+            {
+                Drawable = CompassDrawable,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill
+            };
+            comptGrid.Children.Add(graphicsView);
+            MainGrid.Add(comptGrid, 0 , rowcount++);
+
+
 
         }
         catch (Exception ex)
@@ -141,6 +161,10 @@ public partial class Page2 : ContentView, IContentViewHost
     {
 
         var graphicsViews = MainGrid.Children.OfType<GraphicsView>().ToList();
+        CompassDrawable.Heading = (float)record.headingMag;
+        CompassDrawable.ApparentWind = (float)record.windAppDir;
+        CompassDrawable.TrueWind = (float)record.windTrueDir;
+        graphicsView.Invalidate();
 
     }
 

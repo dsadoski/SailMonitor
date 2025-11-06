@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SailMonitor.Models;
 using SailMonitor.Services;
 
 namespace SailMonitor
@@ -11,7 +12,7 @@ namespace SailMonitor
 
 
 
-            var setup = new Models.Setup();
+            
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -26,9 +27,12 @@ namespace SailMonitor
 #endif
             try
             {
-                builder.Services.AddSingleton(sp => new UdpListenerService(port: 10110));
-                builder.Services.AddSingleton(sp => new GPSService());
+                builder.Services.AddSingleton(sp => new Setup());
+                Setup setup = new Setup();
                 builder.Services.AddSingleton(sp => new NmeaService(setup));
+                NmeaService nmeaService = new NmeaService(setup);
+                builder.Services.AddSingleton(sp => new UdpListenerService(setup, nmeaService));
+                builder.Services.AddSingleton(sp => new GPSService());
             }
 
             catch (Exception ex)

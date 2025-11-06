@@ -18,19 +18,20 @@ namespace SailMonitor.Services
         private CancellationTokenSource? _cts;
 
         public event Action<Record>? OnMessageReceived;
-        Setup  setup = new Setup();
+        Setup _setup;
         public Record record;
         
         public bool hasLocation = false;
 
         bool isInitialized = false;
-        private NmeaService nmeaService;
-        public UdpListenerService(int port)
+        private NmeaService _nmeaService;
+        public UdpListenerService(Setup setup, NmeaService nmeaService)
         {
-            _port = port;
+            _setup = setup;
+            _port = _setup.Port;
             record = new Record();
-            setup = new Setup();
-            nmeaService = new NmeaService(setup);
+            _setup = setup;
+            _nmeaService = nmeaService;
         }
 
         public void Start()
@@ -101,7 +102,7 @@ namespace SailMonitor.Services
                         var message = Encoding.UTF8.GetString(result.Buffer);
                         /*NMEA2000 nMEA2000Message = new NMEA2000(message);
                         var record = n2KService.N2KParse(nMEA2000Message.PGN, nMEA2000Message.byteArray);*/
-                        record = nmeaService.ParseSentence(message, record);
+                        record = _nmeaService.ParseSentence(message, record);
                         if (hasLocation == true)
                         {
                             ParseLocation();
@@ -127,7 +128,7 @@ namespace SailMonitor.Services
             record.longitude = record.location.Longitude;
             record.SOG = (record.location.Speed ?? 0.0) * 1.94384; // m/s → knots
             record.COG = record.location.Course ?? 0.0;
-            record = nmeaService.CalculateWind(record);
+            record = _nmeaService.CalculateWind(record);
             if (record.location != null)
             {
                 // can we calc COG/SOG from  2 points?
@@ -137,9 +138,9 @@ namespace SailMonitor.Services
 
                 if (Math.Abs(timeSpan.TotalSeconds) > 5)
                 {
-                    double distance = nmeaService.CalcDistanceNM(record); // in nautical miles
+                    double distance = _nmeaService.CalcDistanceNM(record); // in nautical miles
                     record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                    double bearing = nmeaService.CalcBearing(record);
+                    double bearing = _nmeaService.CalcBearing(record);
                     record.headingTrue = bearing;
                     record.COG = bearing;
                     record.latitude = record.location.Latitude;

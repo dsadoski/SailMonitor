@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Graphics;
+using SailMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +13,16 @@ namespace SailMonitor.Services
     public class CompassDrawable : IDrawable
     {
         public float RotationDegrees { get; set; } = 0f; // For rotating compass if needed
-        public List<float> PieAngles { get; set; } = new List<float> { 0f, 45f, 90f }; // start angles of wedges
-        public float PieWidthDegrees { get; set; } = 5f;
+        
 
         public float TrueWind=100;
         public float ApparentWind=85;
         public float Heading=0;
+        public Setup setup;
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+            setup = new Setup();
             float width = dirtyRect.Width;
             float height = dirtyRect.Height;
             float centerX = width / 2;
@@ -39,7 +41,7 @@ namespace SailMonitor.Services
             canvas.Translate(centerX, centerY);
             //canvas.Rotate(RotationDegrees);
 
-            canvas.StrokeColor = Colors.Black;
+            canvas.StrokeColor = setup.foreColor ;
             canvas.StrokeSize = 2;
 
             // Draw main circle
@@ -58,7 +60,7 @@ namespace SailMonitor.Services
                 canvas.DrawLine(x1, y1, x2, y2);
 
                 // Draw degree numbers
-                canvas.FontColor = Colors.Black;
+                canvas.FontColor = setup.foreColor;
                 canvas.FontSize = radius * 0.08f;
                 canvas.DrawString($"{deg}°", x1 * 1.3f, y1 * 1.3f, HorizontalAlignment.Center);
                 //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
@@ -87,7 +89,7 @@ namespace SailMonitor.Services
                 }
 
                 // Draw degree numbers
-                canvas.FontColor = Colors.Black;
+                canvas.FontColor = setup.foreColor;
                 canvas.FontSize = radius * 0.08f;
                 canvas.DrawString($"{displayDeg}°", x1 * .8f, y1 * .8f, HorizontalAlignment.Center);
                 //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);

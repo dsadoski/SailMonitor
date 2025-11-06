@@ -12,51 +12,54 @@ namespace SailMonitor.Models
     {
         public int Port;
         public bool Night;
-        public int Orientation;
         public bool KeepActive;
         public bool UseGPSPOS;
         public bool UseGPSHEADING;
         public bool UseGPSSOG;
-        public bool Fakewind;
+
+        public Color foreColor;
+        public Color backColor;
+        
 
 
         public Setup()
         {
             Port = Preferences.Get("Port", 10110);
             Night = Preferences.Get("Night", false);
-            Orientation = Preferences.Get("Orientation", 1);
+            
             KeepActive = Preferences.Get("KeepActive", true);
             UseGPSPOS = Preferences.Get("UseGPSPOS", true);
             UseGPSHEADING = Preferences.Get("UseGPSHEADING", true);
             UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
-            Fakewind = false;
+            SetColor();
+            
         }
 
         public void Save()
         {
             Preferences.Set("Port", Port);
             Preferences.Set("Night", Night);
-            Preferences.Set("Orientation", Orientation);
+            
             Preferences.Set("KeepActive", KeepActive);
             Preferences.Set("UseGPSPOS", UseGPSPOS);
             Preferences.Set("UseGPSHEADING", UseGPSHEADING);
             Preferences.Set("UseGPSSOG", UseGPSSOG);
+            SetColor();
         }
 
-        public Setup Copy()
+        public void SetColor()
         {
-            Setup P = new Setup();
-            P.Night = Night;
-            P.Port = Port;
-            P.Orientation = Orientation;
-            P.KeepActive = KeepActive;
-            P.UseGPSPOS = UseGPSPOS;
-
-            P.UseGPSHEADING = UseGPSHEADING;
-            P.UseGPSSOG = UseGPSSOG;
-            P.Fakewind = Fakewind;
-            return P;
-
+            if (Night == false)
+            {
+                foreColor = Colors.Black;
+                backColor = Colors.White;
+            }
+            else
+            {
+                foreColor = Colors.Red;
+                backColor = Colors.Black;
+            }
         }
+       
     }
 }

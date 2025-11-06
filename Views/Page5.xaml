@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SailMonitor.Page4">
+    <VerticalStackLayout>
+      
+
+        <HorizontalStackLayout>
+            <Label Text="Speed: " HorizontalTextAlignment="Start" />
+            <Entry x:Name="Speed"></Entry>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="Wind Speed: " HorizontalTextAlignment="Start" />
+            <Entry x:Name="WindSpeed"></Entry>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Label Text="Wind Dir: " HorizontalTextAlignment="Start" />
+            <Entry x:Name="WindDir"></Entry>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout>
+            <Button x:Name="submit" Text="Submit" Clicked="onSubmit"></Button>
+        </HorizontalStackLayout>
+
+
+    </VerticalStackLayout>
+
+</ContentView>
