@@ -12,13 +12,13 @@ public partial class Page2 : ContentView, IContentViewHost
 
     private Record record = new Record();
     
-    List<DataPointDisplay> dataPointDisplays =new List<DataPointDisplay>();
+    
     public CompassDrawable CompassDrawable { get; set; }
 
     GraphicsView graphicsView;
 
 
-    public Page2()
+    public Page2(List<DataPointDisplay> dataPointdisplay)
     {
 		InitializeComponent();
         //this.BackgroundColor = Colors.White;
@@ -51,15 +51,12 @@ public partial class Page2 : ContentView, IContentViewHost
             }
 
             // Redraw when needed
-            dataPointDisplays.Add(new DataPointDisplay("AWS", "F1"));
-            dataPointDisplays.Add(new DataPointDisplay("AWD", "F1"));
-            dataPointDisplays.Add(new DataPointDisplay("TWS", "F1"));
-            dataPointDisplays.Add(new DataPointDisplay("TWD", "F1"));
-            dataPointDisplays.Add(new DataPointDisplay("DPT", "F1"));
+           
             int rowcount = 0;
             int colcount = 0;
+            
 
-            foreach (var display in dataPointDisplays)
+            foreach (var display in dataPointdisplay)
             {
                 var cellGrid = new Grid
                 {
@@ -104,13 +101,7 @@ public partial class Page2 : ContentView, IContentViewHost
                     Margin = new Thickness(6)
                 };
 
-                display.center = new Label
-                {
-                    Text = "Center",
-                    HorizontalOptions = LayoutOptions.Center,
-                    FontSize = 36,
-                    VerticalOptions = LayoutOptions.Center
-                };
+                display.center = new Label { Text = "Center", HorizontalOptions = LayoutOptions.Center, FontSize = 36, VerticalOptions = LayoutOptions.Center };
 
                 // Add elements — GraphicsView first (so it's behind)
                 cellGrid.Children.Add(display.graphicsView);
@@ -156,6 +147,7 @@ public partial class Page2 : ContentView, IContentViewHost
 
     }
 
+   
 
     private void UpdateUI()
     {
@@ -168,34 +160,19 @@ public partial class Page2 : ContentView, IContentViewHost
 
     }
 
-    public void UpdateRecord(string name, double value)
-    {
-        var view = dataPointDisplays.FirstOrDefault(d => d.name == name);
-        if (view != null)
-        {
-            view.AddDataPoint(value);
-        }
-    }
-    public void Dispose()
+     public void Dispose()
     {
         /*_udpService.OnMessageReceived -= HandleUdpMessage;
         _gpsService.OnLocationReceived -= HandleGpsLocation;*/
     }
 
-    public void OnAppEvent(string eventName, Record data)
+    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPoints)
     {
         record = data.Copy();
-        if(record.windAppSpeed ==0)
-        {
-            return;
-        }
-        UpdateRecord("AWS", record.windAppSpeed);
-        UpdateRecord("AWD", record.windAppDir);
-        UpdateRecord("TWS", record.windTrueSpeed);
-        UpdateRecord("TWD", record.windTrueDir);
-        UpdateRecord("DPT", record.depth);
+       
+       
 
-        foreach (var display in dataPointDisplays)
+        foreach (var display in dataPoints)
         {
             display.UpdateUI();
             display.graphicsView.Invalidate();

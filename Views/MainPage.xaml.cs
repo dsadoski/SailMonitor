@@ -18,7 +18,8 @@ namespace SailMonitor
         private readonly NmeaService _nmeaService;
         public Record record = new Record();
         private Setup _setup;
-        List<DataPointDisplay> dataPointDisplays = new List<DataPointDisplay>();
+        public List<DataPointDisplay> dataPointDisplays;
+        
 
 
         //public ObservableCollection<ContentView> DisplayedPage { get; set; }
@@ -36,19 +37,34 @@ namespace SailMonitor
                 _nmeaService = nmeaService;
                 _setup = setup;
                 DeviceDisplay.KeepScreenOn = true;
-                
+
+                dataPointDisplays = new List<DataPointDisplay>();
+                dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed"));
+                dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir"));
+                dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed"));
+                dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir"));
+                dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth"));
+                dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground"));
+                dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water"));
+                dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading"));
 
                 PageViews = new List<ContentView>
                 {
                     new PageSetup(),
                     new Page1(),
-                    new Page2(),
+                    new Page2(dataPointDisplays),
                     new Page3(),
                     new Page4(),
                 };
 
+                foreach(var item in dataPointDisplays)
+                {
+                    PageViews.Add(new SingleDataPoint(item));
+                }
+
                 SetColorScheme(_setup);
-                
+               
+
                 content.Content = PageViews[currentIndex];
                 
                 _udpService.OnMessageReceived += HandleUdpMessage;
@@ -84,9 +100,27 @@ namespace SailMonitor
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 record = n2krecord.Copy();
-                RaiseEventToCurrentView("UDPUpdate", n2krecord);
+                UpdateDataDisplayRecord("AWS", record.windAppSpeed);
+                UpdateDataDisplayRecord("AWD", record.windAppDir);
+                UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
+                UpdateDataDisplayRecord("TWD", record.windTrueDir);
+                UpdateDataDisplayRecord("DPT", record.depth);
+                UpdateDataDisplayRecord("SOG", record.SOG);
+                UpdateDataDisplayRecord("SOW", record.SOW);
+                UpdateDataDisplayRecord("HDG", record.headingMag);
+
+                RaiseEventToCurrentView("UDPUpdate", record);
 
             });
+        }
+
+        public void UpdateDataDisplayRecord(string name, double value)
+        {
+            var view = dataPointDisplays.FirstOrDefault(d => d.name == name);
+            if (view != null)
+            {
+                view.AddDataPoint(value);
+            }
         }
 
         private void HandleGpsLocation(Location location)
@@ -129,7 +163,9 @@ namespace SailMonitor
         private void RaiseEventToCurrentView(string eventName, Record data)
         {
             if (content.Content is IContentViewHost activeView)
-                activeView.OnAppEvent(eventName, data);
+            {
+                activeView.OnAppEvent(eventName, data, dataPointDisplays);
+            }
         }
 
         protected override void OnDisappearing()
@@ -190,3 +226,4 @@ namespace SailMonitor
 
     }
 }
+

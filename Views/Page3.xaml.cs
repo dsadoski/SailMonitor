@@ -11,7 +11,7 @@ public partial class Page3 : ContentView, IContentViewHost
 		InitializeComponent();
 	}
 
-    public void OnAppEvent(string eventName, Record data)
+    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPointDisplays)
     {
         record = data.Copy();
         UpdateUI();

@@ -66,8 +66,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\Page5.xaml.cs">
-	    <DependentUpon>Page5.xaml</DependentUpon>
+	  <Compile Update="Views\SingleDataPoint.xaml.cs">
+	    <DependentUpon>SingleDataPoint.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Page4.xaml.cs">
+	    <DependentUpon>Page4.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\PageSetup.xaml.cs">
 	    <DependentUpon>PageSetup.xaml</DependentUpon>
@@ -78,10 +81,13 @@
 	  <MauiXaml Update="Views\Page1.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\SingleDataPoint.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Page2.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Page5.xaml">
+	  <MauiXaml Update="Views\Page4.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\PageSetup.xaml">

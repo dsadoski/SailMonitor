@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.Maui;
+using Microsoft.Maui.Layouts;
 using SailMonitor.Models;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace SailMonitor.Services
 {
-    internal class DataPointDisplay : IDrawable
+    public class DataPointDisplay : IDrawable
     {
-        FieldData fieldData;
+        public FieldData fieldData;
         public string name = "";
         string precision = "F2";
         private List<Microsoft.Maui.Graphics.Font> fonts;
@@ -25,12 +26,14 @@ namespace SailMonitor.Services
         public Label bottomRight;
         public Label center;
         public GraphicsView graphicsView;
+        public string description;
 
-        public DataPointDisplay(string Name,string Precision)
+        public DataPointDisplay(string Name,string Precision, string Description)
         {
             
             name = Name;
             precision = Precision;
+            description = Description;
             fieldData = new FieldData(Name);
             fonts = new List<Microsoft.Maui.Graphics.Font>();
             fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansRegular"));
@@ -44,7 +47,7 @@ namespace SailMonitor.Services
             if (fieldData.DataPoints.Count > 0)
             {
                 TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - fieldData.DataPoints[fieldData.DataPoints.Count - 1].dateTime.Ticks);
-                if (Math.Abs(timeSpan.TotalSeconds)>= 5)
+                if (Math.Abs(timeSpan.TotalSeconds)>= 10)
                 {
                     fieldData.AddDataPoint(value);
                     //graphicsView.Invalidate();
@@ -111,10 +114,24 @@ namespace SailMonitor.Services
 
         public void UpdateUI()
         {
+           
+            var displayInfo = DeviceDisplay.MainDisplayInfo;
+            // width & height are in raw pixels
+            double width = displayInfo.Width /displayInfo.Density;
+            double height = displayInfo.Height / displayInfo.Density;
+
+            AbsoluteLayout.SetLayoutBounds(center, new Rect(width * .4, height *.4, -1, -1));
+            
+            AbsoluteLayout.SetLayoutBounds(topLeft, new Rect(1, 1, -1, -1));
+
+
             topLeft.Text = name;
-            bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
+           
+
+            /*bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
             bottomRight.Text = string.Format($"{{0:{precision}}}", fieldData.Max);
-            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);
+            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);*/
+            
         }
     }
 }

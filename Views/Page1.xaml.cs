@@ -54,7 +54,7 @@ public partial class Page1 : ContentView, IContentViewHost
 
     // Optional: update wedges dynamically
 
-    public void OnAppEvent(string eventName, Record data)
+    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPointDisplays)
     {
         record = data.Copy();
         UpdateUI();
