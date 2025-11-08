@@ -45,12 +45,17 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
             {
                 Drawable = dataPoint,
                 HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill
+                VerticalOptions = LayoutOptions.Fill,
+                AnchorX = 0,
+                AnchorY = 0,
+                WidthRequest = screenWidth,
+                HeightRequest = screenHeight,
+                
             };
             MainLayout.Children.Add(dataPoint.graphicsView);
 
 
-            // Add labels (foreground content)
+           /* // Add labels (foreground content)
             dataPoint.topLeft = new Label
             {
                 Text = "Top Left",                
@@ -79,7 +84,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
 
                 FontSize = 36,
             };
-            MainLayout.Children.Add(dataPoint.center);
+            MainLayout.Children.Add(dataPoint.bottomRight);*/
         }
         catch (Exception ex)
         {
@@ -98,17 +103,17 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         _gpsService.OnLocationReceived -= HandleGpsLocation;*/
     }
 
-    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPoints)
+    public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
-        var point = dataPoints.Where(d  => d.name == dataPoint.name).FirstOrDefault();
+        var point = DataPoints.Where(d  => d.name == dataPoint.name).FirstOrDefault();
 
         MainLayout.MaximumWidthRequest = DeviceDisplay.MainDisplayInfo.Width;
         MainLayout.MinimumHeightRequest = DeviceDisplay.MainDisplayInfo.Height;
 
-        dataPoint.fieldData = point.fieldData;
-        //dataPoint.graphicsView.Invalidate();
-        dataPoint.UpdateUI();
+        dataPoint.fieldData = point;
+        dataPoint.graphicsView.Invalidate();
+        //dataPoint.UpdateUI();
 
         
     }

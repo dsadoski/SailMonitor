@@ -27,6 +27,7 @@ namespace SailMonitor.Services
         public Label center;
         public GraphicsView graphicsView;
         public string description;
+        Setup setup;
 
         public DataPointDisplay(string Name,string Precision, string Description)
         {
@@ -36,33 +37,17 @@ namespace SailMonitor.Services
             description = Description;
             fieldData = new FieldData(Name);
             fonts = new List<Microsoft.Maui.Graphics.Font>();
+            setup = new Setup();
             fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansRegular"));
             fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansBold"));
 
         }
 
-        public void AddDataPoint(double value)
-        {
-            fieldData.current = value;
-            if (fieldData.DataPoints.Count > 0)
-            {
-                TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - fieldData.DataPoints[fieldData.DataPoints.Count - 1].dateTime.Ticks);
-                if (Math.Abs(timeSpan.TotalSeconds)>= 10)
-                {
-                    fieldData.AddDataPoint(value);
-                    //graphicsView.Invalidate();
-                }
-            }
-            else
-            {
-                fieldData.AddDataPoint(value);
-                //graphicsView.Invalidate();
-            }
-        }
         public void Draw(ICanvas Canvas, RectF DirtyRect)
         {
             canvas = Canvas;
             dirtyRect = DirtyRect;
+
 
             try
             {
@@ -76,7 +61,7 @@ namespace SailMonitor.Services
                 canvas.FillColor = new Color(0, 0, 0, 0.3f);
                 canvas.StrokeColor = Colors.Blue;
                 canvas.StrokeSize = 2;
-                canvas.FillRectangle(dirtyRect);
+                //canvas.FillRectangle(dirtyRect);
 
                 float MaxY = (float)fieldData.Max * 1.1f;
                 float MinY = 0;// (float)fieldData.Min * 0.9f;
@@ -104,6 +89,18 @@ namespace SailMonitor.Services
                     lastY = curY;
 
                 }
+                canvas.FontColor = setup.foreColor;
+                canvas.Font = fonts[0];
+                canvas.FontSize = 18;
+                string txt = fieldData.Min.ToString($"F{precision}");
+                canvas.DrawString(txt, 1, (float)(dirtyRect.Height * 0.9f),HorizontalAlignment.Left);
+
+                
+                canvas.DrawString(description, 1,50, HorizontalAlignment.Left);
+
+
+                canvas.RestoreState();
+
             }
             catch (Exception ex)
             {
@@ -128,9 +125,9 @@ namespace SailMonitor.Services
             topLeft.Text = name;
            
 
-            /*bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
+            bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
             bottomRight.Text = string.Format($"{{0:{precision}}}", fieldData.Max);
-            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);*/
+            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);
             
         }
     }

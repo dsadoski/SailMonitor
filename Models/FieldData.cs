@@ -29,27 +29,38 @@ namespace SailMonitor.Models
         public void AddDataPoint(double value)
         {
             current = value;
-            if (DataPoints.Count ==0)
+            if (DataPoints.Count == 0)
             {
                 Max = value;
                 Min = value;
             }
             else
             {
-                if(value > Max)
+                if (value > Max)
                 {
                     Max = value;
                 }
-                if(value < Min)
+                if (value < Min)
                 {
                     Min = value;
                 }
             }
-            DataPoints.Add(new SingleDataPoint(value));
+            if (DataPoints.Count > 0)
+            {
+                TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - DataPoints[DataPoints.Count - 1].dateTime.Ticks);
+                if (Math.Abs(timeSpan.TotalSeconds) >= 10)
+                {
+                    DataPoints.Add(new SingleDataPoint(value));
+                }
+            }
+            else
+            {
+                DataPoints.Add(new SingleDataPoint(value));
+            }
 
-            DateTime dateTime =  DateTime.Now.AddHours(-1);
+            DateTime dateTime = DateTime.Now.AddHours(-1);
 
-            DataPoints = DataPoints.Where( d => d.dateTime.Ticks> dateTime.Ticks).ToList();
+            DataPoints = DataPoints.Where(d => d.dateTime.Ticks > dateTime.Ticks).ToList();
 
         }
     }
