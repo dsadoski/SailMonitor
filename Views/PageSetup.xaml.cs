@@ -22,6 +22,7 @@ public partial class PageSetup : ContentView
         UseGPSPOS.IsToggled = setup.UseGPSPOS;
         UseGPSHEADING.IsToggled = setup.UseGPSHEADING;
         UseGPSSOG.IsToggled = setup.UseGPSSOG;
+        SaveFrequency.Text = setup.saveFrequency.ToString();
 
         
     }
@@ -29,11 +30,13 @@ public partial class PageSetup : ContentView
     public void Save(object sender, EventArgs e)
     {
         int.TryParse(Port.Text, out setup.Port);
+        int.TryParse(SaveFrequency.Text, out setup.saveFrequency);
         setup.Night = Night.IsToggled;
         setup.KeepActive = KeepActive.IsToggled;
         setup.UseGPSPOS = UseGPSPOS.IsToggled;
         setup.UseGPSHEADING = UseGPSHEADING.IsToggled;
         setup.UseGPSSOG = UseGPSSOG.IsToggled;
+        
         setup.Save();
         var parentPage = GetParentPage();
         parentPage?.SetColorScheme(setup);

@@ -11,7 +11,7 @@ public partial class Page3 : ContentView, IContentViewHost
 		InitializeComponent();
 	}
 
-    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPointDisplays)
+    public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
         UpdateUI();
@@ -35,5 +35,9 @@ public partial class Page3 : ContentView, IContentViewHost
 
         /*VoltageLabel.Text = $"{record.voltage:F2} V";
         WaterTempLabel.Text = $"{record.waterTemp:F2} °C";*/
+    }
+
+    public void OnReSize()
+    {
     }
 }

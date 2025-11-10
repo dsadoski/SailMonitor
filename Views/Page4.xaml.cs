@@ -14,7 +14,7 @@ public partial class Page4 : ContentView, IContentViewHost
         
     }
 
-    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPoints)
+    public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
         UpdateUI();
@@ -36,7 +36,9 @@ public partial class Page4 : ContentView, IContentViewHost
     public void onSubmit(object sender, EventArgs e)
     {
        
+    }
 
-
+    public void OnReSize()
+    {
     }
 }

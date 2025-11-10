@@ -16,11 +16,13 @@ public partial class Page2 : ContentView, IContentViewHost
     public CompassDrawable CompassDrawable { get; set; }
 
     GraphicsView graphicsView;
+    List<DataPointDisplay> datapoints;
 
 
     public Page2(List<DataPointDisplay> dataPointdisplay)
     {
 		InitializeComponent();
+        datapoints = dataPointdisplay;
         //this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
 
@@ -56,7 +58,7 @@ public partial class Page2 : ContentView, IContentViewHost
             int colcount = 0;
             
 
-            foreach (var display in dataPointdisplay)
+            foreach (var display in datapoints)
             {
                 var cellGrid = new Grid
                 {
@@ -166,23 +168,26 @@ public partial class Page2 : ContentView, IContentViewHost
         _gpsService.OnLocationReceived -= HandleGpsLocation;*/
     }
 
-    public void OnAppEvent(string eventName, Record data, List<DataPointDisplay> dataPoints)
+    public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
        
        
 
-        foreach (var display in dataPoints)
+        foreach (var point in DataPoints)
         {
-            display.UpdateUI();
-            display.graphicsView.Invalidate();
+
+            /*display.UpdateUI();
+            display.graphicsView.Invalidate();*/
 
         }
 
-        if (eventName == "RefreshData")
-        {
-        }
+       
 
         UpdateUI();
     }
-}
+
+    public void OnReSize()
+    {
+    }
+    }

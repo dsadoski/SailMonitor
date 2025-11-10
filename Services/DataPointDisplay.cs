@@ -27,6 +27,9 @@ namespace SailMonitor.Services
         public Label center;
         public GraphicsView graphicsView;
         public string description;
+        Setup setup;
+        public double width;
+        public double height;
 
         public DataPointDisplay(string Name,string Precision, string Description)
         {
@@ -36,37 +39,44 @@ namespace SailMonitor.Services
             description = Description;
             fieldData = new FieldData(Name);
             fonts = new List<Microsoft.Maui.Graphics.Font>();
+            setup = new Setup();
             fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansRegular"));
             fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansBold"));
 
         }
 
-        public void AddDataPoint(double value)
-        {
-            fieldData.current = value;
-            if (fieldData.DataPoints.Count > 0)
-            {
-                TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - fieldData.DataPoints[fieldData.DataPoints.Count - 1].dateTime.Ticks);
-                if (Math.Abs(timeSpan.TotalSeconds)>= 10)
-                {
-                    fieldData.AddDataPoint(value);
-                    //graphicsView.Invalidate();
-                }
-            }
-            else
-            {
-                fieldData.AddDataPoint(value);
-                //graphicsView.Invalidate();
-            }
-        }
         public void Draw(ICanvas Canvas, RectF DirtyRect)
         {
             canvas = Canvas;
             dirtyRect = DirtyRect;
 
+
             try
             {
-                if(fieldData.DataPoints.Count < 2)
+                canvas.FontColor = setup.foreColor;
+                canvas.Font = fonts[0];
+                canvas.FontSize = 18;
+
+                string txt = string.Empty;
+
+                var textSize = canvas.GetStringSize("M", fonts[0], 18);
+
+                
+                canvas.DrawString(description, 1,textSize.Height, HorizontalAlignment.Left);
+
+                canvas.FontSize = 72;
+                
+                txt = fieldData.current.ToString($"{precision}");
+                canvas.DrawString(txt, (float)(width/2), (float)(height*.2), HorizontalAlignment.Center);
+                textSize = canvas.GetStringSize("M", fonts[0], 72);
+
+                canvas.FontSize = 18;
+
+                txt = fieldData.Min.ToString($"{precision}") + " - " + fieldData.Max.ToString($"{precision}");
+                canvas.DrawString(txt, (float)(width / 2), (float)(height * .2 + textSize.Height), HorizontalAlignment.Center);
+
+
+                if (fieldData.DataPoints.Count < 2)
                 {
                     // Not enough data to draw
                     return;
@@ -76,7 +86,7 @@ namespace SailMonitor.Services
                 canvas.FillColor = new Color(0, 0, 0, 0.3f);
                 canvas.StrokeColor = Colors.Blue;
                 canvas.StrokeSize = 2;
-                canvas.FillRectangle(dirtyRect);
+                //canvas.FillRectangle(dirtyRect);
 
                 float MaxY = (float)fieldData.Max * 1.1f;
                 float MinY = 0;// (float)fieldData.Min * 0.9f;
@@ -94,16 +104,28 @@ namespace SailMonitor.Services
 
                 float lastY = dirtyRect.Height - ((float)(fieldData.DataPoints[0].value - MinY) * yMult);
                 float lastX = 0;
-
+                float curY;
                 for (int i = xStep; i < fieldData.DataPoints.Count - 1; i += xStep)
                 {
                     float curX = i;
-                    float curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
-                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f)+curY);
+                    if (name != "DBT")
+                    {
+                        curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
+                    }
+                    else
+                    {
+                        curY =  ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
+                    }
+                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f) + curY);
                     lastX = curX;
                     lastY = curY;
 
                 }
+                
+
+
+                canvas.RestoreState();
+
             }
             catch (Exception ex)
             {
@@ -128,9 +150,9 @@ namespace SailMonitor.Services
             topLeft.Text = name;
            
 
-            /*bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
+            bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
             bottomRight.Text = string.Format($"{{0:{precision}}}", fieldData.Max);
-            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);*/
+            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);
             
         }
     }

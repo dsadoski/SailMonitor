@@ -8,6 +8,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
+
 namespace SailMonitor
 {
     public partial class MainPage : ContentPage
@@ -19,6 +20,7 @@ namespace SailMonitor
         public Record record = new Record();
         private Setup _setup;
         public List<DataPointDisplay> dataPointDisplays;
+        public List<FieldData> fieldData;
         
 
 
@@ -31,12 +33,16 @@ namespace SailMonitor
             try
             {
                 InitializeComponent();
+                HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+                WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
+                SizeChanged += OnSizeChanged;
 
                 _udpService = udpService;
                 _gpsService = gpsService;
                 _nmeaService = nmeaService;
                 _setup = setup;
                 DeviceDisplay.KeepScreenOn = true;
+                fieldData = new List<FieldData>();
 
                 dataPointDisplays = new List<DataPointDisplay>();
                 dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed"));
@@ -52,15 +58,19 @@ namespace SailMonitor
                 {
                     new PageSetup(),
                     new Page1(),
-                    new Page2(dataPointDisplays),
+                    /*new Page2(dataPointDisplays),
                     new Page3(),
-                    new Page4(),
+                    new Page4(),*/
                 };
 
                 foreach(var item in dataPointDisplays)
                 {
                     PageViews.Add(new SingleDataPoint(item));
+                    fieldData.Add(new FieldData(item.name));
+                    
                 }
+                PageViews.Add(new Page3());
+                PageViews.Add(new Page4());
 
                 SetColorScheme(_setup);
                
@@ -99,24 +109,31 @@ namespace SailMonitor
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                record = n2krecord.Copy();
-                UpdateDataDisplayRecord("AWS", record.windAppSpeed);
-                UpdateDataDisplayRecord("AWD", record.windAppDir);
-                UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
-                UpdateDataDisplayRecord("TWD", record.windTrueDir);
-                UpdateDataDisplayRecord("DPT", record.depth);
-                UpdateDataDisplayRecord("SOG", record.SOG);
-                UpdateDataDisplayRecord("SOW", record.SOW);
-                UpdateDataDisplayRecord("HDG", record.headingMag);
+                try
+                {
+                    record = n2krecord.Copy();
+                    UpdateDataDisplayRecord("AWS", record.windAppSpeed);
+                    UpdateDataDisplayRecord("AWD", record.windAppDir);
+                    UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
+                    UpdateDataDisplayRecord("TWD", record.windTrueDir);
+                    UpdateDataDisplayRecord("DPT", record.depth);
+                    UpdateDataDisplayRecord("SOG", record.SOG);
+                    UpdateDataDisplayRecord("SOW", record.SOW);
+                    UpdateDataDisplayRecord("HDG", record.headingMag);
 
-                RaiseEventToCurrentView("UDPUpdate", record);
+                    RaiseEventToCurrentView("UDPUpdate", record);
+                } 
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
+                }
 
             });
         }
 
         public void UpdateDataDisplayRecord(string name, double value)
         {
-            var view = dataPointDisplays.FirstOrDefault(d => d.name == name);
+            var view = fieldData.FirstOrDefault(d => d.name == name);
             if (view != null)
             {
                 view.AddDataPoint(value);
@@ -164,7 +181,7 @@ namespace SailMonitor
         {
             if (content.Content is IContentViewHost activeView)
             {
-                activeView.OnAppEvent(eventName, data, dataPointDisplays);
+                activeView.OnAppEvent(eventName, data, fieldData);
             }
         }
 
@@ -222,6 +239,18 @@ namespace SailMonitor
             {
                 SetColorsRecursively(contentView.Content, setup);
             }
+        }
+
+        private void OnSizeChanged(object sender, EventArgs e)
+        {
+            if (content.Content is IContentViewHost activeView)
+            {
+                content.Content.WidthRequest= Width; 
+                content.Content.HeightRequest= Height;
+                
+                activeView.OnReSize();
+            }
+
         }
 
     }

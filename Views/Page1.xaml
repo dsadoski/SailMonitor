@@ -1,82 +1,73 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SailMonitor.Page1">
-    <Grid 
-x:Name="MainGrid"
-Padding="10"
-RowSpacing="6"
-ColumnSpacing="6"
-RowDefinitions="Auto,Auto,Auto"
-ColumnDefinitions="*,*,*,*"
-       HeightRequest="700">
+             x:Class="SailMonitor.Page1"
+             HorizontalOptions="FillAndExpand"
+             VerticalOptions="FillAndExpand">
 
-        <!-- Row 0 -->
-        <VerticalStackLayout Grid.Row="0" Grid.Column="0" Padding="4">
-            <Label Text="Heading" HorizontalTextAlignment="Center" />
-            <Label x:Name="HeadingLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
+    <!-- Master container -->
+    <Grid x:Name="MainGrid"
+          RowDefinitions="Auto,*"
+          ColumnDefinitions="*"
+          HorizontalOptions="FillAndExpand"
+          VerticalOptions="FillAndExpand">
+
+        <!-- Info panel (the numbers) -->
+        <VerticalStackLayout x:Name="InfoPanel"
+                             Grid.Row="0"
+                             Grid.Column="0"
+                             Padding="4"
+                             Spacing="8"
+                             HorizontalOptions="FillAndExpand"
+                             VerticalOptions="Start">
+
+            <!-- Row 0 -->
+            <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="Heading" HorizontalTextAlignment="Start" />
+                    <Label x:Name="HeadingLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="Speed Water" HorizontalTextAlignment="Start" />
+                    <Label x:Name="SpeedWaterLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="Speed Ground" HorizontalTextAlignment="Start" />
+                    <Label x:Name="SpeedGroundLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="Depth" HorizontalTextAlignment="Start" />
+                    <Label x:Name="DepthLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <!-- Row 1 -->
+            <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="App" HorizontalTextAlignment="Start" />
+                    <Label x:Name="AWSLabel" FontSize="18" HorizontalTextAlignment="End" />
+                    <Label x:Name="AWDLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
+                    <Label Text="TWS" HorizontalTextAlignment="Start" />
+                    <Label x:Name="TWSLabel" FontSize="18" HorizontalTextAlignment="End" />
+                    <Label x:Name="TWDLabel" FontSize="18" HorizontalTextAlignment="End" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <VerticalStackLayout Grid.Row="0" Grid.Column="1" Padding="4">
-            <Label Text="Speed Water" HorizontalTextAlignment="Center" />
-            <Label x:Name="SpeedWaterLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
+        <!-- Graphics area -->
+        <GraphicsView x:Name="GraphicsOverlay"
+                      Grid.Row="1"
+                      Grid.Column="0"
+                      BackgroundColor="Black"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center"
+                      HeightRequest="500"
+                      />
 
-        <VerticalStackLayout Grid.Row="0" Grid.Column="2" Padding="4">
-            <Label Text="Speed Ground" HorizontalTextAlignment="Center" />
-            <Label x:Name="SpeedGroundLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <VerticalStackLayout Grid.Row="0" Grid.Column="3" Padding="4">
-            <Label Text="Depth" HorizontalTextAlignment="Center" />
-            <Label x:Name="DepthLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <!-- Row 1 -->
-        <VerticalStackLayout Grid.Row="1" Grid.Column="0" Padding="4">
-            <Label Text="AWS" HorizontalTextAlignment="Center" />
-            <Label x:Name="AWSLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <VerticalStackLayout Grid.Row="1" Grid.Column="1" Padding="4">
-            <Label Text="AWD" HorizontalTextAlignment="Center" />
-            <Label x:Name="AWDLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <VerticalStackLayout Grid.Row="1" Grid.Column="2" Padding="4">
-            <Label Text="TWS" HorizontalTextAlignment="Center" />
-            <Label x:Name="TWSLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <VerticalStackLayout Grid.Row="1" Grid.Column="3" Padding="4">
-            <Label Text="TWD" HorizontalTextAlignment="Center" />
-            <Label x:Name="TWDLabel" 
-           FontSize="18" 
-           HorizontalTextAlignment="End" />
-        </VerticalStackLayout>
-
-        <!-- Row 2: Windrose title + native GraphicsView -->
-        <VerticalStackLayout Grid.Row="2" Grid.ColumnSpan="4" Padding="4">
-           
-
-            <!-- Native MAUI GraphicsView -->
-            <GraphicsView x:Name="GraphicsOverlay"
-                  HeightRequest="500"
-                  BackgroundColor="Black" />
-        </VerticalStackLayout>
     </Grid>
 </ContentView>
