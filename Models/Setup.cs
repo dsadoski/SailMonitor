@@ -16,9 +16,9 @@ namespace SailMonitor.Models
         public bool UseGPSPOS;
         public bool UseGPSHEADING;
         public bool UseGPSSOG;
-
         public Color foreColor;
         public Color backColor;
+        public int saveFrequency;
         
 
 
@@ -26,11 +26,11 @@ namespace SailMonitor.Models
         {
             Port = Preferences.Get("Port", 10110);
             Night = Preferences.Get("Night", false);
-            
             KeepActive = Preferences.Get("KeepActive", true);
             UseGPSPOS = Preferences.Get("UseGPSPOS", true);
             UseGPSHEADING = Preferences.Get("UseGPSHEADING", true);
             UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
+            saveFrequency = Preferences.Get("saveFrequency", 5);
             SetColor();
             
         }
@@ -44,6 +44,8 @@ namespace SailMonitor.Models
             Preferences.Set("UseGPSPOS", UseGPSPOS);
             Preferences.Set("UseGPSHEADING", UseGPSHEADING);
             Preferences.Set("UseGPSSOG", UseGPSSOG);
+            Preferences.Set("saveFrequency", saveFrequency);
+            
             SetColor();
         }
 

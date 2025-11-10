@@ -8,6 +8,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
+
 namespace SailMonitor
 {
     public partial class MainPage : ContentPage
@@ -32,6 +33,9 @@ namespace SailMonitor
             try
             {
                 InitializeComponent();
+                HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+                WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
+                SizeChanged += OnSizeChanged;
 
                 _udpService = udpService;
                 _gpsService = gpsService;
@@ -65,6 +69,8 @@ namespace SailMonitor
                     fieldData.Add(new FieldData(item.name));
                     
                 }
+                PageViews.Add(new Page3());
+                PageViews.Add(new Page4());
 
                 SetColorScheme(_setup);
                
@@ -233,6 +239,18 @@ namespace SailMonitor
             {
                 SetColorsRecursively(contentView.Content, setup);
             }
+        }
+
+        private void OnSizeChanged(object sender, EventArgs e)
+        {
+            if (content.Content is IContentViewHost activeView)
+            {
+                content.Content.WidthRequest= Width; 
+                content.Content.HeightRequest= Height;
+                
+                activeView.OnReSize();
+            }
+
         }
 
     }

@@ -28,6 +28,8 @@ namespace SailMonitor.Services
         public GraphicsView graphicsView;
         public string description;
         Setup setup;
+        public double width;
+        public double height;
 
         public DataPointDisplay(string Name,string Precision, string Description)
         {
@@ -51,7 +53,30 @@ namespace SailMonitor.Services
 
             try
             {
-                if(fieldData.DataPoints.Count < 2)
+                canvas.FontColor = setup.foreColor;
+                canvas.Font = fonts[0];
+                canvas.FontSize = 18;
+
+                string txt = string.Empty;
+
+                var textSize = canvas.GetStringSize("M", fonts[0], 18);
+
+                
+                canvas.DrawString(description, 1,textSize.Height, HorizontalAlignment.Left);
+
+                canvas.FontSize = 72;
+                
+                txt = fieldData.current.ToString($"{precision}");
+                canvas.DrawString(txt, (float)(width/2), (float)(height*.2), HorizontalAlignment.Center);
+                textSize = canvas.GetStringSize("M", fonts[0], 72);
+
+                canvas.FontSize = 18;
+
+                txt = fieldData.Min.ToString($"{precision}") + " - " + fieldData.Max.ToString($"{precision}");
+                canvas.DrawString(txt, (float)(width / 2), (float)(height * .2 + textSize.Height), HorizontalAlignment.Center);
+
+
+                if (fieldData.DataPoints.Count < 2)
                 {
                     // Not enough data to draw
                     return;
@@ -79,24 +104,24 @@ namespace SailMonitor.Services
 
                 float lastY = dirtyRect.Height - ((float)(fieldData.DataPoints[0].value - MinY) * yMult);
                 float lastX = 0;
-
+                float curY;
                 for (int i = xStep; i < fieldData.DataPoints.Count - 1; i += xStep)
                 {
                     float curX = i;
-                    float curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
-                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f)+curY);
+                    if (name != "DBT")
+                    {
+                        curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
+                    }
+                    else
+                    {
+                        curY =  ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
+                    }
+                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f) + curY);
                     lastX = curX;
                     lastY = curY;
 
                 }
-                canvas.FontColor = setup.foreColor;
-                canvas.Font = fonts[0];
-                canvas.FontSize = 18;
-                string txt = fieldData.Min.ToString($"F{precision}");
-                canvas.DrawString(txt, 1, (float)(dirtyRect.Height * 0.9f),HorizontalAlignment.Left);
-
                 
-                canvas.DrawString(description, 1,50, HorizontalAlignment.Left);
 
 
                 canvas.RestoreState();

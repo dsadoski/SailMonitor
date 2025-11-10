@@ -36,7 +36,9 @@ public partial class Page4 : ContentView, IContentViewHost
     public void onSubmit(object sender, EventArgs e)
     {
        
+    }
 
-
+    public void OnReSize()
+    {
     }
 }

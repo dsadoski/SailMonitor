@@ -19,15 +19,16 @@ namespace SailMonitor.Services
         public float ApparentWind=85;
         public float Heading=0;
         public Setup setup;
+        /*public float width ;
+        public float height;*/
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             setup = new Setup();
-            float width = dirtyRect.Width;
-            float height = dirtyRect.Height;
-            float centerX = width / 2;
-            float centerY = height / 2;
-            float radius = Math.Min(width, height) / 2 * 0.9f;
+            
+            float centerX = dirtyRect.Width / 2;
+            float centerY = dirtyRect.Height / 2;
+            float radius = Math.Min(dirtyRect.Width, dirtyRect.Height) / 2 * 0.7f;
 
             // Clear background (transparent)
             canvas.SaveState();

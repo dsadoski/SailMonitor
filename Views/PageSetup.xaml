@@ -42,7 +42,17 @@
                 <Switch x:Name="UseGPSSOG" />
             </HorizontalStackLayout>
 
-            <!-- CRUD Buttons -->
+
+        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <Label Text="Save Frequency:" VerticalOptions="Center"/>
+            <Entry Text="" 
+           x:Name="SaveFrequency"
+           Keyboard="Numeric"
+           WidthRequest="100"
+           Placeholder="Enter port"/>
+        </HorizontalStackLayout>
+            
+        <!-- CRUD Buttons -->
             <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
                 <Button Text="Save" Clicked="Save" />
             </HorizontalStackLayout>

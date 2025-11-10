@@ -5,6 +5,6 @@
 
     <AbsoluteLayout x:Name="MainLayout"
                 Padding="10"
-                HeightRequest="700"
-                WidthRequest="900" />
+                HorizontalOptions="FillAndExpand"
+VerticalOptions="FillAndExpand" />
 </ContentView>

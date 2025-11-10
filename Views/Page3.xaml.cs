@@ -36,4 +36,8 @@ public partial class Page3 : ContentView, IContentViewHost
         /*VoltageLabel.Text = $"{record.voltage:F2} V";
         WaterTempLabel.Text = $"{record.waterTemp:F2} °C";*/
     }
+
+    public void OnReSize()
+    {
+    }
 }

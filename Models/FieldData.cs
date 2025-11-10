@@ -19,10 +19,13 @@ namespace SailMonitor.Models
 
         public double current;
 
+        Setup setup { get; set; }
+
         public FieldData(string Name)
         {   
             name = Name;
             DataPoints = new List<SingleDataPoint>();
+            setup = new Setup();    
 
         }
 
@@ -48,7 +51,7 @@ namespace SailMonitor.Models
             if (DataPoints.Count > 0)
             {
                 TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - DataPoints[DataPoints.Count - 1].dateTime.Ticks);
-                if (Math.Abs(timeSpan.TotalSeconds) >= 10)
+                if (Math.Abs(timeSpan.TotalSeconds) >= setup.saveFrequency)
                 {
                     DataPoints.Add(new SingleDataPoint(value));
                 }

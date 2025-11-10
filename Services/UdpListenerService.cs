@@ -136,7 +136,7 @@ namespace SailMonitor.Services
                 // can we calc COG/SOG from  2 points?
 
 
-                if (Math.Abs(timeSpan.TotalSeconds) > 5)
+                if (Math.Abs(timeSpan.TotalSeconds) > _setup.saveFrequency)
                 {
                     double distance = _nmeaService.CalcDistanceNM(record); // in nautical miles
                     record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots

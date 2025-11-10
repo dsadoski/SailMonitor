@@ -9,7 +9,9 @@
             <Button Text="Next ▶" Clicked="Next_Clicked" />
         </HorizontalStackLayout>
 
-        <ContentView x:Name="content" ></ContentView>
+        <ContentView x:Name="content"
+             HorizontalOptions="FillAndExpand"
+             VerticalOptions="FillAndExpand" />
 
        
 

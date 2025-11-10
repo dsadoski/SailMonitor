@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Devices;
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -34,7 +35,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         double screenWidth = width / displayInfo.Density;
         double screenHeight = height / displayInfo.Density;
 
-        // example: set a view’s size
+        
 
         try
         {
@@ -54,37 +55,6 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
             };
             MainLayout.Children.Add(dataPoint.graphicsView);
 
-
-           /* // Add labels (foreground content)
-            dataPoint.topLeft = new Label
-            {
-                Text = "Top Left",                
-                FontSize = 18,
-            };
-            MainLayout.Children.Add(dataPoint.topLeft);
-
-            dataPoint.bottomLeft = new Label
-            {
-                Text = "Bottom Left",
-                FontSize = 18,
-            };
-            MainLayout.Children.Add(dataPoint.bottomLeft);
-
-            dataPoint.bottomRight = new Label
-            {
-                Text = "Bottom Right",                
-                FontSize = 18,
-                
-            };
-            MainLayout.Children.Add(dataPoint.bottomRight);
-
-            dataPoint.center = new Label
-            {
-                Text = "Center",
-
-                FontSize = 36,
-            };
-            MainLayout.Children.Add(dataPoint.bottomRight);*/
         }
         catch (Exception ex)
         {
@@ -93,15 +63,6 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
 
     }
 
-   
-
-    
-
-     public void Dispose()
-    {
-        /*_udpService.OnMessageReceived -= HandleUdpMessage;
-        _gpsService.OnLocationReceived -= HandleGpsLocation;*/
-    }
 
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
@@ -110,11 +71,13 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
 
         MainLayout.MaximumWidthRequest = DeviceDisplay.MainDisplayInfo.Width;
         MainLayout.MinimumHeightRequest = DeviceDisplay.MainDisplayInfo.Height;
+        dataPoint.width = MainLayout.Width; 
+        dataPoint.height = MainLayout.Height;
 
         dataPoint.fieldData = point;
         dataPoint.graphicsView.Invalidate();
-        //dataPoint.UpdateUI();
-
-        
+    }
+    public void OnReSize()
+    {
     }
 }

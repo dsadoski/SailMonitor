@@ -186,4 +186,8 @@ public partial class Page2 : ContentView, IContentViewHost
 
         UpdateUI();
     }
-}
+
+    public void OnReSize()
+    {
+    }
+    }
