@@ -1,5 +1,6 @@
 ﻿
 
+
 using Microsoft.Maui;
 using Microsoft.Maui.Layouts;
 using SailMonitor.Models;
@@ -84,14 +85,67 @@ namespace SailMonitor.Services
                 canvas.SaveState();
                 //canvas.FillColor = Colors.White;
                 canvas.FillColor = new Color(0, 0, 0, 0.3f);
-                canvas.StrokeColor = Colors.Blue;
+                
                 canvas.StrokeSize = 2;
                 //canvas.FillRectangle(dirtyRect);
 
                 float MaxY = (float)fieldData.Max * 1.1f;
+                int MY = (int)MaxY;
+                int scaleMult =0;
+                // scaling the Y axis
+                if (MY == 0)
+                {
+                    MY = 1;
+                }
+                else
+                {
+                    while (MY > 10)
+                    {
+                        MY = MY / 10;
+                        scaleMult++;
+                    }
+                    if (MY < 5)
+                    {
+                        MY++;
+                    }
+                    else
+                    {
+                        MY = 10;
+                        if (scaleMult > 1)
+                        {
+                            scaleMult--;
+                        }
+                    }
+                    if (scaleMult > 0)
+                    {
+                        MY = (int)Math.Pow(10, scaleMult) * MY;
+                        MaxY = MY;
+                    }
+                    else
+                    {
+                        MaxY = MY;
+                    }
+                }
+                bool invertY = false;
+                if (name == "DBT")
+                {
+                    invertY = true;
+                }
                 float MinY = 0;// (float)fieldData.Min * 0.9f;
                 float rangeY = MaxY - MinY;
-                float yMult = dirtyRect.Height*.8f / rangeY;
+                float yMult = dirtyRect.Height  / rangeY;
+                
+                canvas.StrokeColor = Colors.DarkGray;
+                int yStep = MY / (int)Math.Pow(10, scaleMult);
+                for (int i = 0; i * scaleMult <= MaxY; i = i +yStep )
+                {
+                    canvas.DrawLine(0,(float) i * yMult, dirtyRect.Width,(float)i* yMult);
+                    canvas.DrawString((MY-i).ToString(),0,(float)i * yMult,HorizontalAlignment.Left);
+                }
+
+
+                canvas.StrokeColor = Colors.Blue;
+               
                 int xStep = 1;
 
                 if (dirtyRect.Width > fieldData.DataPoints.Count)
@@ -102,21 +156,31 @@ namespace SailMonitor.Services
                     }
                 }
 
-                float lastY = dirtyRect.Height - ((float)(fieldData.DataPoints[0].value - MinY) * yMult);
+                float xMult = dirtyRect.Width / (float)(fieldData.DataPoints.Count()-1);
+                
+                float lastY = 0;
+                
+
+                lastY = dirtyRect.Height - ((float)(fieldData.DataPoints[0].value - MinY) * yMult);
+                
+                
                 float lastX = 0;
                 float curY;
                 for (int i = xStep; i < fieldData.DataPoints.Count - 1; i += xStep)
                 {
-                    float curX = i;
+                    float curX = i *  xMult;
                     if (name != "DBT")
                     {
+                       // curY = ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
                         curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
                     }
                     else
                     {
+                        //curY = dirtyRect.Height - ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
                         curY =  ((float)(fieldData.DataPoints[i].value - MinY) * yMult);
                     }
-                    canvas.DrawLine(lastX, (dirtyRect.Height * .1f) + lastY, curX, (dirtyRect.Height * .1f) + curY);
+                    
+                    canvas.DrawLine(lastX,  lastY, curX, curY);
                     lastX = curX;
                     lastY = curY;
 
