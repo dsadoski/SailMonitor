@@ -49,10 +49,21 @@ namespace SailMonitor.Services
             canvas.DrawCircle(0, 0, radius);
 
             // Draw degree markers every 30°  draw it with coarse up
-            for (int deg = 0 ; deg < 360; deg += 30)
+            int degCount = 0;
+            for (int deg = 0; deg < 360; deg += 5)
             {
-                float rad  = (deg -Heading) * (float)Math.PI / 180f;
-                float inner = radius * 0.9f; 
+                
+
+                float rad = (deg - Heading) * (float)Math.PI / 180f;
+                float inner;
+                if (degCount == 45)
+                {
+                    inner = radius * 0.8f;
+                }
+                else
+                {
+                    inner = radius * 0.9f;
+                }
                 float outer = radius;
                 float x1 = inner * (float)Math.Sin(rad);
                 float y1 = -inner * (float)Math.Cos(rad);
@@ -63,8 +74,13 @@ namespace SailMonitor.Services
                 // Draw degree numbers
                 canvas.FontColor = setup.foreColor;
                 canvas.FontSize = radius * 0.08f;
-                canvas.DrawString($"{deg}°", x1 * 1.3f, y1 * 1.3f, HorizontalAlignment.Center);
-                //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
+                
+                if (degCount == 45 || degCount == 0)
+                {
+                    canvas.DrawString($"{deg}°", x1 * 1.4f, y1 * 1.4f, HorizontalAlignment.Center);
+                    degCount = 0;
+                }
+                degCount += 5;
             }
 
             //Draw deg relative to boat
@@ -96,10 +112,10 @@ namespace SailMonitor.Services
                 //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
             }
 
-
-            DrawHeading(canvas, Colors.Blue, 10, radius, 0);
-            DrawHeading(canvas, Colors.Red, 10,  radius, ApparentWind);
-            DrawHeading(canvas, Colors.Green, 10, radius, TrueWind);
+            canvas.StrokeLineCap = LineCap.Round;
+            DrawHeading(canvas, Colors.Blue, 2, radius, 0);
+            DrawHeading(canvas, Colors.Red, 15,  radius, ApparentWind);
+            DrawHeading(canvas, Colors.Green, 15, radius, TrueWind);
 
             
             canvas.RestoreState();

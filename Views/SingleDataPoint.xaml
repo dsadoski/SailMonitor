@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.SingleDataPoint">
 
-    <AbsoluteLayout x:Name="MainLayout"
+    <VerticalStackLayout x:Name="MainLayout"
                 Padding="10"
                 HorizontalOptions="FillAndExpand"
 VerticalOptions="FillAndExpand" />
