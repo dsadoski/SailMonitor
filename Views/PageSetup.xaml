@@ -2,64 +2,67 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.PageSetup">
-    <ScrollView>
-    
-        <VerticalStackLayout Padding="20" Spacing="16">
+
+    <ScrollView Orientation="Vertical"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="16"
+            HorizontalOptions="Center"
+            VerticalOptions="Start"
+            MaximumWidthRequest="600"   
+            >
+            <!-- full width on phones, limited on desktop -->
 
             <!-- Port -->
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Port:" VerticalOptions="Center"/>
-                <Entry Text="" 
-                       x:Name="Port"
+                <Entry x:Name="Port"
                        Keyboard="Numeric"
-                       WidthRequest="100"
-                       Placeholder="Enter port"/>
+                       Placeholder="Enter port"
+                       HorizontalOptions="FillAndExpand"/>
             </HorizontalStackLayout>
 
             <!-- Switches -->
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Night Mode:" VerticalOptions="Center"/>
-            <Switch 
-                    x:Name="Night" Toggled="ToggleNight"/>
-        </HorizontalStackLayout>
+                <Switch x:Name="Night" Toggled="ToggleNight" HorizontalOptions="End"/>
+            </HorizontalStackLayout>
 
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Keep Active:" VerticalOptions="Center"/>
-                <Switch x:Name="KeepActive" />
+                <Switch x:Name="KeepActive" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS POS:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSPOS" />
+                <Switch x:Name="UseGPSPOS" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS HEADING:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSHEADING" />
+                <Switch x:Name="UseGPSHEADING" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS SOG:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSSOG" />
+                <Switch x:Name="UseGPSSOG" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
+                <Label Text="Save Frequency:" VerticalOptions="Center"/>
+                <Entry x:Name="SaveFrequency"
+                       Keyboard="Numeric"
+                       Placeholder="Enter frequency"
+                       HorizontalOptions="FillAndExpand"/>
+            </HorizontalStackLayout>
 
-        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-            <Label Text="Save Frequency:" VerticalOptions="Center"/>
-            <Entry Text="" 
-           x:Name="SaveFrequency"
-           Keyboard="Numeric"
-           WidthRequest="100"
-           Placeholder="Enter port"/>
-        </HorizontalStackLayout>
-            
-        <!-- CRUD Buttons -->
+            <!-- Buttons -->
             <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
-                <Button Text="Save" Clicked="Save" />
+                <Button Text="Save" Clicked="Save"/>
             </HorizontalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>
-
-
 </ContentView>
