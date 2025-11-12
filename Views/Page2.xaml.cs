@@ -11,8 +11,8 @@ public partial class Page2 : ContentView, IContentViewHost
 {
 
     private Record record = new Record();
-    
-    
+
+
     public CompassDrawable CompassDrawable { get; set; }
 
     GraphicsView graphicsView;
@@ -21,7 +21,7 @@ public partial class Page2 : ContentView, IContentViewHost
 
     public Page2(List<DataPointDisplay> dataPointdisplay)
     {
-		InitializeComponent();
+        InitializeComponent();
         datapoints = dataPointdisplay;
         //this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
@@ -53,22 +53,22 @@ public partial class Page2 : ContentView, IContentViewHost
             }
 
             // Redraw when needed
-           
+
             int rowcount = 0;
             int colcount = 0;
-            
+
 
             foreach (var display in datapoints)
             {
                 var cellGrid = new Grid
                 {
-                    WidthRequest = screenWidth/4,
-                    HeightRequest = screenHeight/5,
+                    WidthRequest = screenWidth / 4,
+                    HeightRequest = screenHeight / 5,
                     Padding = 5
                 };
 
                 // Add a background GraphicsView (fills the whole cell)
-                display.graphicsView= new GraphicsView
+                display.graphicsView = new GraphicsView
                 {
                     Drawable = display,
                     HorizontalOptions = LayoutOptions.Fill,
@@ -111,12 +111,12 @@ public partial class Page2 : ContentView, IContentViewHost
                 cellGrid.Children.Add(display.bottomLeft);
                 cellGrid.Children.Add(display.bottomRight);
                 cellGrid.Children.Add(display.center);
-                
 
 
-                MainGrid.Add(cellGrid,colcount,rowcount);
+
+                MainGrid.Add(cellGrid, colcount, rowcount);
                 colcount++;
-                if(colcount >= 3)
+                if (colcount >= 3)
                 {
                     colcount = 0;
                     rowcount++;
@@ -126,7 +126,7 @@ public partial class Page2 : ContentView, IContentViewHost
             var comptGrid = new Grid
             {
                 WidthRequest = screenWidth,
-                HeightRequest = screenHeight * 3/5,
+                HeightRequest = screenHeight * 3 / 5,
                 Padding = 5
             };
             CompassDrawable = new CompassDrawable();
@@ -137,7 +137,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 VerticalOptions = LayoutOptions.Fill
             };
             comptGrid.Children.Add(graphicsView);
-            MainGrid.Add(comptGrid, 0 , rowcount++);
+            MainGrid.Add(comptGrid, 0, rowcount++);
 
 
 
@@ -149,7 +149,7 @@ public partial class Page2 : ContentView, IContentViewHost
 
     }
 
-   
+
 
     private void UpdateUI()
     {
@@ -162,7 +162,7 @@ public partial class Page2 : ContentView, IContentViewHost
 
     }
 
-     public void Dispose()
+    public void Dispose()
     {
         /*_udpService.OnMessageReceived -= HandleUdpMessage;
         _gpsService.OnLocationReceived -= HandleGpsLocation;*/
@@ -171,8 +171,8 @@ public partial class Page2 : ContentView, IContentViewHost
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
-       
-       
+
+
 
         foreach (var point in DataPoints)
         {
@@ -182,7 +182,7 @@ public partial class Page2 : ContentView, IContentViewHost
 
         }
 
-       
+
 
         UpdateUI();
     }
@@ -190,4 +190,9 @@ public partial class Page2 : ContentView, IContentViewHost
     public void OnReSize()
     {
     }
+
+    public void OnSetupChanged(Setup settings)
+    {
+
     }
+}

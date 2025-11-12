@@ -80,4 +80,9 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
     public void OnReSize()
     {
     }
+
+    public void OnSetupChanged(Setup settings)
+    {
+
+    }
 }

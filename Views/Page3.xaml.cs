@@ -40,4 +40,9 @@ public partial class Page3 : ContentView, IContentViewHost
     public void OnReSize()
     {
     }
+
+    public void OnSetupChanged(Setup settings)
+    {
+
+    }
 }

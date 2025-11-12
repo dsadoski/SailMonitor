@@ -126,4 +126,8 @@ public partial class Page1 : ContentView, IContentViewHost
         
         
     }
+    public void OnSetupChanged(Setup settings)
+    {
+
+    }
 }

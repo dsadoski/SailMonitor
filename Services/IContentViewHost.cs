@@ -12,5 +12,7 @@ namespace SailMonitor.Services
         void OnAppEvent(string eventName, Record record, List<FieldData> DataPoints);
 
         void OnReSize();
+
+        void OnSetupChanged(Setup settings);
     }
 }

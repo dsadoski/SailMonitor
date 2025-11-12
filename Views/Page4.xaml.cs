@@ -41,4 +41,9 @@ public partial class Page4 : ContentView, IContentViewHost
     public void OnReSize()
     {
     }
+
+    public void OnSetupChanged(Setup settings)
+    {
+
+    }
 }
