@@ -62,8 +62,12 @@ namespace SailMonitor.Models
             }
 
             DateTime dateTime = DateTime.Now.AddHours(-1);
-
+            int datapointCount = DataPoints.Count;
             DataPoints = DataPoints.Where(d => d.dateTime.Ticks > dateTime.Ticks).ToList();
+            
+                Max = DataPoints.Max(x => x.value);
+            Min = DataPoints.Min(x => x.value);
+            
 
         }
     }

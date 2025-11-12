@@ -30,7 +30,7 @@ namespace SailMonitor.Models
             UseGPSPOS = Preferences.Get("UseGPSPOS", true);
             UseGPSHEADING = Preferences.Get("UseGPSHEADING", true);
             UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
-            saveFrequency = Preferences.Get("saveFrequency", 5);
+            saveFrequency = Preferences.Get("saveFrequency", 15);
             SetColor();
             
         }
