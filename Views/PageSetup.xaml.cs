@@ -11,10 +11,10 @@ public partial class PageSetup : ContentView
     
 
 
-    public PageSetup()
+    public PageSetup(Setup _setup)
     {
         InitializeComponent();
-        setup = new Setup();
+        setup = _setup;
 
         Port.Text = setup.Port.ToString();
         Night.IsToggled = setup.Night;
@@ -58,7 +58,7 @@ public partial class PageSetup : ContentView
         setup.SetColor();
         var parentPage = GetParentPage();
         parentPage?.SetColorScheme(setup);
-            //parentPage?.SetColorsRecursively(this, setup);
+            parentPage?.SetColorsRecursively(this, setup);
 
     }
 

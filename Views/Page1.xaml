@@ -23,22 +23,22 @@
             <!-- Row 0 -->
             <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
                 <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Heading" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="Heading" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="HeadingLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>
                 <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Depth" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="Depth" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="DepthLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
             <HorizontalStackLayout>
             <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Spd Water" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="Spd Water" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="SpeedWaterLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Spd Ground" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="Spd Ground" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="SpeedGroundLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
@@ -49,13 +49,13 @@
             <!-- Row 1 -->
             <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
                 <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="App" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="App" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="AWSLabel" FontSize="36" HorizontalTextAlignment="End" />
                     <Label x:Name="AWDLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="TWS" FontSize="36" HorizontalTextAlignment="Start" />
+                    <Label Text="TWS" FontSize="18" HorizontalTextAlignment="Start" />
                     <Label x:Name="TWSLabel" FontSize="36" HorizontalTextAlignment="End" />
                     <Label x:Name="TWDLabel" FontSize="36" HorizontalTextAlignment="End" />
                 </VerticalStackLayout>

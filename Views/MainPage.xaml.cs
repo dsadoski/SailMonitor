@@ -1,6 +1,7 @@
 ﻿
 
 
+using Microsoft.Maui.Controls;
 using SailMonitor;
 using SailMonitor.Models;
 using SailMonitor.Services;
@@ -50,13 +51,14 @@ namespace SailMonitor
                 dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed"));
                 dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir"));
                 dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth"));
+                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass"));
                 dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground"));
                 dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water"));
                 dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading"));
 
                 PageViews = new List<ContentView>
                 {
-                    new PageSetup(),
+                    new PageSetup(_setup),
                     new Page1(),
                     /*new Page2(dataPointDisplays),
                     new Page3(),
@@ -92,6 +94,7 @@ namespace SailMonitor
 
         public void SetColorScheme(Setup setup)
         {
+            _setup = setup;
             this.BackgroundColor = setup.backColor;
             foreach (ContentView view in PageViews)
             {
@@ -120,6 +123,8 @@ namespace SailMonitor
                     UpdateDataDisplayRecord("SOG", record.SOG);
                     UpdateDataDisplayRecord("SOW", record.SOW);
                     UpdateDataDisplayRecord("HDG", record.headingMag);
+                    UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+
 
                     RaiseEventToCurrentView("UDPUpdate", record);
                 } 
@@ -159,6 +164,7 @@ namespace SailMonitor
                 {
                     currentIndex++;
                     content.Content = PageViews[currentIndex];
+                    SetColorsRecursively(content.Content, _setup);
 
                 }
             }

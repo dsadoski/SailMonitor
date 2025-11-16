@@ -48,7 +48,7 @@ public partial class Page1 : ContentView, IContentViewHost
         AWSLabel.Text = $"{record.windAppSpeed:F2}";
         AWDLabel.Text = $"{record.windAppDir:F2}°";
         TWSLabel.Text = $"{record.windTrueSpeed:F2}";
-        TWDLabel.Text = $"{record.windTrueDir:F2}°";
+        TWDLabel.Text = $"{record.windTrueCompass:F2}°";
         CompassDrawable.Heading = (float)record.headingMag;
         CompassDrawable.ApparentWind = (float)record.windAppDir;
         CompassDrawable.TrueWind = (float)record.windTrueDir;
