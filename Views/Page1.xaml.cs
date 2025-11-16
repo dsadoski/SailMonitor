@@ -18,6 +18,7 @@ public partial class Page1 : ContentView, IContentViewHost
         //this.BackgroundColor = Colors.White;
         CompassDrawable = new CompassDrawable();
         GraphicsOverlay.Drawable = CompassDrawable;
+        SizeChanged += Page1_SizeChanged;
         WidthRequest = 1000;
         HeightRequest = 1000;
         if(Width>Height)
@@ -33,6 +34,58 @@ public partial class Page1 : ContentView, IContentViewHost
         GraphicsOverlay.Invalidate();
 
 
+    }
+
+    private void Page1_SizeChanged(object sender, EventArgs e)
+    {
+        if (Width <= 0 || Height <= 0)
+            return;
+
+        // Delay one tick so that InfoPanel has real width/height
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            bool isLandscape = Width > Height;
+
+            AdjustLayout(isLandscape);
+            ResizeCompass(isLandscape);
+            ResizeFonts();
+
+            GraphicsOverlay.Invalidate();
+        });
+    }
+
+    private void ResizeCompass(bool isLandscape)
+    {
+        double availableWidth = Width;
+        double availableHeight = Height;
+
+        // Using ActualWidth and ActualHeight ensures REAL measured size
+        double panelWidth = InfoPanel.Width;
+        double panelHeight = InfoPanel.Height;
+
+        // avoid null/zero bad values
+        if (panelWidth < 0) panelWidth = 0;
+        if (panelHeight < 0) panelHeight = 0;
+
+        double maxSide;
+
+        if (isLandscape)
+        {
+            double compassWidth = availableWidth - panelWidth;
+            maxSide = Math.Min(compassWidth, availableHeight);
+        }
+        else
+        {
+            double compassHeight = availableHeight - panelHeight;
+            maxSide = Math.Min(availableWidth, compassHeight);
+        }
+
+        // Ensure we never get 0 or negative
+        if (maxSide < 50)   // minimum 50px so compass is always visible
+            maxSide = Math.Min(availableWidth, availableHeight);
+
+        GraphicsOverlay.WidthRequest = maxSide;
+        GraphicsOverlay.HeightRequest = maxSide;
     }
 
 
@@ -92,39 +145,47 @@ public partial class Page1 : ContentView, IContentViewHost
 
         if (isLandscape)
         {
-            // Landscape: side-by-side
+            // side-by-side
             MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star }); // compass
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // text
 
-            // Place graphics on left, numbers on right
             Grid.SetRow(GraphicsOverlay, 0);
             Grid.SetColumn(GraphicsOverlay, 0);
+
             Grid.SetRow(InfoPanel, 0);
             Grid.SetColumn(InfoPanel, 1);
-
-            // Make the graphics view square
-            GraphicsOverlay.WidthRequest = Width * .4;
-            GraphicsOverlay.HeightRequest = Height * .9;
-            
         }
         else
         {
-            // Portrait: stacked vertically
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+            // stacked
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // text
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star }); // compass
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-            // Place numbers on top, graphics below
             Grid.SetRow(InfoPanel, 0);
             Grid.SetColumn(InfoPanel, 0);
+
             Grid.SetRow(GraphicsOverlay, 1);
             Grid.SetColumn(GraphicsOverlay, 0);
-            GraphicsOverlay.WidthRequest = Width * .9;
-            GraphicsOverlay.HeightRequest = Height * .4;
         }
-        
-        
+    }
+
+
+    private void ResizeFonts()
+    {
+        double baseSize = Math.Min(Width, Height);
+
+        double headerSize = baseSize * 0.018; // e.g., "Heading"
+        double valueSize = baseSize * 0.036; // e.g., "123.45"
+
+        foreach (var lbl in InfoPanel.Children.OfType<Label>())
+        {
+            if (lbl.FontSize <= 20)   // header label
+                lbl.FontSize = headerSize;
+            else                      // value label
+                lbl.FontSize = valueSize;
+        }
     }
     public void OnSetupChanged(Setup settings)
     {
