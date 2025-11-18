@@ -1,4 +1,6 @@
 ﻿namespace SailMonitor;
+
+using Microsoft.Maui.Animations;
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -94,14 +96,14 @@ public partial class Page1 : ContentView, IContentViewHost
     private void UpdateUI()
     {
 
-        HeadingLabel.Text = $"{record.headingMag:F2}";
-        SpeedWaterLabel.Text = $"{record.SOW:F2}";
-        SpeedGroundLabel.Text = $"{record.SOG:F2}";
-        DepthLabel.Text = $"{record.depth:F2}";
-        AWSLabel.Text = $"{record.windAppSpeed:F2}";
-        AWDLabel.Text = $"{record.windAppDir:F2}°";
-        TWSLabel.Text = $"{record.windTrueSpeed:F2}";
-        TWDLabel.Text = $"{record.windTrueCompass:F2}°";
+        HeadingLabel.Text = $"{record.headingMag:F0}";
+        SpeedWaterLabel.Text = $"{record.SOW:F1}";
+        SpeedGroundLabel.Text = $"{record.SOG:F1}";
+        DepthLabel.Text = $"{record.depth:F1}";
+        AWSLabel.Text = $"{record.windAppSpeed:F0}";
+        AWDLabel.Text = $"{record.windAppDir:F0}°";
+        TWSLabel.Text = $"{record.windTrueSpeed:F0}";
+        TWDLabel.Text = $"{record.windTrueCompass:F0}°";
         CompassDrawable.Heading = (float)record.headingMag;
         CompassDrawable.ApparentWind = (float)record.windAppDir;
         CompassDrawable.TrueWind = (float)record.windTrueDir;
@@ -152,12 +154,17 @@ public partial class Page1 : ContentView, IContentViewHost
 
             // RIGHT: Info panel (fills remaining space)
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-            Grid.SetRow(GraphicsOverlay, 0);
-            Grid.SetColumn(GraphicsOverlay, 0);
+            MainGrid.SetRow(GraphicsOverlay, 0);
+            MainGrid.SetColumn(GraphicsOverlay, 0);
 
-            Grid.SetRow(InfoPanel, 0);
-            Grid.SetColumn(InfoPanel, 1);
+            MainGrid.SetRow(InfoPanel, 0);
+            MainGrid.SetColumn(InfoPanel, 1);
+
+           
+
+            
             // side-by-side
             /*MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star }); // compass
@@ -172,15 +179,15 @@ public partial class Page1 : ContentView, IContentViewHost
         else
         {
             // stacked
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // text
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star }); // text
             MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star }); // compass
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-            Grid.SetRow(InfoPanel, 0);
-            Grid.SetColumn(InfoPanel, 0);
+            MainGrid.SetRow(InfoPanel, 0);
+            MainGrid.SetColumn(InfoPanel, 0);
 
-            Grid.SetRow(GraphicsOverlay, 1);
-            Grid.SetColumn(GraphicsOverlay, 0);
+            MainGrid.SetRow(GraphicsOverlay, 1);
+            MainGrid.SetColumn(GraphicsOverlay, 0);
         }
     }
 
