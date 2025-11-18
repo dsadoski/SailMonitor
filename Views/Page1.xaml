@@ -13,12 +13,10 @@
 
         <!-- Info panel (the numbers) -->
         <VerticalStackLayout x:Name="InfoPanel"
-                             Grid.Row="0"
-                             Grid.Column="0"
-                             Padding="4"
-                             Spacing="8"
-                             HorizontalOptions="FillAndExpand"
-                             VerticalOptions="Start">
+                     Padding="8"
+                     Spacing="12"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="Start">
 
             <!-- Row 0 -->
             <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
@@ -68,8 +66,7 @@
                       Grid.Column="0"
                       BackgroundColor="Black"
                       HorizontalOptions="Center"
-                      VerticalOptions="Center"
-                      HeightRequest="500"
+                      VerticalOptions="Center"                      
                       />
 
     </Grid>

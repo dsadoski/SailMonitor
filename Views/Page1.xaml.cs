@@ -145,8 +145,21 @@ public partial class Page1 : ContentView, IContentViewHost
 
         if (isLandscape)
         {
-            // side-by-side
             MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+
+            // LEFT: Compass (Auto width)
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // RIGHT: Info panel (fills remaining space)
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            Grid.SetRow(GraphicsOverlay, 0);
+            Grid.SetColumn(GraphicsOverlay, 0);
+
+            Grid.SetRow(InfoPanel, 0);
+            Grid.SetColumn(InfoPanel, 1);
+            // side-by-side
+            /*MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star }); // compass
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // text
 
@@ -154,7 +167,7 @@ public partial class Page1 : ContentView, IContentViewHost
             Grid.SetColumn(GraphicsOverlay, 0);
 
             Grid.SetRow(InfoPanel, 0);
-            Grid.SetColumn(InfoPanel, 1);
+            Grid.SetColumn(InfoPanel, 1);*/
         }
         else
         {
