@@ -24,30 +24,30 @@
                        HorizontalOptions="FillAndExpand"/>
             </HorizontalStackLayout>
 
-            <!-- Switches -->
+            <!-- CheckBoxes -->
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Night Mode:" VerticalOptions="Center"/>
-                <Switch x:Name="Night" Toggled="ToggleNight" HorizontalOptions="End"/>
+                <CheckBox x:Name="Night" CheckedChanged="ToggleNight" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Keep Active:" VerticalOptions="Center"/>
-                <Switch x:Name="KeepActive" HorizontalOptions="End"/>
+                <CheckBox x:Name="KeepActive" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS POS:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSPOS" HorizontalOptions="End"/>
+                <CheckBox x:Name="UseGPSPOS" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS HEADING:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSHEADING" HorizontalOptions="End"/>
+                <CheckBox x:Name="UseGPSHEADING" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
                 <Label Text="Use GPS SOG:" VerticalOptions="Center"/>
-                <Switch x:Name="UseGPSSOG" HorizontalOptions="End"/>
+                <CheckBox x:Name="UseGPSSOG" HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">

@@ -32,6 +32,7 @@ namespace SailMonitor.Services
         Setup setup;
         public double width;
         public double height;
+        
 
         public DataPointDisplay(string Name,string Precision, string Description)
         {

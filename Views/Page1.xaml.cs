@@ -1,6 +1,6 @@
 ﻿namespace SailMonitor;
 
-using Microsoft.Maui.Animations;
+
 using SailMonitor.Models;
 using SailMonitor.Services;
 
@@ -12,28 +12,46 @@ public partial class Page1 : ContentView, IContentViewHost
   
     public CompassDrawable CompassDrawable { get; set; }
 
+    public List<FieldDisplay> fieldDisplays { get; set; }
+
+    public List<WindPointDisplay> windPointDisplays { get; set; }
+
+    public GraphicsView compassGraphic { get; set; }
+
+
     public Page1()
     {
 
         InitializeComponent();
-        
+        fieldDisplays = new List<FieldDisplay>();
+        windPointDisplays = new List<WindPointDisplay>();
+        var mainPage = GetParentPage();
+        var fieldData = mainPage?.fieldData;
+        var setup = new Setup();
+        compassGraphic = new GraphicsView();
+
         //this.BackgroundColor = Colors.White;
-        CompassDrawable = new CompassDrawable();
-        GraphicsOverlay.Drawable = CompassDrawable;
+        
         SizeChanged += Page1_SizeChanged;
-        WidthRequest = 1000;
-        HeightRequest = 1000;
-        if(Width>Height)
-        { 
-            GraphicsOverlay.WidthRequest = Width*.4;
-        }
-        else
+        CompassDrawable = new CompassDrawable();
+        compassGraphic.Drawable = CompassDrawable;
+
+        bool isLandscape = true;
+
+        if (Width > 0 && Height > 0)
         {
-            GraphicsOverlay.HeightRequest = Height * .4;
+            isLandscape = Width > Height;
         }
+
+        AdjustLayout(isLandscape);
+        ResizeCompass(isLandscape);
+        ResizeFonts();
+
+
         OnReSize();
+        
         // Redraw when needed
-        GraphicsOverlay.Invalidate();
+        compassGraphic.Invalidate();
 
 
     }
@@ -52,7 +70,7 @@ public partial class Page1 : ContentView, IContentViewHost
             ResizeCompass(isLandscape);
             ResizeFonts();
 
-            GraphicsOverlay.Invalidate();
+            compassGraphic.Invalidate();
         });
     }
 
@@ -62,8 +80,8 @@ public partial class Page1 : ContentView, IContentViewHost
         double availableHeight = Height;
 
         // Using ActualWidth and ActualHeight ensures REAL measured size
-        double panelWidth = InfoPanel.Width;
-        double panelHeight = InfoPanel.Height;
+        double panelWidth = Width*.5;
+        double panelHeight = Height*.5;
 
         // avoid null/zero bad values
         if (panelWidth < 0) panelWidth = 0;
@@ -86,35 +104,25 @@ public partial class Page1 : ContentView, IContentViewHost
         if (maxSide < 50)   // minimum 50px so compass is always visible
             maxSide = Math.Min(availableWidth, availableHeight);
 
-        GraphicsOverlay.WidthRequest = maxSide;
-        GraphicsOverlay.HeightRequest = maxSide;
+        compassGraphic.WidthRequest = maxSide;
+        compassGraphic.HeightRequest = maxSide;
     }
 
 
 
 
     private void UpdateUI()
-    {
-
-        HeadingLabel.Text = $"{record.headingMag:F0}";
-        SpeedWaterLabel.Text = $"{record.SOW:F1}";
-        SpeedGroundLabel.Text = $"{record.SOG:F1}";
-        DepthLabel.Text = $"{record.depth:F1}";
-        AWSLabel.Text = $"{record.windAppSpeed:F0}";
-        AWDLabel.Text = $"{record.windAppDir:F0}°";
-        TWSLabel.Text = $"{record.windTrueSpeed:F0}";
-        TWDLabel.Text = $"{record.windTrueCompass:F0}°";
+    {  
         CompassDrawable.Heading = (float)record.headingMag;
         CompassDrawable.ApparentWind = (float)record.windAppDir;
         CompassDrawable.TrueWind = (float)record.windTrueDir;
-       
-        GraphicsOverlay.Invalidate();
+        compassGraphic.Invalidate();
     }
 
     public void SetRotation(float degrees)
     {
         CompassDrawable.RotationDegrees = degrees;
-        GraphicsOverlay.Invalidate();
+        compassGraphic.Invalidate();
     }
 
     // Optional: update wedges dynamically
@@ -124,10 +132,13 @@ public partial class Page1 : ContentView, IContentViewHost
         record = data.Copy();
         OnReSize();
         UpdateUI();
-        if (eventName == "RefreshData")
+        foreach (var field in fieldDisplays)
         {
-            // handle event
-            //RefreshData((MyDataModel)data!);
+            field.Update(DataPoints);
+        }
+        foreach(var wind in windPointDisplays)
+        {
+            wind.Update(DataPoints);
         }
     }
 
@@ -138,58 +149,93 @@ public partial class Page1 : ContentView, IContentViewHost
 
         bool isLandscape = Width > Height;
         AdjustLayout(isLandscape);
+        ResizeFonts();
+    }
+
+    MainPage? GetParentPage()
+    {
+        Element? parent = this;
+        while (parent != null && parent is not MainPage)
+            parent = parent.Parent;
+        return parent as MainPage;
     }
 
     private void AdjustLayout(bool isLandscape)
     {
         MainGrid.RowDefinitions.Clear();
         MainGrid.ColumnDefinitions.Clear();
+        MainGrid.Children.Clear();
+        fieldDisplays = new List<FieldDisplay>();
+        windPointDisplays = new List<WindPointDisplay>();
+        Setup setup = new Setup();
+
 
         if (isLandscape)
         {
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+            if (Width > 0)
+            {
+                compassGraphic.WidthRequest = Width * .4;
+            }
+            /*                MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) }); // Left half
+                            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Right col 1
+                            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Right col 2*/
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) }); // Left ~40% for compass
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2.5, GridUnitType.Star) }); // Right col 1 (~30%)
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2.5, GridUnitType.Star) }); // Right col 2 (~30%)
 
-            // LEFT: Compass (Auto width)
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            // RIGHT: Info panel (fills remaining space)
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-            MainGrid.SetRow(GraphicsOverlay, 0);
-            MainGrid.SetColumn(GraphicsOverlay, 0);
 
-            MainGrid.SetRow(InfoPanel, 0);
-            MainGrid.SetColumn(InfoPanel, 1);
+            MainGrid.Children.Add(compassGraphic);
+            MainGrid.SetRow(compassGraphic, 0);
+            MainGrid.SetColumn(compassGraphic, 0);
+            MainGrid.SetRowSpan(compassGraphic, 4);
 
-           
 
-            
-            // side-by-side
-            /*MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star }); // compass
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); // text
 
-            Grid.SetRow(GraphicsOverlay, 0);
-            Grid.SetColumn(GraphicsOverlay, 0);
 
-            Grid.SetRow(InfoPanel, 0);
-            Grid.SetColumn(InfoPanel, 1);*/
+
+            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 1, "F0", "Heading"));
+            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 2, "F1", "Depth"));
+            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 1, "F1", "Speed Ground"));
+            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 2, "F1", "Speed Water"));
+            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 1, "F0", "Apparent"));
+            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 2, "F0", "True"));
         }
         else
         {
-            // stacked
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star }); // text
-            MainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star }); // compass
-            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            compassGraphic.HeightRequest = Height * .4;
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) }); // Left half
+            MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) }); // Right col 1
 
-            MainGrid.SetRow(InfoPanel, 0);
-            MainGrid.SetColumn(InfoPanel, 0);
 
-            MainGrid.SetRow(GraphicsOverlay, 1);
-            MainGrid.SetColumn(GraphicsOverlay, 0);
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1.25, GridUnitType.Star) });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1.25, GridUnitType.Star) });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1.25, GridUnitType.Star) });
+            MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(5, GridUnitType.Star) });
+
+
+
+
+
+
+            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 0, "F0", "Heading"));
+            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 1, "F1", "Depth"));
+            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 0, "F1", "Speed Water"));
+            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 1, "F1", "Speed Ground"));
+            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 0, "F0", "Apparent"));
+            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 1, "F0", "True"));
+            MainGrid.Children.Add(compassGraphic);
+            MainGrid.SetRow(compassGraphic, 3);
+            MainGrid.SetColumn(compassGraphic, 0);
+            MainGrid.SetColumnSpan(compassGraphic, 2);
         }
     }
+
 
 
     private void ResizeFonts()
@@ -199,16 +245,26 @@ public partial class Page1 : ContentView, IContentViewHost
         double headerSize = baseSize * 0.018; // e.g., "Heading"
         double valueSize = baseSize * 0.036; // e.g., "123.45"
 
-        foreach (var lbl in InfoPanel.Children.OfType<Label>())
+        foreach (var windPointDisplay in windPointDisplays)
         {
-            if (lbl.FontSize <= 20)   // header label
-                lbl.FontSize = headerSize;
-            else                      // value label
-                lbl.FontSize = valueSize;
+            windPointDisplay.Resize(Width, Height);
         }
+
+        foreach (var fieldDisplay in fieldDisplays)
+        {
+
+            fieldDisplay.Resize(Width, Height);
+
+        }
+
+        
     }
+
+   
     public void OnSetupChanged(Setup settings)
     {
 
     }
 }
+
+
