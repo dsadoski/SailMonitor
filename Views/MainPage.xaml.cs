@@ -22,7 +22,8 @@ namespace SailMonitor
         public Setup _setup;
         public List<DataPointDisplay> dataPointDisplays;
         public List<FieldData> fieldData;
-        
+        private double _panStartX;
+
 
 
         //public ObservableCollection<ContentView> DisplayedPage { get; set; }
@@ -179,25 +180,45 @@ namespace SailMonitor
 
             });
         }
-        private void Next_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                if (currentIndex < PageViews.Count - 1)
-                {
-                    currentIndex++;
-                    content.Content = PageViews[currentIndex];
-                    SetColorsRecursively(content.Content, _setup);
+        /*   private void Next_Clicked(object sender, EventArgs e)
+           {
+               try
+               {
+                   if (currentIndex < PageViews.Count - 1)
+                   {
+                       currentIndex++;
+                       content.Content = PageViews[currentIndex];
+                       SetColorsRecursively(content.Content, _setup);
 
-                }
-            }
-            catch (Exception ex)
+                   }
+               }
+               catch (Exception ex)
+               {
+                   Debug.WriteLine($"Error in Next_Clicked: {ex.Message}");
+               }
+           }
+
+           private void Prev_Clicked(object sender, EventArgs e)
+           {
+               if (currentIndex > 0)
+               {
+                   currentIndex--;
+                   content.Content = PageViews[currentIndex];
+                   SetColorsRecursively(content.Content, _setup);
+               }
+           }*/
+
+        private void NextPage()
+        {
+            if (currentIndex < PageViews.Count - 1)
             {
-                Debug.WriteLine($"Error in Next_Clicked: {ex.Message}");
+                currentIndex++;
+                content.Content = PageViews[currentIndex];
+                SetColorsRecursively(content.Content, _setup);
             }
         }
 
-        private void Prev_Clicked(object sender, EventArgs e)
+        private void PrevPage()
         {
             if (currentIndex > 0)
             {
@@ -206,6 +227,9 @@ namespace SailMonitor
                 SetColorsRecursively(content.Content, _setup);
             }
         }
+
+        private void Next_Clicked(object sender, EventArgs e) => NextPage();
+        private void Prev_Clicked(object sender, EventArgs e) => PrevPage();
 
         private void RaiseEventToCurrentView(string eventName, Record data)
         {
@@ -300,6 +324,35 @@ namespace SailMonitor
                 activeView.OnReSize();
             }
 
+        }
+
+        private void Content_PanUpdated(object sender, PanUpdatedEventArgs e)
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    _panStartX = e.TotalX;
+                    break;
+
+                case GestureStatus.Running:
+                    // Optional: you could move the content visually here for a "dragging" effect
+                    break;
+
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    double deltaX = e.TotalX - _panStartX;
+
+                    // Detect swipe thresholds
+                    if (deltaX < -50) // swipe left → next
+                    {
+                        NextPage();
+                    }
+                    else if (deltaX > 50) // swipe right → previous
+                    {
+                        PrevPage();
+                    }
+                    break;
+            }
         }
 
     }
