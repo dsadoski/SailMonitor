@@ -11,17 +11,17 @@ public partial class PageSetup : ContentView
     
 
 
-    public PageSetup()
+    public PageSetup(Setup _setup)
     {
         InitializeComponent();
-        setup = new Setup();
+        setup = _setup;
 
         Port.Text = setup.Port.ToString();
-        Night.IsToggled = setup.Night;
-        KeepActive.IsToggled = setup.KeepActive;
-        UseGPSPOS.IsToggled = setup.UseGPSPOS;
-        UseGPSHEADING.IsToggled = setup.UseGPSHEADING;
-        UseGPSSOG.IsToggled = setup.UseGPSSOG;
+        Night.IsChecked = setup.Night;
+        KeepActive.IsChecked = setup.KeepActive;
+        UseGPSPOS.IsChecked = setup.UseGPSPOS;
+        UseGPSHEADING.IsChecked = setup.UseGPSHEADING;
+        UseGPSSOG.IsChecked = setup.UseGPSSOG;
         SaveFrequency.Text = setup.saveFrequency.ToString();
 
         
@@ -31,11 +31,11 @@ public partial class PageSetup : ContentView
     {
         int.TryParse(Port.Text, out setup.Port);
         int.TryParse(SaveFrequency.Text, out setup.saveFrequency);
-        setup.Night = Night.IsToggled;
-        setup.KeepActive = KeepActive.IsToggled;
-        setup.UseGPSPOS = UseGPSPOS.IsToggled;
-        setup.UseGPSHEADING = UseGPSHEADING.IsToggled;
-        setup.UseGPSSOG = UseGPSSOG.IsToggled;
+        setup.Night = Night.IsChecked;
+        setup.KeepActive = KeepActive.IsChecked;
+        setup.UseGPSPOS = UseGPSPOS.IsChecked;
+        setup.UseGPSHEADING = UseGPSHEADING.IsChecked;
+        setup.UseGPSSOG = UseGPSSOG.IsChecked;
         
         setup.Save();
         var parentPage = GetParentPage();
@@ -54,11 +54,11 @@ public partial class PageSetup : ContentView
 
     public void ToggleNight(object sender, EventArgs e)
     {
-        setup.Night = Night.IsToggled;
+        setup.Night = Night.IsChecked;
         setup.SetColor();
         var parentPage = GetParentPage();
         parentPage?.SetColorScheme(setup);
-            //parentPage?.SetColorsRecursively(this, setup);
+            parentPage?.SetColorsRecursively(this, setup);
 
     }
 

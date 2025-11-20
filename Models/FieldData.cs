@@ -17,7 +17,9 @@ namespace SailMonitor.Models
         public double Max { get; set; }
         public double Min { get; set; }
 
-        public double current;
+        public double Current;
+
+        public double Average;
 
         Setup setup { get; set; }
 
@@ -31,7 +33,7 @@ namespace SailMonitor.Models
 
         public void AddDataPoint(double value)
         {
-            current = value;
+            Current = value;
             if (DataPoints.Count == 0)
             {
                 Max = value;
@@ -67,6 +69,7 @@ namespace SailMonitor.Models
             
                 Max = DataPoints.Max(x => x.value);
             Min = DataPoints.Min(x => x.value);
+            Average=DataPoints.Average(x => x.value);
             
 
         }

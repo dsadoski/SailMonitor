@@ -32,6 +32,7 @@ namespace SailMonitor.Services
         Setup setup;
         public double width;
         public double height;
+        
 
         public DataPointDisplay(string Name,string Precision, string Description)
         {
@@ -110,8 +111,8 @@ namespace SailMonitor.Services
 
                 canvas.FontSize = 72;
                 
-                txt = fieldData.current.ToString($"{precision}");
-                canvas.DrawString(txt, (float)(width/2), (float)(height*.2), HorizontalAlignment.Center);
+                txt = fieldData.Current.ToString($"{precision}");
+                canvas.DrawString(txt, (float)(width/2), (float)(height*.05), HorizontalAlignment.Center);
                 textSize = canvas.GetStringSize("M", fonts[0], 72);
 
                 canvas.FontSize = 18;
@@ -291,7 +292,7 @@ namespace SailMonitor.Services
 
             bottomLeft.Text = string.Format($"{{0:{precision}}}", fieldData.Min);
             bottomRight.Text = string.Format($"{{0:{precision}}}", fieldData.Max);
-            center.Text = string.Format($"{{0:{precision}}}", fieldData.current);
+            center.Text = string.Format($"{{0:{precision}}}", fieldData.Current);
             
         }
     }

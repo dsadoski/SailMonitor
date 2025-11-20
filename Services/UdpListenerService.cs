@@ -139,13 +139,16 @@ namespace SailMonitor.Services
                 if (Math.Abs(timeSpan.TotalSeconds) > _setup.saveFrequency)
                 {
                     double distance = _nmeaService.CalcDistanceNM(record); // in nautical miles
-                    record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                    double bearing = _nmeaService.CalcBearing(record);
-                    record.headingTrue = bearing;
-                    record.COG = bearing;
-                    record.latitude = record.location.Latitude;
-                    record.longitude = record.location.Longitude;
-                    record.gpsTicks = record.location.Timestamp.Ticks;
+                    if (distance > 0)
+                    {
+                        record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
+                        double bearing = _nmeaService.CalcBearing(record);
+                        record.headingTrue = bearing;
+                        record.COG = bearing;
+                        record.latitude = record.location.Latitude;
+                        record.longitude = record.location.Longitude;
+                        record.gpsTicks = record.location.Timestamp.Ticks;
+                    }
                 }
             }
             else

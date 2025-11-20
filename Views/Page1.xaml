@@ -1,76 +1,14 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.Page1"
-             HorizontalOptions="FillAndExpand"
-             VerticalOptions="FillAndExpand">
+             
+             >
 
     <!-- Master container -->
-    <Grid x:Name="MainGrid"
-          RowDefinitions="Auto,*"
-          ColumnDefinitions="*"
-          HorizontalOptions="FillAndExpand"
-          VerticalOptions="FillAndExpand">
-
-        <!-- Info panel (the numbers) -->
-        <VerticalStackLayout x:Name="InfoPanel"
-                             Grid.Row="0"
-                             Grid.Column="0"
-                             Padding="4"
-                             Spacing="8"
-                             HorizontalOptions="FillAndExpand"
-                             VerticalOptions="Start">
-
-            <!-- Row 0 -->
-            <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
-                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Heading" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="HeadingLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Depth" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="DepthLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-            </HorizontalStackLayout>
-            <HorizontalStackLayout>
-            <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Spd Water" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="SpeedWaterLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-
-                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="Spd Ground" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="SpeedGroundLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-            </HorizontalStackLayout>
-
-
-
-
-            <!-- Row 1 -->
-            <HorizontalStackLayout HorizontalOptions="FillAndExpand" Spacing="8">
-                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="App" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="AWSLabel" FontSize="36" HorizontalTextAlignment="End" />
-                    <Label x:Name="AWDLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-
-                <VerticalStackLayout Padding="4" HorizontalOptions="FillAndExpand">
-                    <Label Text="TWS" FontSize="36" HorizontalTextAlignment="Start" />
-                    <Label x:Name="TWSLabel" FontSize="36" HorizontalTextAlignment="End" />
-                    <Label x:Name="TWDLabel" FontSize="36" HorizontalTextAlignment="End" />
-                </VerticalStackLayout>
-            </HorizontalStackLayout>
-        </VerticalStackLayout>
+    <Grid x:Name="MainGrid">
 
         <!-- Graphics area -->
-        <GraphicsView x:Name="GraphicsOverlay"
-                      Grid.Row="1"
-                      Grid.Column="0"
-                      BackgroundColor="Black"
-                      HorizontalOptions="Center"
-                      VerticalOptions="Center"
-                      HeightRequest="500"
-                      />
+       
 
     </Grid>
 </ContentView>

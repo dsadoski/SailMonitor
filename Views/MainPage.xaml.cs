@@ -1,6 +1,7 @@
 ﻿
 
 
+using Microsoft.Maui.Controls;
 using SailMonitor;
 using SailMonitor.Models;
 using SailMonitor.Services;
@@ -18,7 +19,7 @@ namespace SailMonitor
         private readonly GPSService _gpsService;
         private readonly NmeaService _nmeaService;
         public Record record = new Record();
-        private Setup _setup;
+        public Setup _setup;
         public List<DataPointDisplay> dataPointDisplays;
         public List<FieldData> fieldData;
         
@@ -33,6 +34,13 @@ namespace SailMonitor
             try
             {
                 InitializeComponent();
+                /*if (OperatingSystem.IsAndroid())
+                {
+                    if (MainLayout.Children.Contains(ButtonHzStack))
+                    {
+                        MainLayout.Children.Remove(ButtonHzStack);
+                    }
+                }*/
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
                 SizeChanged += OnSizeChanged;
@@ -50,13 +58,14 @@ namespace SailMonitor
                 dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed"));
                 dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir"));
                 dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth"));
+                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass"));
                 dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground"));
                 dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water"));
                 dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading"));
 
                 PageViews = new List<ContentView>
                 {
-                    new PageSetup(),
+                    new PageSetup(_setup),
                     new Page1(),
                     /*new Page2(dataPointDisplays),
                     new Page3(),
@@ -92,7 +101,24 @@ namespace SailMonitor
 
         public void SetColorScheme(Setup setup)
         {
+            _setup = setup;
             this.BackgroundColor = setup.backColor;
+            PrevButton.BackgroundColor = Colors.DarkBlue;
+            NextButton.BackgroundColor = Colors.DarkBlue;
+
+            if (setup.Night)
+            {
+                PrevButton.TextColor = setup.foreColor;
+                NextButton.TextColor = setup.foreColor;
+            }
+            else
+            {
+                PrevButton.TextColor = Colors.White;
+                NextButton.TextColor = Colors.White;
+            }
+
+            
+
             foreach (ContentView view in PageViews)
             {
                 SetColorsRecursively(view,setup);
@@ -120,6 +146,8 @@ namespace SailMonitor
                     UpdateDataDisplayRecord("SOG", record.SOG);
                     UpdateDataDisplayRecord("SOW", record.SOW);
                     UpdateDataDisplayRecord("HDG", record.headingMag);
+                    UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+
 
                     RaiseEventToCurrentView("UDPUpdate", record);
                 } 
@@ -159,6 +187,7 @@ namespace SailMonitor
                 {
                     currentIndex++;
                     content.Content = PageViews[currentIndex];
+                    SetColorsRecursively(content.Content, _setup);
 
                 }
             }
@@ -174,6 +203,7 @@ namespace SailMonitor
             {
                 currentIndex--;
                 content.Content = PageViews[currentIndex];
+                SetColorsRecursively(content.Content, _setup);
             }
         }
 
@@ -204,8 +234,15 @@ namespace SailMonitor
                     break;
 
                 case Button btn:
-                    btn.BackgroundColor = setup.backColor;
-                    btn.TextColor = setup.foreColor;
+                    btn.BackgroundColor = Colors.DarkBlue;
+                    if (setup.Night)
+                    {
+                        btn.TextColor = setup.foreColor;
+                    }
+                    else
+                    {
+                        btn.TextColor = Colors.White;
+                    }
                     break;
 
                 case Entry entry:
@@ -216,6 +253,11 @@ namespace SailMonitor
                 case Editor editor:
                     editor.BackgroundColor = setup.backColor;
                     editor.TextColor = setup.foreColor;
+                    break;
+
+                case CheckBox checkBox:
+                    checkBox.BackgroundColor = setup.backColor;
+                    checkBox.Color = setup.foreColor;
                     break;
 
                 case Grid grid:
@@ -235,10 +277,17 @@ namespace SailMonitor
                     SetColorsRecursively(child, setup);
                 }
             }
-            else if (view is ContentView contentView && contentView.Content != null)
+            if (view is ContentView contentView && contentView.Content != null)
             {
                 SetColorsRecursively(contentView.Content, setup);
             }
+            if (view is ScrollView scrollView)
+            {
+                var content = scrollView.Content;
+                SetColorsRecursively(content, setup);
+                
+            }
+
         }
 
         private void OnSizeChanged(object sender, EventArgs e)
