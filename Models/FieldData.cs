@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
-
-namespace SailMonitor.Models
+﻿namespace SailMonitor.Models
 {
     public class FieldData
-    {   
+    {
         public List<SingleDataPoint> DataPoints { get; set; }
 
-        public string name { get; set; } = "";
+        public string name { get; set; } = string.Empty;
 
         public double Max { get; set; }
         public double Min { get; set; }
@@ -21,14 +13,13 @@ namespace SailMonitor.Models
 
         public double Average;
 
-        Setup setup { get; set; }
+        private Setup setup { get; set; }
 
         public FieldData(string Name)
-        {   
+        {
             name = Name;
             DataPoints = new List<SingleDataPoint>();
-            setup = new Setup();    
-
+            setup = new Setup();
         }
 
         public void AddDataPoint(double value)
@@ -45,11 +36,13 @@ namespace SailMonitor.Models
                 {
                     Max = value;
                 }
+
                 if (value < Min)
                 {
                     Min = value;
                 }
             }
+
             if (DataPoints.Count > 0)
             {
                 TimeSpan timeSpan = new TimeSpan(DateTime.Now.Ticks - DataPoints[DataPoints.Count - 1].dateTime.Ticks);
@@ -66,12 +59,10 @@ namespace SailMonitor.Models
             DateTime dateTime = DateTime.Now.AddHours(-1);
             int datapointCount = DataPoints.Count;
             DataPoints = DataPoints.Where(d => d.dateTime.Ticks > dateTime.Ticks).ToList();
-            
-                Max = DataPoints.Max(x => x.value);
-            Min = DataPoints.Min(x => x.value);
-            Average=DataPoints.Average(x => x.value);
-            
 
+            Max = DataPoints.Max(x => x.value);
+            Min = DataPoints.Min(x => x.value);
+            Average = DataPoints.Average(x => x.value);
         }
     }
 }

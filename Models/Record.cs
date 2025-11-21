@@ -1,15 +1,5 @@
-﻿
-
-using Microsoft.Maui.Devices.Sensors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SailMonitor.Models
+﻿namespace SailMonitor.Models
 {
-
     public class Record
     {
         public int ID;
@@ -36,9 +26,6 @@ namespace SailMonitor.Models
         public double voltage;
         public string ErrMessage;
         public Location location;
-        
-
-
 
         public void RecordNew()
         {
@@ -59,12 +46,12 @@ namespace SailMonitor.Models
             SOW = 0;
             windTrueDir = 0;
             windTrueSpeed = 0;
-            windTrueCompass = 0;    
+            windTrueCompass = 0;
             windAppDir = 0;
             windAppSpeed = 0;
             VPWSPD = 0;
             POLARDATA = 0;
-            waterTemp= 0;
+            waterTemp = 0;
             voltage = 0;
             location = new Location();
         }
@@ -102,25 +89,15 @@ namespace SailMonitor.Models
             {
                 location = new Location();
             }
-            
-            return P;
 
+            return P;
         }
 
-        public void Makefromlive()//MainActivity MA)
+        public void Makefromlive()
         {
-
             userId = 1;
             boatId = 1;
             time = System.DateTime.Now.Ticks;
-            //if (MA.CBRECORD.isChecked() == true) POLARDATA = 1;
-            //POLARDATA = 0;
-
-
         }
-
-
-
     }
-
 }

@@ -1,18 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using SailMonitor.Models;
-using SailMonitor.Services;
-
-namespace SailMonitor
+﻿namespace SailMonitor
 {
+    using Microsoft.Extensions.Logging;
+    using SailMonitor.Models;
+    using SailMonitor.Services;
+
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()
         {
-
-
-
-
-            
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -34,14 +29,12 @@ namespace SailMonitor
                 builder.Services.AddSingleton(sp => new UdpListenerService(setup, nmeaService));
                 builder.Services.AddSingleton(sp => new GPSService());
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine($"MauiApp Creation Error: {ex.Message}");
             }
 
             return builder.Build();
-
         }
     }
 }

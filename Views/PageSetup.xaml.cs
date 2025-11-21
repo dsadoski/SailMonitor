@@ -1,15 +1,12 @@
 
 using SailMonitor.Models;
-using SailMonitor.Services;
-using System.ComponentModel;
+
 namespace SailMonitor;
 
 public partial class PageSetup : ContentView
 {
     private Record record = new Record();
-    Setup setup;
-    
-
+    private Setup setup;
 
     public PageSetup(Setup _setup)
     {
@@ -23,8 +20,6 @@ public partial class PageSetup : ContentView
         UseGPSHEADING.IsChecked = setup.UseGPSHEADING;
         UseGPSSOG.IsChecked = setup.UseGPSSOG;
         SaveFrequency.Text = setup.saveFrequency.ToString();
-
-        
     }
 
     public void Save(object sender, EventArgs e)
@@ -36,19 +31,21 @@ public partial class PageSetup : ContentView
         setup.UseGPSPOS = UseGPSPOS.IsChecked;
         setup.UseGPSHEADING = UseGPSHEADING.IsChecked;
         setup.UseGPSSOG = UseGPSSOG.IsChecked;
-        
+
         setup.Save();
         var parentPage = GetParentPage();
         parentPage?.SetColorScheme(setup);
         parentPage?.SetColorsRecursively(this, setup);
-
     }
 
-    MainPage? GetParentPage()
+    private MainPage? GetParentPage()
     {
         Element? parent = this;
         while (parent != null && parent is not MainPage)
+        {
             parent = parent.Parent;
+        }
+
         return parent as MainPage;
     }
 
@@ -58,8 +55,6 @@ public partial class PageSetup : ContentView
         setup.SetColor();
         var parentPage = GetParentPage();
         parentPage?.SetColorScheme(setup);
-            parentPage?.SetColorsRecursively(this, setup);
-
+        parentPage?.SetColorsRecursively(this, setup);
     }
-
 }

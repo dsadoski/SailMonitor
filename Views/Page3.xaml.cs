@@ -1,15 +1,16 @@
 
-using SailMonitor.Services;
 using SailMonitor.Models;
+using SailMonitor.Services;
+
 namespace SailMonitor;
 
 public partial class Page3 : ContentView, IContentViewHost
 {
     private Record record = new Record();
     public Page3()
-	{
-		InitializeComponent();
-	}
+    {
+        InitializeComponent();
+    }
 
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
@@ -18,7 +19,7 @@ public partial class Page3 : ContentView, IContentViewHost
         if (eventName == "RefreshData")
         {
             // handle event
-            //RefreshData((MyDataModel)data!);
+            // RefreshData((MyDataModel)data!);
         }
     }
 
@@ -43,6 +44,5 @@ public partial class Page3 : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
-
     }
 }

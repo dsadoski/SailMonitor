@@ -1,24 +1,20 @@
-﻿using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Devices.Sensors;
-
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Threading;
-
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using System.Diagnostics;
+
     public class GPSService
     {
         private CancellationTokenSource? _cts;
         private bool _isRunning;
         public event Action<Location>? OnLocationReceived;
-        
 
         public async Task Start()
         {
             if (_isRunning)
+            {
                 return;
+            }
+
             _isRunning = true;
             _cts = new CancellationTokenSource();
             try
@@ -71,8 +67,6 @@ namespace SailMonitor.Services
         public void Stop()
         {
             _cts?.Cancel();
-
         }
-
     }
 }

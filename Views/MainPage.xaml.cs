@@ -1,33 +1,24 @@
-﻿
-
-
-using Microsoft.Maui.Controls;
-using SailMonitor;
-using SailMonitor.Models;
-using SailMonitor.Services;
-using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-
-
-namespace SailMonitor
+﻿namespace SailMonitor
 {
+    using System.Diagnostics;
+    using SailMonitor.Models;
+    using SailMonitor.Services;
+
     public partial class MainPage : ContentPage
     {
-
-        private readonly UdpListenerService _udpService;
-        private readonly GPSService _gpsService;
-        private readonly NmeaService _nmeaService;
         public Record record = new Record();
         public Setup _setup;
         public List<DataPointDisplay> dataPointDisplays;
         public List<FieldData> fieldData;
-        
+        private readonly UdpListenerService _udpService;
+        private readonly GPSService _gpsService;
+        private readonly NmeaService _nmeaService;
 
+        private double _panStartX;
 
-        //public ObservableCollection<ContentView> DisplayedPage { get; set; }
+        // public ObservableCollection<ContentView> DisplayedPage { get; set; }
         public List<ContentView> PageViews { get; set; }
-        int currentIndex = 1;
+        private int currentIndex = 1;
 
         public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService, Setup setup)
         {
@@ -72,20 +63,19 @@ namespace SailMonitor
                     new Page4(),*/
                 };
 
-                foreach(var item in dataPointDisplays)
+                foreach (var item in dataPointDisplays)
                 {
                     PageViews.Add(new SingleDataPoint(item));
-                    fieldData.Add(new FieldData(item.name));
-                    
+                    fieldData.Add(new FieldData(item.Name));
                 }
+
                 PageViews.Add(new Page3());
                 PageViews.Add(new Page4());
 
                 SetColorScheme(_setup);
-               
 
                 content.Content = PageViews[currentIndex];
-                
+
                 _udpService.OnMessageReceived += HandleUdpMessage;
                 _gpsService.OnLocationReceived += HandleGpsLocation;
 
@@ -95,7 +85,6 @@ namespace SailMonitor
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in MainPage constructor: {ex.Message}");
-
             }
         }
 
@@ -117,13 +106,18 @@ namespace SailMonitor
                 NextButton.TextColor = Colors.White;
             }
 
-            
-
             foreach (ContentView view in PageViews)
             {
-                SetColorsRecursively(view,setup);
+                SetColorsRecursively(view, setup);
             }
+        }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            // Restore normal sleep behavior when leaving
+            DeviceDisplay.KeepScreenOn = false;
         }
 
         private async Task InitializeAsync()
@@ -148,14 +142,12 @@ namespace SailMonitor
                     UpdateDataDisplayRecord("HDG", record.headingMag);
                     UpdateDataDisplayRecord("WTC", record.windTrueCompass);
 
-
                     RaiseEventToCurrentView("UDPUpdate", record);
-                } 
+                }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
                 }
-
             });
         }
 
@@ -172,32 +164,23 @@ namespace SailMonitor
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                //record = _udpService.record.Copy();
-                _udpService.record.location = new Location(location);
-                _udpService.hasLocation = true;
-
-
+                // record = _udpService.record.Copy();
+                _udpService.Record.location = new Location(location);
+                _udpService.HasLocation = true;
             });
         }
-        private void Next_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                if (currentIndex < PageViews.Count - 1)
-                {
-                    currentIndex++;
-                    content.Content = PageViews[currentIndex];
-                    SetColorsRecursively(content.Content, _setup);
 
-                }
-            }
-            catch (Exception ex)
+        private void NextPage()
+        {
+            if (currentIndex < PageViews.Count - 1)
             {
-                Debug.WriteLine($"Error in Next_Clicked: {ex.Message}");
+                currentIndex++;
+                content.Content = PageViews[currentIndex];
+                SetColorsRecursively(content.Content, _setup);
             }
         }
 
-        private void Prev_Clicked(object sender, EventArgs e)
+        private void PrevPage()
         {
             if (currentIndex > 0)
             {
@@ -207,20 +190,15 @@ namespace SailMonitor
             }
         }
 
+        private void Next_Clicked(object sender, EventArgs e) => NextPage();
+        private void Prev_Clicked(object sender, EventArgs e) => PrevPage();
+
         private void RaiseEventToCurrentView(string eventName, Record data)
         {
             if (content.Content is IContentViewHost activeView)
             {
                 activeView.OnAppEvent(eventName, data, fieldData);
             }
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            // Restore normal sleep behavior when leaving
-            DeviceDisplay.KeepScreenOn = false;
         }
 
         public void SetColorsRecursively(IView view, Setup setup)
@@ -243,6 +221,7 @@ namespace SailMonitor
                     {
                         btn.TextColor = Colors.White;
                     }
+
                     break;
 
                 case Entry entry:
@@ -264,9 +243,9 @@ namespace SailMonitor
                     grid.BackgroundColor = setup.backColor;
                     break;
 
-                    case Microsoft.Maui.Controls.Switch swtch:
-                        swtch.BackgroundColor = setup.backColor;
-                        break;
+                case Microsoft.Maui.Controls.Switch swtch:
+                    swtch.BackgroundColor = setup.backColor;
+                    break;
             }
 
             // Now recurse if it’s a layout or content view
@@ -277,31 +256,58 @@ namespace SailMonitor
                     SetColorsRecursively(child, setup);
                 }
             }
+
             if (view is ContentView contentView && contentView.Content != null)
             {
                 SetColorsRecursively(contentView.Content, setup);
             }
+
             if (view is ScrollView scrollView)
             {
                 var content = scrollView.Content;
                 SetColorsRecursively(content, setup);
-                
             }
-
         }
 
         private void OnSizeChanged(object sender, EventArgs e)
         {
             if (content.Content is IContentViewHost activeView)
             {
-                content.Content.WidthRequest= Width; 
-                content.Content.HeightRequest= Height;
-                
+                content.Content.WidthRequest = Width;
+                content.Content.HeightRequest = Height;
+
                 activeView.OnReSize();
             }
-
         }
 
+        private void Content_PanUpdated(object sender, PanUpdatedEventArgs e)
+        {
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    _panStartX = e.TotalX;
+                    break;
+
+                case GestureStatus.Running:
+                    // Optional: you could move the content visually here for a "dragging" effect
+                    break;
+
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    double deltaX = e.TotalX - _panStartX;
+
+                    // Detect swipe thresholds
+                    if (deltaX < -50) // swipe left → next
+                    {
+                        NextPage();
+                    }
+                    else if (deltaX > 50) // swipe right → previous
+                    {
+                        PrevPage();
+                    }
+
+                    break;
+            }
+        }
     }
 }
-

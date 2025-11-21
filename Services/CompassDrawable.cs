@@ -1,33 +1,25 @@
-﻿using Microsoft.Maui.Graphics;
-using SailMonitor.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class CompassDrawable : IDrawable
     {
         public float RotationDegrees { get; set; } = 0f; // For rotating compass if needed
-
 
         public float TrueWind = 100;
         public float ApparentWind = 85;
         public float Heading = 0;
         public Setup setup;
-        /*public float width ;
-        public float height;*/
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            if (dirtyRect.Width < 1 || dirtyRect.Height < 1) return;
+            if (dirtyRect.Width < 1 || dirtyRect.Height < 1)
+            {
+                return;
+            }
+
             try
             {
-
                 setup = new Setup();
 
                 float centerX = dirtyRect.Width / 2;
@@ -37,15 +29,16 @@ namespace SailMonitor.Services
                 // Clear background (transparent)
                 canvas.SaveState();
                 canvas.FillColor = Colors.Transparent;
-                //SetFillColor(Colors.Transparent);
+
+                // SetFillColor(Colors.Transparent);
                 canvas.FillRectangle(dirtyRect);
                 canvas.RestoreState();
 
                 // Draw compass rose
                 canvas.SaveState();
                 canvas.Translate(centerX, centerY);
-                //canvas.Rotate(RotationDegrees);
 
+                // canvas.Rotate(RotationDegrees);
                 canvas.StrokeColor = setup.foreColor;
                 canvas.StrokeSize = 2;
 
@@ -56,18 +49,19 @@ namespace SailMonitor.Services
                 int degCount = 0;
                 for (int deg = 0; deg < 360; deg += 5)
                 {
-
-
                     float rad = (deg - Heading) * (float)Math.PI / 180f;
                     float inner;
-                    if (degCount == 45)
+                    if (degCount == 45 || degCount == 0)
                     {
                         inner = radius * 0.85f;
+                        canvas.StrokeSize = 4;
                     }
                     else
                     {
                         inner = radius * 0.95f;
+                        canvas.StrokeSize = 1;
                     }
+
                     float outer = radius;
                     float x1 = inner * (float)Math.Sin(rad);
                     float y1 = -inner * (float)Math.Cos(rad);
@@ -84,15 +78,15 @@ namespace SailMonitor.Services
                         canvas.DrawString($"{deg}°", x1 * 1.4f, y1 * 1.4f, HorizontalAlignment.Center);
                         degCount = 0;
                     }
+
                     degCount += 5;
                 }
 
-                //Draw deg relative to boat
-
+                // Draw deg relative to boat
                 int displayDeg;
                 for (int deg = 0; deg < 360; deg += 30)
                 {
-                    float rad = (deg) * (float)Math.PI / 180f;
+                    float rad = deg * (float)Math.PI / 180f;
                     float inner = radius * 0.9f;
                     float outer = radius;
                     float x1 = inner * (float)Math.Sin(rad);
@@ -113,7 +107,6 @@ namespace SailMonitor.Services
                     canvas.FontColor = setup.foreColor;
                     canvas.FontSize = radius * 0.08f;
                     canvas.DrawString($"{displayDeg}°", x1 * .8f, y1 * .8f, HorizontalAlignment.Center);
-                    //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
                 }
 
                 canvas.StrokeLineCap = LineCap.Round;
@@ -129,9 +122,7 @@ namespace SailMonitor.Services
                 else
                 {
                     DrawHeadingWedge(canvas, Colors.Green, radius, ApparentWind, 10);
-
                 }
-
 
                 canvas.RestoreState();
             }
@@ -146,7 +137,6 @@ namespace SailMonitor.Services
             canvas.StrokeColor = color;
             canvas.StrokeSize = size;
             float rad = degree * (float)Math.PI / 180f;
-
 
             float x2 = radius * (float)Math.Sin(rad);
             float y2 = -radius * (float)Math.Cos(rad);
@@ -165,10 +155,10 @@ namespace SailMonitor.Services
                 float half = sweepDegrees / 2f;
                 float startDeg = centerDegree - half;
                 float endDeg = centerDegree + half;
-                //radius = radius * 1.1f;
 
-                float startRad = startDeg*(float)Math.PI / 180f;
-                float endRad = endDeg*(float)Math.PI / 180f;
+                // radius = radius * 1.1f;
+                float startRad = startDeg * (float)Math.PI / 180f;
+                float endRad = endDeg * (float)Math.PI / 180f;
                 float midRad = centerDegree * (float)Math.PI / 180f;
 
                 // Points on the outer circle (note: y uses negative cos to have 0° = up)
@@ -187,19 +177,15 @@ namespace SailMonitor.Services
 
                 // AddArc draws an elliptical arc from pStart to pEnd with radii rx,ry.
                 // The 'clockwise' boolean selects the short/long arc direction.
-                //path.AddArc(pStart, pEnd, startDeg, endDeg, true);
-
+                // path.AddArc(pStart, pEnd, startDeg, endDeg, true);
                 path.Close();
 
                 canvas.FillPath(path);
             }
-            catch(Exception ex)
-            { 
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.ToString());
             }
         }
-
-        
-
     }
 }

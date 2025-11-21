@@ -1,34 +1,35 @@
 ﻿
-using SailMonitor.Models;
-using SailMonitor.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class NmeaService
     {
-        Setup _setup;
+        private Setup _setup;
         public Boolean CalcWind;
-        //public Record record;
 
+        // public Record record;
         public NmeaService(Setup s)
         {
             _setup = s;
             CalcWind = false;
-            //record = new Record();
+
+            // record = new Record();
         }
 
         public Record ParseSentence(string message, Record record)
         {
-
             CalcWind = false;
             record.ErrMessage = string.Empty;
-            if (message.Length < 4) return record.Copy();
-            if (message[0] != '$') return record.Copy();
+            if (message.Length < 4)
+            {
+                return record.Copy();
+            }
+
+            if (message[0] != '$')
+            {
+                return record.Copy();
+            }
 
             int i;
 
@@ -36,14 +37,16 @@ namespace SailMonitor.Services
 
             string[] NSTR = new StringParser().CommaListToString(splitMessage[0]);
 
-            if (NSTR.Length < 2) return record.Copy();
-            string txt = "";
+            if (NSTR.Length < 2)
+            {
+                return record.Copy();
+            }
+
+            string txt = string.Empty;
             for (i = 3; i < NSTR[0].Length; i++)
             {
                 txt += NSTR[0][i];
             }
-
-
 
             switch (txt)
             {
@@ -101,22 +104,15 @@ namespace SailMonitor.Services
                 default:
                     record.ErrMessage = txt;
                     break;
-
             }
-
-
 
             if (CalcWind)
             {
                 record = CalculateWind(record);
             }
 
-
             return record;
-
-
         }
-
 
         public Record NMEA_DBT(string[] stray, Record record)// depth below transducer
         {
@@ -138,11 +134,8 @@ namespace SailMonitor.Services
 
             int i;
 
-            ////TV1.append(string.valueOf(stray.Length));
-            //for(i=0;i<stray.Length;i++)//TV1.append(stray[i]+"\n");
             for (i = 1; i < stray.Length - 1; i++)
             {
-
                 if (stray[i + 1] == "f")
                 {
                     double T = DoubleGet(stray[i]);
@@ -150,63 +143,48 @@ namespace SailMonitor.Services
                     {
                         record.depth = T;
                     }
-
-
                 }
-
-
-
             }
 
-
             return record.Copy();
-
         }
 
         public Record NMEA_HDM(string[] stray, Record record)// depth below transducer
         {
+            if (stray.Length < 2)
+            {
+                return record.Copy();
+            }
 
-            if (stray.Length < 2) return record.Copy(); ;
+            ;
 
-
-
-            //if (S.UseGPSHEADING == false) 
-                record.headingMag = DoubleGet(stray[1]);
+            // if (S.UseGPSHEADING == false) 
+            record.headingMag = DoubleGet(stray[1]);
             CalcWind = true;
             return record.Copy();
-
-
-
-
-
         }
 
         public Record NMEA_HDT(string[] stray, Record record)// depth below transducer
         {
+            if (stray.Length < 2)
+            {
+                return record.Copy();
+            }
 
-
-            if (stray.Length < 2) return record.Copy(); 
-
-            double T= DoubleGet(stray[1]);
+            double T = DoubleGet(stray[1]);
 
             if (T != 0)
             {
-
                 record.headingMag = T;// * .0001 * (180.0 / Math.PI);
 
-
-                //if (S.UseGPSHEADING == false)
+                // if (S.UseGPSHEADING == false)
                 {
-                    //record.headingTrue = DoubleGet(stray[1]);
+                    // record.headingTrue = DoubleGet(stray[1]);
                     CalcWind = true;
                 }
             }
 
-
-
-
             return record.Copy();
-
         }
 
         public Record NMEA_MWD(string[] stray, Record record)
@@ -220,20 +198,24 @@ namespace SailMonitor.Services
     Wind direction, 0 to 359 degrees Magnetic
     Wind direction, 0 to 359 degrees True*/
 
-            if (stray.Length < 8) return record.Copy(); ;
+            if (stray.Length < 8)
+            {
+                return record.Copy();
+            }
+
+            ;
 
             // only use if youare getting SOG frominternal GPS
-
             if (_setup.UseGPSSOG == false)
             {
                 record.windTrueDir = DoubleGet(stray[1]);
-                //D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
+
+                // D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
                 record.windTrueSpeed = DoubleGet(stray[5]);
             }
+
             return record.Copy();
-
         }
-
 
         public Record NMEA_MWV(string[] stray, Record record)
         {
@@ -261,25 +243,23 @@ namespace SailMonitor.Services
 
             if (stray.Length < 4)
             {
-                //TV1.append("Failed on Length\n");
+                // TV1.append("Failed on Length\n");
                 return record.Copy();
             }
-
 
             record.windAppDir = DoubleGet(stray[1]);
 
             record.windAppSpeed = DoubleGet(stray[3]);
+
             // sending radians, so testing
             double T = DoubleGet(stray[6]);
 
             record.windAppDir = T;
 
-
             if (stray[4] == "M")
             {
                 record.windAppSpeed = record.windAppSpeed * 1.94384; // m/s to knots
             }
-
 
             CalcWind = true;
             return record.Copy();
@@ -293,25 +273,31 @@ namespace SailMonitor.Services
     Speed, knots
     Heading, degrees Magnetic
     Heading, degrees True*/
-            if (stray.Length < 9) return record.Copy();
+            if (stray.Length < 9)
+            {
+                return record.Copy();
+            }
 
-            //D.Speed.D.Clear();
+            // D.Speed.D.Clear();
             record.SOW = DoubleGet(stray[5]);
-            //record.headingMag = DoubleGet(stray[3]);
+
+            // record.headingMag = DoubleGet(stray[3]);
             CalcWind = true;
             return record.Copy();
         }
 
         public double DoubleGet(string msg)
         {
-            if (msg.Length < 1) return 0;
+            if (msg.Length < 1)
+            {
+                return 0;
+            }
 
             double T = double.Parse(msg);
             if (double.IsInfinity(T) || double.IsNaN(T))
             {
                 return 0;
             }
-
 
             return T;
         }
@@ -326,15 +312,15 @@ namespace SailMonitor.Services
     Speed, meters/second, "-" = downwind
     Speed, knots, "-" = downwind
              */
-            if (stray.Length < 3) return record.Copy();
-            //D.Vpw.D.Clear();
+            if (stray.Length < 3)
+            {
+                return record.Copy();
+            }
 
-            /*if(stray[2].equals("N"))D.Vpw.D.SPDKTS=DoubleGet(stray[1]);
-             if(stray[2].equals("M"))D.Vpw.D.SPDMS=DoubleGet(stray[1]);*/
-
-
-            if (_setup.UseGPSHEADING == false && _setup.UseGPSSOG == false) record.VPWSPD = DoubleGet(stray[1]);
-
+            if (_setup.UseGPSHEADING == false && _setup.UseGPSSOG == false)
+            {
+                record.VPWSPD = DoubleGet(stray[1]);
+            }
 
             return record.Copy();
         }
@@ -342,7 +328,10 @@ namespace SailMonitor.Services
         public Record NMEA_VTG(string[] stray, Record record)
         {
             /*Track made good and speed over ground*/
-            if (stray.Length < 3) return record.Copy();
+            if (stray.Length < 3)
+            {
+                return record.Copy();
+            }
 
             if (_setup.UseGPSHEADING == false)
             {
@@ -357,13 +346,12 @@ namespace SailMonitor.Services
                 {
                     record.COG = record.COG + 360;
                 }
-
             }
+
             if (_setup.UseGPSSOG == false)
             {
-                //record.SOG = DoubleGet(stray[5]);
+                // record.SOG = DoubleGet(stray[5]);
             }
-
 
             return record.Copy();
         }
@@ -371,7 +359,10 @@ namespace SailMonitor.Services
         public Record NMEA_WND(string[] stray, Record record)
         {
             /*Track made good and speed over ground*/
-            if (stray.Length < 3) return record.Copy();
+            if (stray.Length < 3)
+            {
+                return record.Copy();
+            }
 
             if (_setup.UseGPSHEADING == false)
             {
@@ -386,14 +377,13 @@ namespace SailMonitor.Services
                 {
                     record.COG = record.COG + 360;
                 }
-
             }
+
             if (_setup.UseGPSSOG == false)
             {
-                //record.SOG = DoubleGet(stray[5]);
-                //record.SOG = 5;
+                // record.SOG = DoubleGet(stray[5]);
+                // record.SOG = 5;
             }
-
 
             return record.Copy();
         }
@@ -401,41 +391,53 @@ namespace SailMonitor.Services
         public Record NMEA_GLL(string[] stray, Record record)
         {
             /*
-            0 Message ID	$GPGLL	GLL protocol header
-            1 Latitude	3723.2475	ddmm.mmmm
-    2 N/S indicator	N	N =North or S = south -1
-    3 Longitude	12158.3416	dddmm.mmmm
-    4 E/W indicator	W	E =East or W = West -1
-    5 UTC time	161229.487	hhmmss.sss
-    6 Status	A	A = data valid or V = data not valid
-    7 Mode	A	A =Autonomous , D =DGPS, E =DR (This field is only present in NMEA version 3.0)
-    8Checksum	*41
-    <CR><LF>		End of message termination*/
-            if (stray.Length < 7) return record.Copy();
+            0 Message ID    $GPGLL  GLL protocol header
+            1 Latitude  3723.2475   ddmm.mmmm
+    2 N/S indicator N   N =North or S = south -1
+    3 Longitude 12158.3416  dddmm.mmmm
+    4 E/W indicator W   E =East or W = West -1
+    5 UTC time  161229.487  hhmmss.sss
+    6 Status    A   A = data valid or V = data not valid
+    7 Mode  A   A =Autonomous , D =DGPS, E =DR (This field is only present in NMEA version 3.0)
+    8Checksum   *41
+    <CR><LF>        End of message termination*/
+            if (stray.Length < 7)
+            {
+                return record.Copy();
+            }
 
-            if (stray[6] == "V") return record.Copy();//not valid data
-
+            if (stray[6] == "V")
+            {
+                return record.Copy();
+            }
 
             if (_setup.UseGPSHEADING == false)
             {
                 record.latitude = DoubleGet(stray[1]);
-                if (stray[2] == "S") record.latitude = record.latitude * -1;
+                if (stray[2] == "S")
+                {
+                    record.latitude = record.latitude * -1;
+                }
+
                 record.longitude = DoubleGet(stray[3]);
-                if (stray[4] == "W") record.longitude = record.longitude * -1;
+                if (stray[4] == "W")
+                {
+                    record.longitude = record.longitude * -1;
+                }
             }
+
             /*UTC=DoubleGet(stray[5]);
             time=GetNow();*/
-
 
             return record.Copy();
         }
 
         public Record NMEA_TEMP(string[] stray, Record record)
         {
-
             record.waterTemp = DoubleGet(stray[1]);
             return record.Copy();
         }
+
         public Record NMEA_DPT(string[] stray, Record record)
         {
             // depth in Meters convert to feet
@@ -445,7 +447,7 @@ namespace SailMonitor.Services
                 record.depth = T;
                 record.depth = record.depth * 3.281;
             }
-            
+
             return record.Copy();
         }
 
@@ -457,11 +459,10 @@ namespace SailMonitor.Services
 
         public Record NMEA_SPD(string[] stray, Record record)
         {
-            //record.SOG = DoubleGet(stray[1]);
-            //record.SOG = 5;
+            // record.SOG = DoubleGet(stray[1]);
+            // record.SOG = 5;
             return record.Copy();
         }
-
 
         public Record NMEA_BAT(string[] stray, Record record)
         {
@@ -471,8 +472,8 @@ namespace SailMonitor.Services
 
         public Record CalculateWind(Record record)
         {
-
             double deg2rad = Math.PI / 180.0;
+
             // convert AWA (from) to "to" direction for velocity vector
             double thetaA = (record.windAppDir + 180.0) * deg2rad;
             double Va_x = record.windAppSpeed * Math.Cos(thetaA); // forward
@@ -486,22 +487,26 @@ namespace SailMonitor.Services
             {
                 Vb_x = record.SOW;
             }
-            
+
             double Vb_y = 0.0;
 
             double Vt_x = Va_x + Vb_x;
             double Vt_y = Va_y + Vb_y;
 
-            double TWS = Math.Sqrt(Vt_x * Vt_x + Vt_y * Vt_y);
+            double TWS = Math.Sqrt((Vt_x * Vt_x) + (Vt_y * Vt_y));
 
             double thetaTto = Math.Atan2(Vt_y, Vt_x) * (180.0 / Math.PI); // -180..180
-            if (thetaTto < 0) thetaTto += 360.0;
+            if (thetaTto < 0)
+            {
+                thetaTto += 360.0;
+            }
+
             double TWDFrom = (thetaTto + 180.0) % 360.0;
 
             record.windTrueSpeed = TWS;
             record.windTrueDir = TWDFrom;
             record.windTrueCompass = (record.headingMag + TWDFrom) % 360;
-           
+
             return record.Copy();
         }
 
@@ -522,8 +527,8 @@ namespace SailMonitor.Services
 
             // Haversine formula
             double a = Math.Pow(Math.Sin(dLat / 2), 2) +
-                       Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
-                       Math.Pow(Math.Sin(dLon / 2), 2);
+                       (Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+                       Math.Pow(Math.Sin(dLon / 2), 2));
 
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             double distanceNm = EarthRadiusNm * c;
@@ -531,9 +536,7 @@ namespace SailMonitor.Services
             return distanceNm;
         }
 
-
-        public double CalcBearing(
-        Record record)
+        public double CalcBearing(Record record)
         {
             // Convert degrees to radians
             double lat1Rad = DegreesToRadians(record.latitude);
@@ -546,8 +549,8 @@ namespace SailMonitor.Services
 
             // Compute bearing
             double x = Math.Sin(dLon) * Math.Cos(lat2Rad);
-            double y = Math.Cos(lat1Rad) * Math.Sin(lat2Rad) -
-                       Math.Sin(lat1Rad) * Math.Cos(lat2Rad) * Math.Cos(dLon);
+            double y = (Math.Cos(lat1Rad) * Math.Sin(lat2Rad)) -
+                       (Math.Sin(lat1Rad) * Math.Cos(lat2Rad) * Math.Cos(dLon));
 
             double initialBearingRad = Math.Atan2(x, y);
 
@@ -562,9 +565,5 @@ namespace SailMonitor.Services
 
         private static double RadiansToDegrees(double radians) =>
             radians * 180.0 / Math.PI;
-
-
     }
 }
-
-

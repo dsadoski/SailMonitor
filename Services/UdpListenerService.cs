@@ -1,83 +1,78 @@
 ﻿
-
-using SailMonitor.Models;
-
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-
 namespace SailMonitor.Services
 {
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
+    using SailMonitor.Models;
+
     public class UdpListenerService
     {
-        private readonly int _port;
-        private UdpClient? _udpClient;
-        private CancellationTokenSource? _cts;
+        private readonly int port;
+        private UdpClient? udpClient;
+        private CancellationTokenSource? cts;
 
         public event Action<Record>? OnMessageReceived;
-        Setup _setup;
-        public Record record;
-        
-        public bool hasLocation = false;
 
-        bool isInitialized = false;
-        private NmeaService _nmeaService;
+        private Setup setup;
+        public Record Record;
+
+        public bool HasLocation = false;
+
+        private bool isInitialized = false;
+        private NmeaService nmeaService;
+
         public UdpListenerService(Setup setup, NmeaService nmeaService)
         {
-            _setup = setup;
-            _port = _setup.Port;
-            record = new Record();
-            _setup = setup;
-            _nmeaService = nmeaService;
+            this.setup = setup;
+            port = this.setup.Port;
+            Record = new Record();
+            this.setup = setup;
+            this.nmeaService = nmeaService;
         }
 
         public void Start()
         {
-            if(isInitialized ==true)
+            if (isInitialized == true)
             {
                 return;
             }
+
             isInitialized = true;
 
             if (OperatingSystem.IsAndroid())
             {
                 try
                 {
-
                     // Clean up if called twice or after a crash/reload
-                    _udpClient?.Close();
-                    _udpClient?.Dispose();
-                    _udpClient = null;
+                    udpClient?.Close();
+                    udpClient?.Dispose();
+                    udpClient = null;
                 }
-                catch { }
+                catch
+                {
+                }
             }
-
 
             try
             {
-                _cts = new CancellationTokenSource();
+                cts = new CancellationTokenSource();
                 if (OperatingSystem.IsAndroid())
                 {
-                    var endpoint = new IPEndPoint(IPAddress.Any, _port);
+                    var endpoint = new IPEndPoint(IPAddress.Any, port);
                     var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
                     // Allow immediate rebinding even if the OS still thinks it’s in use
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-                    
-                    _udpClient = new UdpClient();
-                    _udpClient.Client = socket;
-                    _udpClient.Client.Bind(endpoint);
+                    udpClient = new UdpClient();
+                    udpClient.Client = socket;
+                    udpClient.Client.Bind(endpoint);
                 }
                 else
                 {
-                    
-                    _udpClient = new UdpClient(_port);
+                    udpClient = new UdpClient(port);
                 }
-
             }
             catch (SocketException ex)
             {
@@ -89,25 +84,23 @@ namespace SailMonitor.Services
                 Console.WriteLine($"UDP Listener Initialization Error: {ex.Message}");
                 return;
             }
-            
 
-
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 try
                 {
-                    while (!_cts.IsCancellationRequested)
+                    while (!cts.IsCancellationRequested)
                     {
-                        var result = await _udpClient.ReceiveAsync();
+                        var result = await udpClient.ReceiveAsync();
                         var message = Encoding.UTF8.GetString(result.Buffer);
-                        /*NMEA2000 nMEA2000Message = new NMEA2000(message);
-                        var record = n2KService.N2KParse(nMEA2000Message.PGN, nMEA2000Message.byteArray);*/
-                        record = _nmeaService.ParseSentence(message, record);
-                        if (hasLocation == true)
+
+                        Record = nmeaService.ParseSentence(message, Record);
+                        if (HasLocation == true)
                         {
                             ParseLocation();
                         }
-                        OnMessageReceived?.Invoke(record);
+
+                        OnMessageReceived?.Invoke(Record);
                     }
                 }
                 catch (ObjectDisposedException)
@@ -123,48 +116,45 @@ namespace SailMonitor.Services
 
         public void ParseLocation()
         {
-
-            record.latitude = record.location.Latitude;
-            record.longitude = record.location.Longitude;
-            record.SOG = (record.location.Speed ?? 0.0) * 1.94384; // m/s → knots
-            record.COG = record.location.Course ?? 0.0;
-            record = _nmeaService.CalculateWind(record);
-            if (record.location != null)
+            Record.latitude = Record.location.Latitude;
+            Record.longitude = Record.location.Longitude;
+            Record.SOG = (Record.location.Speed ?? 0.0) * 1.94384; // m/s → knots
+            Record.COG = Record.location.Course ?? 0.0;
+            Record = nmeaService.CalculateWind(Record);
+            if (Record.location != null)
             {
                 // can we calc COG/SOG from  2 points?
-                TimeSpan timeSpan = new TimeSpan(record.location.Timestamp.Ticks - record.gpsTicks);
+                TimeSpan timeSpan = new TimeSpan(Record.location.Timestamp.Ticks - Record.gpsTicks);
+
                 // can we calc COG/SOG from  2 points?
-
-
-                if (Math.Abs(timeSpan.TotalSeconds) > _setup.saveFrequency)
+                if (Math.Abs(timeSpan.TotalSeconds) > setup.saveFrequency)
                 {
-                    double distance = _nmeaService.CalcDistanceNM(record); // in nautical miles
+                    double distance = nmeaService.CalcDistanceNM(Record); // in nautical miles
                     if (distance > 0)
                     {
-                        record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                        double bearing = _nmeaService.CalcBearing(record);
-                        record.headingTrue = bearing;
-                        record.COG = bearing;
-                        record.latitude = record.location.Latitude;
-                        record.longitude = record.location.Longitude;
-                        record.gpsTicks = record.location.Timestamp.Ticks;
+                        Record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
+                        double bearing = nmeaService.CalcBearing(Record);
+                        Record.headingTrue = bearing;
+                        Record.COG = bearing;
+                        Record.latitude = Record.location.Latitude;
+                        Record.longitude = Record.location.Longitude;
+                        Record.gpsTicks = Record.location.Timestamp.Ticks;
                     }
                 }
             }
             else
             {
-                record.location = new Location(record.location);
+                Record.location = new Location(Record.location);
             }
-            
 
-            hasLocation = false;
+            HasLocation = false;
         }
 
         public void Stop()
         {
-            _cts?.Cancel();
-            _udpClient?.Close();
-            _udpClient?.Dispose();
+            cts?.Cancel();
+            udpClient?.Close();
+            udpClient?.Dispose();
         }
     }
 }
