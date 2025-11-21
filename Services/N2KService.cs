@@ -1,15 +1,5 @@
 ﻿
 using SailMonitor.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-
-
-
-
 
 namespace SailMonitor.Services
 {
@@ -26,12 +16,8 @@ namespace SailMonitor.Services
             record.time = System.DateTime.Now.Ticks;
             try
             {
-
-
-
                 switch (PGN)
                 {
-
                     case 59904:
                         {
                             // Engine Parameters, Dynamic
@@ -44,6 +30,7 @@ namespace SailMonitor.Services
                             // result = emitENG(rpm, load, fuelRate);*/
                             break;
                         }
+
                     case 60928:
                         {
                             // Depth data
@@ -85,6 +72,7 @@ namespace SailMonitor.Services
                             // result = emitSTW(speed);
                             break;
                         }
+
                     case 126720:
                         {
                             // Wind Information
@@ -117,9 +105,8 @@ namespace SailMonitor.Services
                             break;
                         }
 
-
                     case 127245:
-                        {  // Rudder
+                        { // Rudder
                            // Field: position (signed) often at bytes 4..5 (per spec offset varies). We'll attempt bytes 4..5 signed 16 bit, resolution 0.0001 rad? but many docs say degrees * 0.1
                             if (data.Length < 6) return record;
                             //int posRaw = BytesToInt(data, 4, 2);
@@ -131,9 +118,8 @@ namespace SailMonitor.Services
                         }
 
                     case 127250:
-                        {  // Vessel Heading: usually 2 bytes heading (1e-4 rad)
+                        { // Vessel Heading: usually 2 bytes heading (1e-4 rad)
                             if (data.Length < 2) return record;
-
 
                             var a = BitConverter.ToUInt16(data, 1) * .01;
                             var b = BitConverter.ToUInt16(data, 2) * .01;
@@ -161,9 +147,8 @@ namespace SailMonitor.Services
                             break;
                         }
 
-
                     case 128259:
-                        {  // Speed: water referenced (0.01 m/s)
+                        { // Speed: water referenced (0.01 m/s)
                             if (data.Length < 4) return record;
                             // Field2: Speed water referenced at offset 1 (per many layouts) - but vendor variations exist
                             int speed_water_raw = BitConverter.ToUInt16(data, 1);
@@ -181,7 +166,7 @@ namespace SailMonitor.Services
                         }
 
                     case 128267:
-                        {  // Water depth
+                        { // Water depth
                             if (data.Length < 4) return record;
                             // Field 2 usually bytes 1..2 or 0..1 depending on device; try bytes 1..2 (transducer depth)
                             int depth_raw = BitConverter.ToUInt16(data, 1);
@@ -201,9 +186,8 @@ namespace SailMonitor.Services
                             break;
                         }
 
-
                     case 129025:
-                        {  // Position, Rapid Update (lat/lon - 1e-7 deg)
+                        { // Position, Rapid Update (lat/lon - 1e-7 deg)
                             if (data.Length < 8) return record;
                             int lat = BitConverter.ToInt32(data, 0);
                             int lon = BitConverter.ToInt32(data, 4);
@@ -216,7 +200,7 @@ namespace SailMonitor.Services
                         }
 
                     case 129029:
-                        {  // GNSS Position Data (fast-packet sometimes) - best-effort
+                        { // GNSS Position Data (fast-packet sometimes) - best-effort
                            // This PGN can contain time/date and higher precision. We'll attempt to parse some common single-frame layout:
                            // Many devices: byte0=SID, byte1..4 = Latitude? The layout varies; safer to try: check if data.Length >=8 and parse lat/lon as pairs.
                             if (data.Length >= 8)
@@ -233,11 +217,12 @@ namespace SailMonitor.Services
                                 // We may not have UTC time fields here; emit GLL and leave RMC to 126992+129029 combined (not implemented fully)
                                 // result = emitGLL(latDeg, lonDeg);
                             }
+
                             break;
                         }
 
                     case 129026:
-                        {  // COG & SOG Rapid Update
+                        { // COG & SOG Rapid Update
                             /*Field 1: Sequence ID identifies the sequence this data is associated with so that the data can be synchronized with other vessel data for this same sequence being sent in another PGN.
                    Field 2: COG Reference--this field is used to indicate the direction reference of the course over ground. True North reference = 0.
                    Field 3: Reserved (6 bits)
@@ -253,10 +238,11 @@ namespace SailMonitor.Services
                             double sog_mps = sog_raw * 0.01f;
                             double sog_kn = MetersPerSecondToKnots(sog_mps);
                             record.COG = cogDeg;
-                           // record.SOG = sog_raw * 0.01f * 3.28084;
+                            // record.SOG = sog_raw * 0.01f * 3.28084;
                             // result = emitVTG(cogDeg, sog_kn);
                             break;
                         }
+
                     case 129283:
                         {
                             if (data.Length < 6) return record;
@@ -265,6 +251,7 @@ namespace SailMonitor.Services
                             // result = emitXTE(xte, direction);
                             break;
                         }
+
                     case 129284:
                         {
                             // Fuel Management
@@ -288,7 +275,6 @@ namespace SailMonitor.Services
                             var c = BitConverter.ToUInt16(data, 3) * .01;
                             var d = BitConverter.ToUInt16(data, 4) * .01;
                             int headingRaw = BitConverter.ToUInt16(data, 1);  // Heading in 1/10th degrees
-
 
                             var A = RadiansToDegrees(a);
                             var B = RadiansToDegrees(b);
@@ -314,7 +300,7 @@ namespace SailMonitor.Services
                         }
 
                     case 130306:
-                        {  // Wind data (apparent angle + speed)
+                        { // Wind data (apparent angle + speed)
                            // Common layout (single frame): SID (1), Wind Speed (2 or 1), Wind Angle (2), Reference etc.
                             if (data.Length < 5) return record;
 
@@ -337,28 +323,28 @@ namespace SailMonitor.Services
                             // result = emitMWV(angleDeg, true, wind_mps);
                             break;
                         }
+
                     case 130310:
                         {
                             // Temperature
-                            if (data.Length < 3) return record;
+                            if (data.Length < 3)
+                            {
+                                return record;
+                            }
                             ushort rawWaterTemp = BitConverter.ToUInt16(data, 1);
-
 
                             double WaterTemperatureKelvin = rawWaterTemp * 0.01;
                             record.waterTemp = (WaterTemperatureKelvin - 273.15) * 9 / 5 + 32;
-                            //int tempRaw = (int)BytesToInt(data, 2, 2);  // Temperature in 1/100th Celsius
-                            //double temperature = tempRaw * 0.01f;              // Convert to Celsius
-
-                            // result = emitTEMP(temperature);
                             break;
                         }
 
                     case 130312:
                         {
-                            if (data.Length < 6) return record;
-                            //int rawTemp = BytesToInt(data, 4, 2);
-                            //double tempC = (rawTemp * 0.01) - 273.15;  // Kelvin to Celsius
-                            // result = emitTMP(tempC);
+                            if (data.Length < 6)
+                            {
+                                return record;
+                            }
+
                             break;
                         }
 
@@ -372,12 +358,6 @@ namespace SailMonitor.Services
                             var c = BitConverter.ToUInt16(data, 3) * .01;
                             var d = BitConverter.ToUInt16(data, 4) * .01;
                             var e = BitConverter.ToUInt16(data, 5) * .01;
-                            //int windSpeedRaw = BytesToInt(data, 3, 2);  // Wind speed in 1/10th m/s
-                            //int windAngleRaw = BytesToInt(data, 5, 2);  // Wind angle in 1/10th degrees
-                            //double windSpeed = windSpeedRaw * 0.1f;         // Convert to m/s
-                            //double windAngle = windAngleRaw * 0.1f;         // Convert to degrees
-
-                            // result = emitWNDSPD(windSpeed, windAngle);
                             break;
                         }
 
@@ -397,13 +377,11 @@ namespace SailMonitor.Services
             return record;
         }
 
-        
-
         public double RadiansToDegrees(double radians)
         {
             return radians * (180.0 / Math.PI);
         }
-        
+
         public double MetersPerSecondToKnots(double mps)
         {
             return mps * 1.94384;

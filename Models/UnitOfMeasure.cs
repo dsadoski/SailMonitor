@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SailMonitor.Models
+﻿namespace SailMonitor.Models
 {
-    class UnitOfMeasure
+    internal class UnitOfMeasure
     {
         public string Name;
         public string Internal;
         public string Selected;
         public List<Unit> UnitList;
 
-        public UnitOfMeasure() 
-        { 
+        public UnitOfMeasure()
+        {
         }
     }
 }

@@ -1,15 +1,9 @@
 ﻿using SailMonitor.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SailMonitor.Services
 {
-    public interface IContentViewHost 
+    public interface IContentViewHost
     {
-        
         void OnAppEvent(string eventName, Record record, List<FieldData> DataPoints);
 
         void OnReSize();

@@ -1,11 +1,4 @@
 ﻿using SailMonitor.Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SailMonitor.Services
 {
@@ -20,12 +13,12 @@ namespace SailMonitor.Services
         public string name2;
         public VerticalStackLayout verticalStackLayout;
         private Grid grid;
-        FieldData fieldDataDir;
-        FieldData fieldDataSpd;
-        string precision;
-        int column;
-        int row;
-        string description;
+        private FieldData fieldDataDir;
+        private FieldData fieldDataSpd;
+        private string precision;
+        private int column;
+        private int row;
+        private string description;
 
         public WindPointDisplay(string Name1, string Name2, Grid owner, Setup setup, int Row, int Column, string Precision, string Description)
         {
@@ -51,7 +44,6 @@ namespace SailMonitor.Services
             statsSpd = new Label();
             statsSpd.FontSize = 12;
 
-
             title.TextColor = setup.foreColor;
             fieldDir.TextColor = setup.foreColor;
             fieldSpd.TextColor = setup.foreColor;
@@ -63,23 +55,19 @@ namespace SailMonitor.Services
             verticalStackLayout.Add(statsDir);
             verticalStackLayout.Add(fieldSpd);
             verticalStackLayout.Add(statsSpd);
-            
-            
+
             grid.Children.Add(verticalStackLayout);
             grid.SetRow(verticalStackLayout, row);
             grid.SetColumn(verticalStackLayout, column);
-
         }
 
         public void OnAppEvent(string eventName, Record record, List<FieldData> DataPoints)
         {
             fieldDataDir = DataPoints.FirstOrDefault(d => d.name == name1);
-            fieldDir.Text = fieldDataDir.Current.ToString($"{precision}")+ "°";
+            fieldDir.Text = fieldDataDir.Current.ToString($"{precision}") + "°";
 
             fieldDataSpd = DataPoints.FirstOrDefault(d => d.name == name2);
             fieldSpd.Text = fieldDataSpd.Current.ToString($"{precision}");
-
-
         }
 
         public void Update(List<FieldData> DataPoints)
@@ -88,7 +76,7 @@ namespace SailMonitor.Services
             if (fieldDataDir != null)
             {
                 var current = fieldDataDir.Current;
-                
+
                 string txt = string.Empty;
                 if (name1 == "AWD")
                 {
@@ -97,7 +85,7 @@ namespace SailMonitor.Services
                     {
                         current = 360 - current;
                         fieldDir.TextColor = Colors.Red;
-                        txt = current.ToString($"{precision}") + "°"+ "P";
+                        txt = current.ToString($"{precision}") + "°" + "P";
                     }
                     else
                     {
@@ -107,11 +95,13 @@ namespace SailMonitor.Services
                 }
                 else
                 {
-                    txt= fieldDataDir.Current.ToString($"{precision}") + "°";
+                    txt = fieldDataDir.Current.ToString($"{precision}") + "°";
                 }
+
                 fieldDir.Text = txt;
                 statsDir.Text = fieldDataDir.Min.ToString($"{precision}") + " - " + fieldDataDir.Average.ToString($"{precision}") + " -" + fieldDataDir.Max.ToString($"{precision}");
             }
+
             fieldDataSpd = DataPoints.FirstOrDefault(d => d.name == name2);
             if (fieldDataSpd != null)
             {
@@ -126,8 +116,6 @@ namespace SailMonitor.Services
 
             double headerSize = baseSize * 0.012; // e.g., "Heading"
             double valueSize = baseSize * 0.072; // e.g., "123.45"
-
-
 
             title.FontSize = headerSize;
             fieldSpd.FontSize = valueSize;

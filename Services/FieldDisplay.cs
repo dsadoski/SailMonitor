@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui;
-using SailMonitor.Models;
+﻿using SailMonitor.Models;
 
 namespace SailMonitor.Services
 {
@@ -16,19 +10,19 @@ namespace SailMonitor.Services
         public string name;
         public VerticalStackLayout verticalStackLayout;
         private Grid grid;
-        FieldData fieldData;
-        string precision;
-        int column;
-        int row;
-        string description;
+        private FieldData fieldData;
+        private string precision;
+        private int column;
+        private int row;
+        private string description;
 
-        public FieldDisplay(string Name, Grid owner, Setup setup, int Row, int Column, string Precision, string description)
+        public FieldDisplay(string name, Grid owner, Setup setup, int row, int column, string precision, string description)
         {
-            column = Column;
-            row = Row;
-            name = Name;
-            precision = Precision;
-            fieldData = new FieldData(name);
+            this.column = column;
+            this.row = row;
+            this.name = name;
+            this.precision = precision;
+            fieldData = new FieldData(this.name);
             grid = owner;
             verticalStackLayout = new VerticalStackLayout();
             title = new Label();
@@ -39,7 +33,6 @@ namespace SailMonitor.Services
             stats = new Label();
             stats.FontSize = 12;
 
-
             title.TextColor = setup.foreColor;
             field.TextColor = setup.foreColor;
             stats.TextColor = setup.foreColor;
@@ -48,33 +41,27 @@ namespace SailMonitor.Services
             verticalStackLayout.Add(field);
             verticalStackLayout.Add(stats);
             grid.Children.Add(verticalStackLayout);
-            grid.SetRow(verticalStackLayout, row);
-            grid.SetColumn(verticalStackLayout, column);
+            grid.SetRow(verticalStackLayout, this.row);
+            grid.SetColumn(verticalStackLayout, this.column);
             this.description = description;
         }
 
-
-        public void Update(List<FieldData> DataPoints)
+        public void Update(List<FieldData> dataPoints)
         {
-            fieldData = DataPoints.FirstOrDefault(d => d.name == name);
+            fieldData = dataPoints.FirstOrDefault(d => d.name == name);
             if (fieldData != null)
             {
-                
                 field.Text = fieldData.Current.ToString($"{precision}");
                 stats.Text = fieldData.Min.ToString($"{precision}") + " - " + fieldData.Average.ToString($"{precision}") + " -" + fieldData.Max.ToString($"{precision}");
             }
-
-
         }
 
-        public void Resize(double Width, double Height)
+        public void Resize(double width, double height)
         {
-            double baseSize = Math.Min(Width, Height);
+            double baseSize = Math.Min(width, height);
 
             double headerSize = baseSize * 0.012; // e.g., "Heading"
             double valueSize = baseSize * 0.072; // e.g., "123.45"
-
-            
 
             title.FontSize = headerSize;
             stats.FontSize = valueSize;

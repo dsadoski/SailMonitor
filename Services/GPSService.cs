@@ -1,10 +1,4 @@
-﻿using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Devices.Sensors;
-
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Threading;
-
+﻿using System.Diagnostics;
 
 namespace SailMonitor.Services
 {
@@ -13,7 +7,6 @@ namespace SailMonitor.Services
         private CancellationTokenSource? _cts;
         private bool _isRunning;
         public event Action<Location>? OnLocationReceived;
-        
 
         public async Task Start()
         {
@@ -71,8 +64,6 @@ namespace SailMonitor.Services
         public void Stop()
         {
             _cts?.Cancel();
-
         }
-
     }
 }

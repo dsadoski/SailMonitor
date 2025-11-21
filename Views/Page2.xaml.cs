@@ -1,23 +1,16 @@
-﻿
-
-using Microsoft.Maui.Controls;
-using SailMonitor.Models;
+﻿using SailMonitor.Models;
 using SailMonitor.Services;
-
 
 namespace SailMonitor;
 
 public partial class Page2 : ContentView, IContentViewHost
 {
-
     private Record record = new Record();
-
 
     public CompassDrawable CompassDrawable { get; set; }
 
-    GraphicsView graphicsView;
-    List<DataPointDisplay> datapoints;
-
+    private GraphicsView graphicsView;
+    private List<DataPointDisplay> datapoints;
 
     public Page2(List<DataPointDisplay> dataPointdisplay)
     {
@@ -39,9 +32,6 @@ public partial class Page2 : ContentView, IContentViewHost
         MainGrid.HeightRequest = screenHeight;
         try
         {
-
-
-
             for (int i = 0; i < 4; i++)
             {
                 MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
@@ -56,7 +46,6 @@ public partial class Page2 : ContentView, IContentViewHost
 
             int rowcount = 0;
             int colcount = 0;
-
 
             foreach (var display in datapoints)
             {
@@ -112,8 +101,6 @@ public partial class Page2 : ContentView, IContentViewHost
                 cellGrid.Children.Add(display.bottomRight);
                 cellGrid.Children.Add(display.center);
 
-
-
                 MainGrid.Add(cellGrid, colcount, rowcount);
                 colcount++;
                 if (colcount >= 3)
@@ -138,28 +125,20 @@ public partial class Page2 : ContentView, IContentViewHost
             };
             comptGrid.Children.Add(graphicsView);
             MainGrid.Add(comptGrid, 0, rowcount++);
-
-
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error in Page2 constructor: {ex.Message}");
         }
-
     }
-
-
 
     private void UpdateUI()
     {
-
         var graphicsViews = MainGrid.Children.OfType<GraphicsView>().ToList();
         CompassDrawable.Heading = (float)record.headingMag;
         CompassDrawable.ApparentWind = (float)record.windAppDir;
         CompassDrawable.TrueWind = (float)record.windTrueDir;
         graphicsView.Invalidate();
-
     }
 
     public void Dispose()
@@ -172,17 +151,11 @@ public partial class Page2 : ContentView, IContentViewHost
     {
         record = data.Copy();
 
-
-
         foreach (var point in DataPoints)
         {
-
             /*display.UpdateUI();
             display.graphicsView.Invalidate();*/
-
         }
-
-
 
         UpdateUI();
     }
@@ -193,6 +166,5 @@ public partial class Page2 : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
-
     }
 }

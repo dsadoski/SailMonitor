@@ -1,24 +1,14 @@
-﻿
-
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Devices;
-using SailMonitor.Models;
+﻿using SailMonitor.Models;
 using SailMonitor.Services;
-
 
 namespace SailMonitor;
 
 public partial class SingleDataPoint : ContentView, IContentViewHost
 {
-
     private Record record = new Record();
-    
-    
-    
 
-    GraphicsView graphicsView;
-    DataPointDisplay dataPoint;
-
+    private GraphicsView graphicsView;
+    private DataPointDisplay dataPoint;
 
     public SingleDataPoint(DataPointDisplay dataPointdisplay)
     {
@@ -35,12 +25,8 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         double screenWidth = width / displayInfo.Density;
         double screenHeight = height / displayInfo.Density;
 
-        
-
         try
         {
-
-
             // Add a background GraphicsView (fills the whole cell)
             dataPoint.graphicsView = new GraphicsView
             {
@@ -51,38 +37,34 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
                 AnchorY = 0,
                 WidthRequest = screenWidth,
                 HeightRequest = screenHeight,
-                
             };
             MainLayout.Children.Add(dataPoint.graphicsView);
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error in Page2 constructor: {ex.Message}");
         }
-
     }
-
 
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
-        var point = DataPoints.Where(d  => d.name == dataPoint.name).FirstOrDefault();
+        var point = DataPoints.Where(d => d.name == dataPoint.name).FirstOrDefault();
 
         MainLayout.MaximumWidthRequest = DeviceDisplay.MainDisplayInfo.Width;
         MainLayout.MinimumHeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-        dataPoint.width = MainLayout.Width; 
+        dataPoint.width = MainLayout.Width;
         dataPoint.height = MainLayout.Height;
 
         dataPoint.fieldData = point;
         dataPoint.graphicsView.Invalidate();
     }
+
     public void OnReSize()
     {
     }
 
     public void OnSetupChanged(Setup settings)
     {
-
     }
 }

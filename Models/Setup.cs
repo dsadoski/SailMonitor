@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
-
-namespace SailMonitor.Models
+﻿namespace SailMonitor.Models
 {
-
     public class Setup
     {
         public int Port;
@@ -19,8 +11,6 @@ namespace SailMonitor.Models
         public Color foreColor;
         public Color backColor;
         public int saveFrequency;
-        
-
 
         public Setup()
         {
@@ -32,20 +22,19 @@ namespace SailMonitor.Models
             UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
             saveFrequency = Preferences.Get("saveFrequency", 15);
             SetColor();
-            
         }
 
         public void Save()
         {
             Preferences.Set("Port", Port);
             Preferences.Set("Night", Night);
-            
+
             Preferences.Set("KeepActive", KeepActive);
             Preferences.Set("UseGPSPOS", UseGPSPOS);
             Preferences.Set("UseGPSHEADING", UseGPSHEADING);
             Preferences.Set("UseGPSSOG", UseGPSSOG);
             Preferences.Set("saveFrequency", saveFrequency);
-            
+
             SetColor();
         }
 
@@ -62,6 +51,5 @@ namespace SailMonitor.Models
                 backColor = Colors.Black;
             }
         }
-       
     }
 }

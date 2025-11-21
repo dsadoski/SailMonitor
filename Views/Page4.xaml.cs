@@ -6,12 +6,10 @@ namespace SailMonitor;
 public partial class Page4 : ContentView, IContentViewHost
 {
     private Record record = new Record();
-    
 
     public Page4()
-	{
-		InitializeComponent();
-        
+    {
+        InitializeComponent();
     }
 
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
@@ -27,15 +25,12 @@ public partial class Page4 : ContentView, IContentViewHost
 
     public void UpdateUI()
     {
-        
-
         /*VoltageLabel.Text = $"{record.voltage:F2} V";
         WaterTempLabel.Text = $"{record.waterTemp:F2} °C";*/
     }
 
     public void onSubmit(object sender, EventArgs e)
     {
-       
     }
 
     public void OnReSize()
@@ -44,6 +39,5 @@ public partial class Page4 : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
-
     }
 }
