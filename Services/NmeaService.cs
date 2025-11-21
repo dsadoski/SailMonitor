@@ -457,12 +457,10 @@ namespace SailMonitor.Services
             return record.Copy();
         }
 
-        public Record NMEA_SPD(string[] stray, Record record)
-        {
+        public Record NMEA_SPD(string[] stray, Record record) =>
             // record.SOG = DoubleGet(stray[1]);
             // record.SOG = 5;
-            return record.Copy();
-        }
+            record.Copy();
 
         public Record NMEA_BAT(string[] stray, Record record)
         {

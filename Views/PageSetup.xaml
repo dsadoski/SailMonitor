@@ -13,6 +13,15 @@
             VerticalOptions="Start"
             MaximumWidthRequest="600"   
             >
+
+            <VerticalStackLayout.GestureRecognizers>
+
+                <SwipeGestureRecognizer Direction="Left"
+                             Swiped="OnSwipeLeft" />
+
+                <SwipeGestureRecognizer Direction="Right"
+                             Swiped="OnSwipeRight" />
+            </VerticalStackLayout.GestureRecognizers>
             <!-- full width on phones, limited on desktop -->
 
             <!-- Port -->

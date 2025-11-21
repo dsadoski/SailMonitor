@@ -6,5 +6,16 @@
     <VerticalStackLayout x:Name="MainLayout"
                 Padding="10"
                 HorizontalOptions="FillAndExpand"
-VerticalOptions="FillAndExpand" />
+VerticalOptions="FillAndExpand" >
+
+        <VerticalStackLayout.GestureRecognizers>
+
+            <SwipeGestureRecognizer Direction="Left"
+                 Swiped="OnSwipeLeft" />
+
+            <SwipeGestureRecognizer Direction="Right"
+                 Swiped="OnSwipeRight" />
+        </VerticalStackLayout.GestureRecognizers>
+
+    </VerticalStackLayout>
 </ContentView>

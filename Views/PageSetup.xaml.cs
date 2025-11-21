@@ -57,4 +57,16 @@ public partial class PageSetup : ContentView
         parentPage?.SetColorScheme(setup);
         parentPage?.SetColorsRecursively(this, setup);
     }
+
+    private void OnSwipeLeft(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.NextPage();
+    }
+
+    private void OnSwipeRight(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.PrevPage();
+    }
 }

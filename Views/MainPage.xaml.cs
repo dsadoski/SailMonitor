@@ -120,36 +120,30 @@
             DeviceDisplay.KeepScreenOn = false;
         }
 
-        private async Task InitializeAsync()
-        {
-            await _gpsService.Start();
-        }
+        private async Task InitializeAsync() => await _gpsService.Start();
 
-        private void HandleUdpMessage(Record n2krecord)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                try
-                {
-                    record = n2krecord.Copy();
-                    UpdateDataDisplayRecord("AWS", record.windAppSpeed);
-                    UpdateDataDisplayRecord("AWD", record.windAppDir);
-                    UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
-                    UpdateDataDisplayRecord("TWD", record.windTrueDir);
-                    UpdateDataDisplayRecord("DPT", record.depth);
-                    UpdateDataDisplayRecord("SOG", record.SOG);
-                    UpdateDataDisplayRecord("SOW", record.SOW);
-                    UpdateDataDisplayRecord("HDG", record.headingMag);
-                    UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+        private void HandleUdpMessage(Record n2krecord) => MainThread.BeginInvokeOnMainThread(() =>
+                                                                    {
+                                                                        try
+                                                                        {
+                                                                            record = n2krecord.Copy();
+                                                                            UpdateDataDisplayRecord("AWS", record.windAppSpeed);
+                                                                            UpdateDataDisplayRecord("AWD", record.windAppDir);
+                                                                            UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
+                                                                            UpdateDataDisplayRecord("TWD", record.windTrueDir);
+                                                                            UpdateDataDisplayRecord("DPT", record.depth);
+                                                                            UpdateDataDisplayRecord("SOG", record.SOG);
+                                                                            UpdateDataDisplayRecord("SOW", record.SOW);
+                                                                            UpdateDataDisplayRecord("HDG", record.headingMag);
+                                                                            UpdateDataDisplayRecord("WTC", record.windTrueCompass);
 
-                    RaiseEventToCurrentView("UDPUpdate", record);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
-                }
-            });
-        }
+                                                                            RaiseEventToCurrentView("UDPUpdate", record);
+                                                                        }
+                                                                        catch (Exception ex)
+                                                                        {
+                                                                            Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
+                                                                        }
+                                                                    });
 
         public void UpdateDataDisplayRecord(string name, double value)
         {
@@ -160,17 +154,14 @@
             }
         }
 
-        private void HandleGpsLocation(Location location)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                // record = _udpService.record.Copy();
-                _udpService.Record.location = new Location(location);
-                _udpService.HasLocation = true;
-            });
-        }
+        private void HandleGpsLocation(Location location) => MainThread.BeginInvokeOnMainThread(() =>
+                                                                      {
+                                                                          // record = _udpService.record.Copy();
+                                                                          _udpService.Record.location = new Location(location);
+                                                                          _udpService.HasLocation = true;
+                                                                      });
 
-        private void NextPage()
+        public void NextPage()
         {
             if (currentIndex < PageViews.Count - 1)
             {
@@ -180,7 +171,7 @@
             }
         }
 
-        private void PrevPage()
+        public void PrevPage()
         {
             if (currentIndex > 0)
             {
@@ -280,34 +271,8 @@
             }
         }
 
-        private void Content_PanUpdated(object sender, PanUpdatedEventArgs e)
-        {
-            switch (e.StatusType)
-            {
-                case GestureStatus.Started:
-                    _panStartX = e.TotalX;
-                    break;
+        private void OnSwipeLeft(object sender, SwipedEventArgs e) => NextPage();
 
-                case GestureStatus.Running:
-                    // Optional: you could move the content visually here for a "dragging" effect
-                    break;
-
-                case GestureStatus.Completed:
-                case GestureStatus.Canceled:
-                    double deltaX = e.TotalX - _panStartX;
-
-                    // Detect swipe thresholds
-                    if (deltaX < -50) // swipe left → next
-                    {
-                        NextPage();
-                    }
-                    else if (deltaX > 50) // swipe right → previous
-                    {
-                        PrevPage();
-                    }
-
-                    break;
-            }
-        }
+        private void OnSwipeRight(object sender, SwipedEventArgs e) => PrevPage();
     }
 }

@@ -32,9 +32,6 @@
             }
         }
 
-        public override string ToString()
-        {
-            return Raw;
-        }
+        public override string ToString() => Raw;
     }
 }

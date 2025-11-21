@@ -3,6 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.MainPage">
     <VerticalStackLayout x:Name="MainLayout" Padding="10" Spacing="10" HorizontalOptions="Center">
+        <VerticalStackLayout.GestureRecognizers>
+
+            <SwipeGestureRecognizer Direction="Left"
+                                    Swiped="OnSwipeLeft" />
+
+            <SwipeGestureRecognizer Direction="Right"
+                                    Swiped="OnSwipeRight" />
+        </VerticalStackLayout.GestureRecognizers>
         <!-- Navigation buttons -->
         <HorizontalStackLayout x:Name="ButtonHzStack" HorizontalOptions="Center" Spacing="20">
             <Button x:Name="PrevButton" Text="◀ Prev" Clicked="Prev_Clicked" />

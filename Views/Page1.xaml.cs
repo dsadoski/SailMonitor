@@ -244,4 +244,18 @@ public partial class Page1 : ContentView, IContentViewHost
     public void OnSetupChanged(Setup settings)
     {
     }
+
+    private void OnSwipeLeft(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.NextPage();
+    }
+
+    private void OnSwipeRight(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.PrevPage();
+
+
+    }
 }

@@ -64,9 +64,6 @@
             return new Location();
         }
 
-        public void Stop()
-        {
-            _cts?.Cancel();
-        }
+        public void Stop() => _cts?.Cancel();
     }
 }

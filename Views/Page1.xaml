@@ -7,6 +7,15 @@
     <!-- Master container -->
     <Grid x:Name="MainGrid">
 
+        <Grid.GestureRecognizers>
+
+            <SwipeGestureRecognizer Direction="Left"
+                                    Swiped="OnSwipeLeft" />
+
+            <SwipeGestureRecognizer Direction="Right"
+                                    Swiped="OnSwipeRight" />
+        </Grid.GestureRecognizers>
+
         <!-- Graphics area -->
        
 
