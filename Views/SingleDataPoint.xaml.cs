@@ -14,7 +14,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
     {
         InitializeComponent();
 
-        //this.BackgroundColor = Colors.White;
+        // this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
         dataPoint = dataPointdisplay;
 

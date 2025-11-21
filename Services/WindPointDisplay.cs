@@ -36,11 +36,10 @@
             title.FontSize = 16;
             fieldDir = new Label();
 
-            //fieldDir.FontSize = 36;
+            // fieldDir.FontSize = 36;
             fieldSpd = new Label();
 
-            //fieldSpd.FontSize = 36;
-
+            // fieldSpd.FontSize = 36;
             statsDir = new Label();
             statsDir.FontSize = 12;
             statsSpd = new Label();

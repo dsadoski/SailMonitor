@@ -16,7 +16,7 @@
 
         private double _panStartX;
 
-        //public ObservableCollection<ContentView> DisplayedPage { get; set; }
+        // public ObservableCollection<ContentView> DisplayedPage { get; set; }
         public List<ContentView> PageViews { get; set; }
         private int currentIndex = 1;
 
@@ -164,7 +164,7 @@
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                //record = _udpService.record.Copy();
+                // record = _udpService.record.Copy();
                 _udpService.Record.location = new Location(location);
                 _udpService.HasLocation = true;
             });

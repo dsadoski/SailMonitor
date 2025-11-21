@@ -20,7 +20,7 @@ public partial class Page4 : ContentView, IContentViewHost
         if (eventName == "RefreshData")
         {
             // handle event
-            //RefreshData((MyDataModel)data!);
+            // RefreshData((MyDataModel)data!);
         }
     }
 

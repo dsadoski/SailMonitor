@@ -30,7 +30,7 @@
                 canvas.SaveState();
                 canvas.FillColor = Colors.Transparent;
 
-                //SetFillColor(Colors.Transparent);
+                // SetFillColor(Colors.Transparent);
                 canvas.FillRectangle(dirtyRect);
                 canvas.RestoreState();
 
@@ -38,8 +38,7 @@
                 canvas.SaveState();
                 canvas.Translate(centerX, centerY);
 
-                //canvas.Rotate(RotationDegrees);
-
+                // canvas.Rotate(RotationDegrees);
                 canvas.StrokeColor = setup.foreColor;
                 canvas.StrokeSize = 2;
 
@@ -52,13 +51,15 @@
                 {
                     float rad = (deg - Heading) * (float)Math.PI / 180f;
                     float inner;
-                    if (degCount == 45)
+                    if (degCount == 45 || degCount == 0)
                     {
                         inner = radius * 0.85f;
+                        canvas.StrokeSize = 4;
                     }
                     else
                     {
                         inner = radius * 0.95f;
+                        canvas.StrokeSize = 1;
                     }
 
                     float outer = radius;
@@ -81,8 +82,7 @@
                     degCount += 5;
                 }
 
-                //Draw deg relative to boat
-
+                // Draw deg relative to boat
                 int displayDeg;
                 for (int deg = 0; deg < 360; deg += 30)
                 {
@@ -107,8 +107,6 @@
                     canvas.FontColor = setup.foreColor;
                     canvas.FontSize = radius * 0.08f;
                     canvas.DrawString($"{displayDeg}°", x1 * .8f, y1 * .8f, HorizontalAlignment.Center);
-
-                    //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
                 }
 
                 canvas.StrokeLineCap = LineCap.Round;
@@ -158,8 +156,7 @@
                 float startDeg = centerDegree - half;
                 float endDeg = centerDegree + half;
 
-                //radius = radius * 1.1f;
-
+                // radius = radius * 1.1f;
                 float startRad = startDeg * (float)Math.PI / 180f;
                 float endRad = endDeg * (float)Math.PI / 180f;
                 float midRad = centerDegree * (float)Math.PI / 180f;
@@ -180,8 +177,7 @@
 
                 // AddArc draws an elliptical arc from pStart to pEnd with radii rx,ry.
                 // The 'clockwise' boolean selects the short/long arc direction.
-                //path.AddArc(pStart, pEnd, startDeg, endDeg, true);
-
+                // path.AddArc(pStart, pEnd, startDeg, endDeg, true);
                 path.Close();
 
                 canvas.FillPath(path);

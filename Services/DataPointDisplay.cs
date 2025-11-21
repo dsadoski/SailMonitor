@@ -104,7 +104,7 @@ public class DataPointDisplay : IDrawable
                 return;
             }
 
-            //canvas.FillColor = Colors.White;
+            // canvas.FillColor = Colors.White;
             canvas.FillColor = new Color(0, 0, 0, 0.3f);
 
             float MaxY = (float)FieldData.Max * 1.1f;
@@ -156,7 +156,7 @@ public class DataPointDisplay : IDrawable
 
             float MinY = (float)FieldData.Min * 0.9f;
 
-            //float rangeY = MaxY - MinY;
+
             float yMult = (float)(position.Bottom - position.Top) / MaxY;
 
             canvas.StrokeColor = Colors.DarkGray;

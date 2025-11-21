@@ -25,8 +25,7 @@ public partial class Page1 : ContentView, IContentViewHost
         var setup = new Setup();
         compassGraphic = new GraphicsView();
 
-        //this.BackgroundColor = Colors.White;
-
+        // this.BackgroundColor = Colors.White;
         SizeChanged += Page1_SizeChanged;
         CompassDrawable = new CompassDrawable();
         compassGraphic.Drawable = CompassDrawable;
@@ -120,12 +119,11 @@ public partial class Page1 : ContentView, IContentViewHost
     }
 
     // Optional: update wedges dynamically
-
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
 
-        //OnReSize();
+        // OnReSize();
         UpdateUI();
         foreach (var field in fieldDisplays)
         {

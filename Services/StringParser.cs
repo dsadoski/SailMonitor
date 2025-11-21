@@ -10,8 +10,8 @@
         {
             int i;
             string tmp = string.Empty;
-            int CNT = 0;
-            string[] ARY;
+            int count = 0;
+            string[] array;
 
             if (txt.Length == 1 && txt[0] == ' ')
             {
@@ -23,7 +23,7 @@
                 if (txt[i] == '~')
                 {
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -33,20 +33,20 @@
 
             if (tmp.Length > 0)
             {
-                CNT++;
+                count++;
             }
 
-            ARY = new string[CNT];
+            array = new string[count];
             tmp = string.Empty;
-            CNT = 0;
+            count = 0;
 
             for (i = 0; i < txt.Length; i++)
             {
                 if (txt[i] == '~')
                 {
-                    ARY[CNT] = tmp;
+                    array[count] = tmp;
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -54,20 +54,20 @@
                 }
             }
 
-            if (tmp.Length > 0 && CNT < ARY.Length)
+            if (tmp.Length > 0 && count < array.Length)
             {
-                ARY[CNT] = tmp;
+                array[count] = tmp;
             }
 
-            return ARY;
+            return array;
         }
 
         public string[] CommaListToString(string txt)
         {
             int i;
             string tmp = string.Empty;
-            int CNT = 0;
-            string[] ARY;
+            int count = 0;
+            string[] array;
 
             if (txt.Length == 1 && txt[0] == ' ')
             {
@@ -79,7 +79,7 @@
                 if (txt[i] == ',')
                 {
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -89,20 +89,20 @@
 
             if (tmp.Length > 0)
             {
-                CNT++;
+                count++;
             }
 
-            ARY = new string[CNT];
+            array = new string[count];
             tmp = string.Empty;
-            CNT = 0;
+            count = 0;
 
             for (i = 0; i < txt.Length; i++)
             {
                 if (txt[i] == ',')
                 {
-                    ARY[CNT] = tmp;
+                    array[count] = tmp;
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -110,19 +110,19 @@
                 }
             }
 
-            if (tmp.Length > 0 && CNT < ARY.Length)
+            if (tmp.Length > 0 && count < array.Length)
             {
-                ARY[CNT] = tmp;
+                array[count] = tmp;
             }
 
-            return ARY;
+            return array;
         }
 
         public List<string> CommaListToStringList(string txt)
         {
             int i;
             string tmp = string.Empty;
-            int CNT = 0;
+            int count = 0;
 
             List<string> result = new List<string>();
 
@@ -136,7 +136,7 @@
                 if (txt[i] == ',')
                 {
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -146,11 +146,11 @@
 
             if (tmp.Length > 0)
             {
-                CNT++;
+                count++;
             }
 
             tmp = string.Empty;
-            CNT = 0;
+            count = 0;
 
             for (i = 0; i < txt.Length; i++)
             {
@@ -158,7 +158,7 @@
                 {
                     result.Add(tmp);
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -178,8 +178,8 @@
         {
             int i;
             string tmp = string.Empty;
-            int CNT = 0;
-            double[] ARY;
+            int count = 0;
+            double[] array;
 
             if (txt.Length == 1 && txt[0] == ' ')
             {
@@ -191,7 +191,7 @@
                 if (txt[i] == '~')
                 {
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -201,20 +201,20 @@
 
             if (tmp.Length > 0)
             {
-                CNT++;
+                count++;
             }
 
-            ARY = new double[CNT];
+            array = new double[count];
             tmp = string.Empty;
-            CNT = 0;
+            count = 0;
 
             for (i = 0; i < txt.Length; i++)
             {
                 if (txt[i] == '~')
                 {
-                    ARY[CNT] = double.Parse(tmp);
+                    array[count] = double.Parse(tmp);
                     tmp = string.Empty;
-                    CNT++;
+                    count++;
                 }
                 else
                 {
@@ -222,14 +222,14 @@
                 }
             }
 
-            if (tmp.Length > 0 && CNT < ARY.Length)
+            if (tmp.Length > 0 && count < array.Length)
             {
-                ARY[CNT] = double.Parse(tmp);
+                array[count] = double.Parse(tmp);
                 tmp = string.Empty;
-                CNT++;
+                count++;
             }
 
-            return ARY;
+            return array;
         }
 
         public int[] TildaListToInts(string txt)
@@ -296,7 +296,7 @@
             int i;
             string tmp = string.Empty;
             int count = 0;
-            long[] ARY;
+            long[] array;
 
             if (txt.Length == 1 && txt[0] == ' ')
             {
@@ -321,7 +321,7 @@
                 count++;
             }
 
-            ARY = new long[count];
+            array = new long[count];
             tmp = string.Empty;
             count = 0;
 
@@ -329,7 +329,7 @@
             {
                 if (txt[i] == '~')
                 {
-                    ARY[count] = long.Parse(tmp);
+                    array[count] = long.Parse(tmp);
                     tmp = string.Empty;
                     count++;
                 }
@@ -339,14 +339,14 @@
                 }
             }
 
-            if (tmp.Length > 0 && count < ARY.Length)
+            if (tmp.Length > 0 && count < array.Length)
             {
-                ARY[count] = long.Parse(tmp);
+                array[count] = long.Parse(tmp);
                 tmp = string.Empty;
                 count++;
             }
 
-            return ARY;
+            return array;
         }
     }
 }

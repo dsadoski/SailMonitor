@@ -127,7 +127,6 @@ namespace SailMonitor.Services
                 TimeSpan timeSpan = new TimeSpan(Record.location.Timestamp.Ticks - Record.gpsTicks);
 
                 // can we calc COG/SOG from  2 points?
-
                 if (Math.Abs(timeSpan.TotalSeconds) > setup.saveFrequency)
                 {
                     double distance = nmeaService.CalcDistanceNM(Record); // in nautical miles

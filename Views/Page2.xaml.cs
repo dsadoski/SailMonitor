@@ -17,7 +17,7 @@ public partial class Page2 : ContentView, IContentViewHost
         InitializeComponent();
         datapoints = dataPointdisplay;
 
-        //this.BackgroundColor = Colors.White;
+        // this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
 
         // width & height are in raw pixels
@@ -44,7 +44,6 @@ public partial class Page2 : ContentView, IContentViewHost
             }
 
             // Redraw when needed
-
             int rowcount = 0;
             int colcount = 0;
 
