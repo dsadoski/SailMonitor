@@ -1,13 +1,11 @@
 ﻿
-
-using SailMonitor.Models;
-
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-
 namespace SailMonitor.Services
 {
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
+    using SailMonitor.Models;
+
     public class UdpListenerService
     {
         private readonly int port;
@@ -51,7 +49,9 @@ namespace SailMonitor.Services
                     udpClient?.Dispose();
                     udpClient = null;
                 }
-                catch { }
+                catch
+                {
+                }
             }
 
             try
@@ -93,8 +93,7 @@ namespace SailMonitor.Services
                     {
                         var result = await udpClient.ReceiveAsync();
                         var message = Encoding.UTF8.GetString(result.Buffer);
-                        /*NMEA2000 nMEA2000Message = new NMEA2000(message);
-                        var record = n2KService.N2KParse(nMEA2000Message.PGN, nMEA2000Message.byteArray);*/
+
                         Record = nmeaService.ParseSentence(message, Record);
                         if (HasLocation == true)
                         {
@@ -126,6 +125,7 @@ namespace SailMonitor.Services
             {
                 // can we calc COG/SOG from  2 points?
                 TimeSpan timeSpan = new TimeSpan(Record.location.Timestamp.Ticks - Record.gpsTicks);
+
                 // can we calc COG/SOG from  2 points?
 
                 if (Math.Abs(timeSpan.TotalSeconds) > setup.saveFrequency)

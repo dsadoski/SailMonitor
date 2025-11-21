@@ -16,6 +16,7 @@ public partial class Page2 : ContentView, IContentViewHost
     {
         InitializeComponent();
         datapoints = dataPointdisplay;
+
         //this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
 
@@ -57,7 +58,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 };
 
                 // Add a background GraphicsView (fills the whole cell)
-                display.graphicsView = new GraphicsView
+                display.GraphicsView = new GraphicsView
                 {
                     Drawable = display,
                     HorizontalOptions = LayoutOptions.Fill,
@@ -65,7 +66,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 };
 
                 // Add labels (foreground content)
-                display.topLeft = new Label
+                display.TopLeft = new Label
                 {
                     Text = "Top Left",
                     HorizontalOptions = LayoutOptions.Start,
@@ -74,7 +75,7 @@ public partial class Page2 : ContentView, IContentViewHost
                     Margin = new Thickness(6)
                 };
 
-                display.bottomLeft = new Label
+                display.BottomLeft = new Label
                 {
                     Text = "Bottom Left",
                     HorizontalOptions = LayoutOptions.Start,
@@ -83,7 +84,7 @@ public partial class Page2 : ContentView, IContentViewHost
                     Margin = new Thickness(6)
                 };
 
-                display.bottomRight = new Label
+                display.BottomRight = new Label
                 {
                     Text = "Bottom Right",
                     HorizontalOptions = LayoutOptions.End,
@@ -92,14 +93,14 @@ public partial class Page2 : ContentView, IContentViewHost
                     Margin = new Thickness(6)
                 };
 
-                display.center = new Label { Text = "Center", HorizontalOptions = LayoutOptions.Center, FontSize = 36, VerticalOptions = LayoutOptions.Center };
+                display.Center = new Label { Text = "Center", HorizontalOptions = LayoutOptions.Center, FontSize = 36, VerticalOptions = LayoutOptions.Center };
 
                 // Add elements — GraphicsView first (so it's behind)
-                cellGrid.Children.Add(display.graphicsView);
-                cellGrid.Children.Add(display.topLeft);
-                cellGrid.Children.Add(display.bottomLeft);
-                cellGrid.Children.Add(display.bottomRight);
-                cellGrid.Children.Add(display.center);
+                cellGrid.Children.Add(display.GraphicsView);
+                cellGrid.Children.Add(display.TopLeft);
+                cellGrid.Children.Add(display.BottomLeft);
+                cellGrid.Children.Add(display.BottomRight);
+                cellGrid.Children.Add(display.Center);
 
                 MainGrid.Add(cellGrid, colcount, rowcount);
                 colcount++;

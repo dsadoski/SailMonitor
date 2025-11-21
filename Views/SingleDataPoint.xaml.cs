@@ -13,6 +13,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
     public SingleDataPoint(DataPointDisplay dataPointdisplay)
     {
         InitializeComponent();
+
         //this.BackgroundColor = Colors.White;
         var displayInfo = DeviceDisplay.MainDisplayInfo;
         dataPoint = dataPointdisplay;
@@ -28,7 +29,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         try
         {
             // Add a background GraphicsView (fills the whole cell)
-            dataPoint.graphicsView = new GraphicsView
+            dataPoint.GraphicsView = new GraphicsView
             {
                 Drawable = dataPoint,
                 HorizontalOptions = LayoutOptions.Fill,
@@ -38,7 +39,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
                 WidthRequest = screenWidth,
                 HeightRequest = screenHeight,
             };
-            MainLayout.Children.Add(dataPoint.graphicsView);
+            MainLayout.Children.Add(dataPoint.GraphicsView);
         }
         catch (Exception ex)
         {
@@ -49,15 +50,15 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
-        var point = DataPoints.Where(d => d.name == dataPoint.name).FirstOrDefault();
+        var point = DataPoints.Where(d => d.name == dataPoint.Name).FirstOrDefault();
 
         MainLayout.MaximumWidthRequest = DeviceDisplay.MainDisplayInfo.Width;
         MainLayout.MinimumHeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-        dataPoint.width = MainLayout.Width;
-        dataPoint.height = MainLayout.Height;
+        dataPoint.Width = MainLayout.Width;
+        dataPoint.Height = MainLayout.Height;
 
-        dataPoint.fieldData = point;
-        dataPoint.graphicsView.Invalidate();
+        dataPoint.FieldData = point;
+        dataPoint.GraphicsView.Invalidate();
     }
 
     public void OnReSize()

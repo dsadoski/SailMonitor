@@ -1,5 +1,6 @@
 
 using SailMonitor.Models;
+
 namespace SailMonitor;
 
 public partial class PageSetup : ContentView
@@ -41,7 +42,10 @@ public partial class PageSetup : ContentView
     {
         Element? parent = this;
         while (parent != null && parent is not MainPage)
+        {
             parent = parent.Parent;
+        }
+
         return parent as MainPage;
     }
 

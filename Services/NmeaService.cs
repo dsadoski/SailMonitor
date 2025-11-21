@@ -1,18 +1,20 @@
 ﻿
-using SailMonitor.Models;
-
 namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class NmeaService
     {
         private Setup _setup;
         public Boolean CalcWind;
+
         //public Record record;
 
         public NmeaService(Setup s)
         {
             _setup = s;
             CalcWind = false;
+
             //record = new Record();
         }
 
@@ -133,8 +135,6 @@ namespace SailMonitor.Services
 
             int i;
 
-            ////TV1.append(string.valueOf(stray.Length));
-            //for(i=0;i<stray.Length;i++)//TV1.append(stray[i]+"\n");
             for (i = 1; i < stray.Length - 1; i++)
             {
                 if (stray[i + 1] == "f")
@@ -211,6 +211,7 @@ namespace SailMonitor.Services
             if (_setup.UseGPSSOG == false)
             {
                 record.windTrueDir = DoubleGet(stray[1]);
+
                 //D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
                 record.windTrueSpeed = DoubleGet(stray[5]);
             }
@@ -251,6 +252,7 @@ namespace SailMonitor.Services
             record.windAppDir = DoubleGet(stray[1]);
 
             record.windAppSpeed = DoubleGet(stray[3]);
+
             // sending radians, so testing
             double T = DoubleGet(stray[6]);
 
@@ -280,6 +282,7 @@ namespace SailMonitor.Services
 
             //D.Speed.D.Clear();
             record.SOW = DoubleGet(stray[5]);
+
             //record.headingMag = DoubleGet(stray[3]);
             CalcWind = true;
             return record.Copy();
@@ -472,6 +475,7 @@ namespace SailMonitor.Services
         public Record CalculateWind(Record record)
         {
             double deg2rad = Math.PI / 180.0;
+
             // convert AWA (from) to "to" direction for velocity vector
             double thetaA = (record.windAppDir + 180.0) * deg2rad;
             double Va_x = record.windAppSpeed * Math.Cos(thetaA); // forward
@@ -491,7 +495,7 @@ namespace SailMonitor.Services
             double Vt_x = Va_x + Vb_x;
             double Vt_y = Va_y + Vb_y;
 
-            double TWS = Math.Sqrt(Vt_x * Vt_x + Vt_y * Vt_y);
+            double TWS = Math.Sqrt((Vt_x * Vt_x) + (Vt_y * Vt_y));
 
             double thetaTto = Math.Atan2(Vt_y, Vt_x) * (180.0 / Math.PI); // -180..180
             if (thetaTto < 0)
@@ -525,8 +529,8 @@ namespace SailMonitor.Services
 
             // Haversine formula
             double a = Math.Pow(Math.Sin(dLat / 2), 2) +
-                       Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
-                       Math.Pow(Math.Sin(dLon / 2), 2);
+                       (Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+                       Math.Pow(Math.Sin(dLon / 2), 2));
 
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             double distanceNm = EarthRadiusNm * c;
@@ -534,8 +538,7 @@ namespace SailMonitor.Services
             return distanceNm;
         }
 
-        public double CalcBearing(
-        Record record)
+        public double CalcBearing(Record record)
         {
             // Convert degrees to radians
             double lat1Rad = DegreesToRadians(record.latitude);
@@ -548,8 +551,8 @@ namespace SailMonitor.Services
 
             // Compute bearing
             double x = Math.Sin(dLon) * Math.Cos(lat2Rad);
-            double y = Math.Cos(lat1Rad) * Math.Sin(lat2Rad) -
-                       Math.Sin(lat1Rad) * Math.Cos(lat2Rad) * Math.Cos(dLon);
+            double y = (Math.Cos(lat1Rad) * Math.Sin(lat2Rad)) -
+                       (Math.Sin(lat1Rad) * Math.Cos(lat2Rad) * Math.Cos(dLon));
 
             double initialBearingRad = Math.Atan2(x, y);
 
@@ -566,5 +569,3 @@ namespace SailMonitor.Services
             radians * 180.0 / Math.PI;
     }
 }
-
-

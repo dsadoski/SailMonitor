@@ -1,6 +1,7 @@
 
-using SailMonitor.Services;
 using SailMonitor.Models;
+using SailMonitor.Services;
+
 namespace SailMonitor;
 
 public partial class Page3 : ContentView, IContentViewHost

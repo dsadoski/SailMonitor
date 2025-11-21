@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using SailMonitor.Models;
-using SailMonitor.Services;
-
-namespace SailMonitor
+﻿namespace SailMonitor
 {
+    using Microsoft.Extensions.Logging;
+    using SailMonitor.Models;
+    using SailMonitor.Services;
+
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()

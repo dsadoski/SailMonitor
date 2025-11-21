@@ -1,7 +1,7 @@
-﻿using SailMonitor.Models;
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class WindPointDisplay
     {
         public Label title;
@@ -20,23 +20,25 @@ namespace SailMonitor.Services
         private int row;
         private string description;
 
-        public WindPointDisplay(string Name1, string Name2, Grid owner, Setup setup, int Row, int Column, string Precision, string Description)
+        public WindPointDisplay(string name1, string name2, Grid owner, Setup setup, int row, int column, string precision, string description)
         {
-            description = Description;
-            column = Column;
-            row = Row;
-            name1 = Name1;
-            name2 = Name2;
-            precision = Precision;
-            fieldDataDir = new FieldData(name1);
+            this.description = description;
+            this.column = column;
+            this.row = row;
+            this.name1 = name1;
+            this.name2 = name2;
+            this.precision = precision;
+            fieldDataDir = new FieldData(this.name1);
             grid = owner;
             verticalStackLayout = new VerticalStackLayout();
             title = new Label();
-            title.Text = description;
+            title.Text = this.description;
             title.FontSize = 16;
             fieldDir = new Label();
+
             //fieldDir.FontSize = 36;
             fieldSpd = new Label();
+
             //fieldSpd.FontSize = 36;
 
             statsDir = new Label();
@@ -57,22 +59,22 @@ namespace SailMonitor.Services
             verticalStackLayout.Add(statsSpd);
 
             grid.Children.Add(verticalStackLayout);
-            grid.SetRow(verticalStackLayout, row);
-            grid.SetColumn(verticalStackLayout, column);
+            grid.SetRow(verticalStackLayout, this.row);
+            grid.SetColumn(verticalStackLayout, this.column);
         }
 
-        public void OnAppEvent(string eventName, Record record, List<FieldData> DataPoints)
+        public void OnAppEvent(string eventName, Record record, List<FieldData> dataPoints)
         {
-            fieldDataDir = DataPoints.FirstOrDefault(d => d.name == name1);
+            fieldDataDir = dataPoints.FirstOrDefault(d => d.name == name1);
             fieldDir.Text = fieldDataDir.Current.ToString($"{precision}") + "°";
 
-            fieldDataSpd = DataPoints.FirstOrDefault(d => d.name == name2);
+            fieldDataSpd = dataPoints.FirstOrDefault(d => d.name == name2);
             fieldSpd.Text = fieldDataSpd.Current.ToString($"{precision}");
         }
 
-        public void Update(List<FieldData> DataPoints)
+        public void Update(List<FieldData> dataPoints)
         {
-            fieldDataDir = DataPoints.FirstOrDefault(d => d.name == name1);
+            fieldDataDir = dataPoints.FirstOrDefault(d => d.name == name1);
             if (fieldDataDir != null)
             {
                 var current = fieldDataDir.Current;
@@ -102,7 +104,7 @@ namespace SailMonitor.Services
                 statsDir.Text = fieldDataDir.Min.ToString($"{precision}") + " - " + fieldDataDir.Average.ToString($"{precision}") + " -" + fieldDataDir.Max.ToString($"{precision}");
             }
 
-            fieldDataSpd = DataPoints.FirstOrDefault(d => d.name == name2);
+            fieldDataSpd = dataPoints.FirstOrDefault(d => d.name == name2);
             if (fieldDataSpd != null)
             {
                 fieldSpd.Text = fieldDataSpd.Current.ToString($"{precision}");
@@ -110,9 +112,9 @@ namespace SailMonitor.Services
             }
         }
 
-        public void Resize(double Width, double Height)
+        public void Resize(double width, double height)
         {
-            double baseSize = Math.Min(Width, Height);
+            double baseSize = Math.Min(width, height);
 
             double headerSize = baseSize * 0.012; // e.g., "Heading"
             double valueSize = baseSize * 0.072; // e.g., "123.45"

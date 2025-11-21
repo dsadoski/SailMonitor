@@ -1,7 +1,7 @@
-﻿using SailMonitor.Models;
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class FieldDisplay
     {
         public Label title;

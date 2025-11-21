@@ -1,7 +1,7 @@
-﻿using SailMonitor.Models;
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using SailMonitor.Models;
+
     public class CompassDrawable : IDrawable
     {
         public float RotationDegrees { get; set; } = 0f; // For rotating compass if needed
@@ -13,7 +13,11 @@ namespace SailMonitor.Services
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            if (dirtyRect.Width < 1 || dirtyRect.Height < 1) return;
+            if (dirtyRect.Width < 1 || dirtyRect.Height < 1)
+            {
+                return;
+            }
+
             try
             {
                 setup = new Setup();
@@ -25,6 +29,7 @@ namespace SailMonitor.Services
                 // Clear background (transparent)
                 canvas.SaveState();
                 canvas.FillColor = Colors.Transparent;
+
                 //SetFillColor(Colors.Transparent);
                 canvas.FillRectangle(dirtyRect);
                 canvas.RestoreState();
@@ -32,6 +37,7 @@ namespace SailMonitor.Services
                 // Draw compass rose
                 canvas.SaveState();
                 canvas.Translate(centerX, centerY);
+
                 //canvas.Rotate(RotationDegrees);
 
                 canvas.StrokeColor = setup.foreColor;
@@ -80,7 +86,7 @@ namespace SailMonitor.Services
                 int displayDeg;
                 for (int deg = 0; deg < 360; deg += 30)
                 {
-                    float rad = (deg) * (float)Math.PI / 180f;
+                    float rad = deg * (float)Math.PI / 180f;
                     float inner = radius * 0.9f;
                     float outer = radius;
                     float x1 = inner * (float)Math.Sin(rad);
@@ -101,6 +107,7 @@ namespace SailMonitor.Services
                     canvas.FontColor = setup.foreColor;
                     canvas.FontSize = radius * 0.08f;
                     canvas.DrawString($"{displayDeg}°", x1 * .8f, y1 * .8f, HorizontalAlignment.Center);
+
                     //(, x1 * 1.1f, y1 * 1.1f, HorizontalAlignment.Center, VerticalAlignment.Center);
                 }
 
@@ -150,6 +157,7 @@ namespace SailMonitor.Services
                 float half = sweepDegrees / 2f;
                 float startDeg = centerDegree - half;
                 float endDeg = centerDegree + half;
+
                 //radius = radius * 1.1f;
 
                 float startRad = startDeg * (float)Math.PI / 180f;

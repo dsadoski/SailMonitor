@@ -124,6 +124,7 @@ public partial class Page1 : ContentView, IContentViewHost
     public void OnAppEvent(string eventName, Record data, List<FieldData> DataPoints)
     {
         record = data.Copy();
+
         //OnReSize();
         UpdateUI();
         foreach (var field in fieldDisplays)
@@ -246,5 +247,3 @@ public partial class Page1 : ContentView, IContentViewHost
     {
     }
 }
-
-

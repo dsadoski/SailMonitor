@@ -1,7 +1,7 @@
-﻿using SailMonitor.Services;
-
-namespace SailMonitor.Models
+﻿namespace SailMonitor.Models
 {
+    using SailMonitor.Services;
+
     public class NMEA2000
     {
         public long PGN { get; set; } = 0;

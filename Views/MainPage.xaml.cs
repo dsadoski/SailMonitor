@@ -1,9 +1,9 @@
-﻿using SailMonitor.Models;
-using SailMonitor.Services;
-using System.Diagnostics;
-
-namespace SailMonitor
+﻿namespace SailMonitor
 {
+    using System.Diagnostics;
+    using SailMonitor.Models;
+    using SailMonitor.Services;
+
     public partial class MainPage : ContentPage
     {
         public Record record = new Record();
@@ -66,7 +66,7 @@ namespace SailMonitor
                 foreach (var item in dataPointDisplays)
                 {
                     PageViews.Add(new SingleDataPoint(item));
-                    fieldData.Add(new FieldData(item.name));
+                    fieldData.Add(new FieldData(item.Name));
                 }
 
                 PageViews.Add(new Page3());
@@ -110,6 +110,14 @@ namespace SailMonitor
             {
                 SetColorsRecursively(view, setup);
             }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            // Restore normal sleep behavior when leaving
+            DeviceDisplay.KeepScreenOn = false;
         }
 
         private async Task InitializeAsync()
@@ -191,14 +199,6 @@ namespace SailMonitor
             {
                 activeView.OnAppEvent(eventName, data, fieldData);
             }
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            // Restore normal sleep behavior when leaving
-            DeviceDisplay.KeepScreenOn = false;
         }
 
         public void SetColorsRecursively(IView view, Setup setup)
@@ -311,4 +311,3 @@ namespace SailMonitor
         }
     }
 }
-

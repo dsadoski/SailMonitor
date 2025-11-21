@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace SailMonitor.Services
+﻿namespace SailMonitor.Services
 {
+    using System.Diagnostics;
+
     public class GPSService
     {
         private CancellationTokenSource? _cts;
@@ -11,7 +11,10 @@ namespace SailMonitor.Services
         public async Task Start()
         {
             if (_isRunning)
+            {
                 return;
+            }
+
             _isRunning = true;
             _cts = new CancellationTokenSource();
             try
