@@ -67,6 +67,12 @@
                        HorizontalOptions="FillAndExpand"/>
             </HorizontalStackLayout>
 
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Fill">
+                <Label Text="Wind Speed:" VerticalOptions="Center"/>
+                
+               
+            </HorizontalStackLayout>
+
             <!-- Buttons -->
             <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
                 <Button Text="Save" Clicked="Save"/>
