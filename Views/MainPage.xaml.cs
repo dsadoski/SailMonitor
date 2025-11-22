@@ -216,7 +216,7 @@
                     break;
 
                 case Entry entry:
-                    entry.BackgroundColor = setup.backColor;
+                    entry.BackgroundColor = Colors.DarkGray;
                     entry.TextColor = setup.foreColor;
                     break;
 
@@ -236,6 +236,11 @@
 
                 case Microsoft.Maui.Controls.Switch swtch:
                     swtch.BackgroundColor = setup.backColor;
+                    break;
+
+                    case CollectionView collectionView:
+                    collectionView.BackgroundColor = setup.backColor;
+                    
                     break;
             }
 

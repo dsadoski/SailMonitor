@@ -11,6 +11,7 @@ public partial class PageSetup : ContentView
     public PageSetup(Setup _setup)
     {
         InitializeComponent();
+        BindingContext = this;
         setup = _setup;
 
         Port.Text = setup.Port.ToString();
@@ -20,8 +21,29 @@ public partial class PageSetup : ContentView
         UseGPSHEADING.IsChecked = setup.UseGPSHEADING;
         UseGPSSOG.IsChecked = setup.UseGPSSOG;
         SaveFrequency.Text = setup.saveFrequency.ToString();
+        WindSpeedbutton.Text = setup.WindSpeed.SelectedUnit;
+        BindCollectionView(WindSpeedList,setup.WindSpeed);
+
+
+
+
     }
 
+    public void BindCollectionView(CollectionView collectionView, UnitOfMeasure unitOfMeasure)
+    { 
+        List<string> items = new List<string>();
+        foreach (var item in unitOfMeasure.UnitList)
+        {
+            items.Add(item.Name);
+        }
+        collectionView.ItemsSource = items;
+        var selected = items.FirstOrDefault(i => i == unitOfMeasure.SelectedUnit);
+        collectionView.SelectedItem = selected;
+        collectionView.IsVisible = false;
+
+
+    }
+    
     public void Save(object sender, EventArgs e)
     {
         int.TryParse(Port.Text, out setup.Port);
@@ -69,4 +91,30 @@ public partial class PageSetup : ContentView
         var mainPage = GetParentPage();
         mainPage?.PrevPage();
     }
+
+    public void WindSpeedbutton_Clicked(object sender, EventArgs e)
+    {
+        if(WindSpeedList.IsVisible)
+        {
+            WindSpeedList.IsVisible = false;
+        }
+        else
+        {
+            WindSpeedList.IsVisible = true;
+            WindSpeedbutton.IsVisible = false;
+        }
+    }
+
+    private void WindSpeedChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var selectedItem = e.CurrentSelection.FirstOrDefault() as string;
+        if (selectedItem != null)
+        {
+            
+            WindSpeedbutton.Text = selectedItem;
+            WindSpeedList.IsVisible = false;
+            WindSpeedbutton.IsVisible = true;
+        }
+    }
+
 }
