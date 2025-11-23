@@ -110,7 +110,7 @@ public partial class PageSetup : ContentView
         var selectedItem = e.CurrentSelection.FirstOrDefault() as string;
         if (selectedItem != null)
         {
-            
+            setup.WindSpeed.SelectedUnit = selectedItem;
             WindSpeedbutton.Text = selectedItem;
             WindSpeedList.IsVisible = false;
             WindSpeedbutton.IsVisible = true;
