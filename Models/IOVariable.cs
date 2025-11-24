@@ -8,12 +8,12 @@
         public string uom;
         public string internaluom;
 
-        public IOVariable()
+        public IOVariable(string Internaluom, string Uom)
         {
             displayValue = 0.0;
             internalValue = 0.0;
-            uom = string.Empty;
-            internaluom = string.Empty;
+            uom = Uom;
+            internaluom = Internaluom;
         }
 
 

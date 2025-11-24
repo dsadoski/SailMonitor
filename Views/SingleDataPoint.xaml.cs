@@ -67,6 +67,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
+        this.dataPoint.UpdateSetup(settings);
     }
 
     private MainPage? GetParentPage()

@@ -14,7 +14,7 @@ namespace SailMonitor.Services
 
         public event Action<Record>? OnMessageReceived;
 
-        private Setup setup;
+        public Setup setup;
         public Record Record;
 
         public bool HasLocation = false;

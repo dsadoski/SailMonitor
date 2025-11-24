@@ -3,9 +3,9 @@ namespace SailMonitor.Services
 {
     using SailMonitor.Models;
 
-    public class NmeaService
+    public class NmeaService 
     {
-        private Setup _setup;
+        public Setup _setup;
         public Boolean CalcWind;
 
         // public Record record;

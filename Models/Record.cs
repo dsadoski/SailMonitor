@@ -19,7 +19,7 @@
         public double windTrueSpeed;
         public double windTrueCompass;
         public double windAppDir;
-        public double windAppSpeed;
+        public IOVariable windAppSpeed;
         public double VPWSPD;
         public int POLARDATA;
         public double waterTemp;
@@ -48,7 +48,7 @@
             windTrueSpeed = 0;
             windTrueCompass = 0;
             windAppDir = 0;
-            windAppSpeed = 0;
+            windAppSpeed = new IOVariable("KPH", "Wind Speed");
             VPWSPD = 0;
             POLARDATA = 0;
             waterTemp = 0;

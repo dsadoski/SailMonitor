@@ -19,9 +19,10 @@
         private int column;
         private int row;
         private string description;
-
-        public WindPointDisplay(string name1, string name2, Grid owner, Setup setup, int row, int column, string precision, string description)
+        public Setup setup;
+        public WindPointDisplay(string name1, string name2, Grid owner, Setup _setup, int row, int column, string precision, string description)
         {
+            setup = _setup;
             this.description = description;
             this.column = column;
             this.row = row;
@@ -127,6 +128,7 @@
 
         public void OnSetupChanged(Setup settings)
         {
+            setup = settings;
             title.TextColor = settings.foreColor;
             fieldDir.TextColor = settings.foreColor;
         }

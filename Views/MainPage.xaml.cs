@@ -25,13 +25,13 @@
             try
             {
                 InitializeComponent();
-                /*if (OperatingSystem.IsAndroid())
+                if (OperatingSystem.IsAndroid())
                 {
                     if (MainLayout.Children.Contains(ButtonHzStack))
                     {
                         MainLayout.Children.Remove(ButtonHzStack);
                     }
-                }*/
+                }
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
                 SizeChanged += OnSizeChanged;
@@ -40,7 +40,7 @@
                 _gpsService = gpsService;
                 _nmeaService = nmeaService;
                 _setup = setup;
-                DeviceDisplay.KeepScreenOn = true;
+                DeviceDisplay.KeepScreenOn = setup.KeepActive;
                 fieldData = new List<FieldData>();
 
                 dataPointDisplays = new List<DataPointDisplay>();
@@ -58,9 +58,6 @@
                 {
                     new PageSetup(_setup),
                     new Page1(),
-                    /*new Page2(dataPointDisplays),
-                    new Page3(),
-                    new Page4(),*/
                 };
 
                 foreach (var item in dataPointDisplays)
@@ -94,6 +91,8 @@
             this.BackgroundColor = setup.backColor;
             PrevButton.BackgroundColor = Colors.DarkBlue;
             NextButton.BackgroundColor = Colors.DarkBlue;
+            _nmeaService._setup = setup;
+            _udpService.setup = setup;
 
             if (setup.Night)
             {
@@ -127,7 +126,7 @@
                                                                         try
                                                                         {
                                                                             record = n2krecord.Copy();
-                                                                            UpdateDataDisplayRecord("AWS", record.windAppSpeed);
+                                                                            UpdateDataDisplayRecord("AWS", record.windAppSpeed.displayValue);
                                                                             UpdateDataDisplayRecord("AWD", record.windAppDir);
                                                                             UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
                                                                             UpdateDataDisplayRecord("TWD", record.windTrueDir);
@@ -166,8 +165,17 @@
             if (currentIndex < PageViews.Count - 1)
             {
                 currentIndex++;
-                content.Content = PageViews[currentIndex];
-                SetColorsRecursively(content.Content, _setup);
+
+                var newView = PageViews[currentIndex];
+
+                content.Content = newView;
+
+                SetColorsRecursively(newView, _setup);
+                if (newView is IContentViewHost host)
+                {
+
+                    host.OnSetupChanged(_setup);
+                }
             }
         }
 
@@ -176,8 +184,16 @@
             if (currentIndex > 0)
             {
                 currentIndex--;
-                content.Content = PageViews[currentIndex];
-                SetColorsRecursively(content.Content, _setup);
+                var newView = PageViews[currentIndex];
+
+                content.Content = newView;
+
+                SetColorsRecursively(newView, _setup);
+                if (newView is IContentViewHost host)
+                {
+
+                    host.OnSetupChanged(_setup);
+                }
             }
         }
 
@@ -241,6 +257,11 @@
                     case CollectionView collectionView:
                     collectionView.BackgroundColor = setup.backColor;
                     
+                    break;
+
+                case Border border:
+                    border.BackgroundColor = setup.backColor;
+                    border.Stroke = setup.foreColor;
                     break;
             }
 

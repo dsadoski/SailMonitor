@@ -259,4 +259,9 @@ public class DataPointDisplay : IDrawable
         BottomRight.Text = string.Format($"{{0:{precision}}}", FieldData.Max);
         Center.Text = string.Format($"{{0:{precision}}}", FieldData.Current);
     }
+
+    public void UpdateSetup(Setup settings)
+    {
+        setup = settings;
+    }
 }

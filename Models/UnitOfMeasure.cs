@@ -1,4 +1,7 @@
-﻿namespace SailMonitor.Models
+﻿using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Media.Animation;
+
+namespace SailMonitor.Models
 {
     public class UnitOfMeasure
     {
@@ -17,6 +20,16 @@
             return value;
         }
 
+        public double ConvertToDisplay(string toUnit,  double value)
+        {
+            var from = UnitList.Find(u => u.Name == Internal);
+            var to = UnitList.Find(u => u.Name == toUnit);
+            if (from != null && to != null)
+            {
+                return value * (to.Conversion / from.Conversion);
+            }
+            return value;
+        }
         public UnitOfMeasure()
         {
         }
