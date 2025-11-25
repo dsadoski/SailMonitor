@@ -28,36 +28,37 @@
             Depth = new UnitOfMeasure
             {
                 Name = "Depth",
-                Internal = "Meters",
+                Internal = Units.Meters,
                 UnitList = new List<Unit>
                 {
-                    new Unit("Meters", 1.0),
-                    new Unit("Feet", 3.28084),
-                    new Unit("Fathoms", 0.546807)
+                    new Unit(Units.Meters, 1.0),
+                    new Unit(Units.Feet, 3.28084),
+                    new Unit(Units.Fathoms, 0.546807)
                 }
             };
-            Depth.SelectedUnit = Preferences.Get("DepthUnit", "Feet");
+            Depth.SelectedUnit = Preferences.Get("DepthUnit", Units.Feet);
             Speed = new UnitOfMeasure
             {
                 Name = "Speed",
-                Internal = "Knots",
+                Internal = Units.Knots,
                 UnitList = new List<Unit>
                 {
-                    new Unit("Knots", 1.0),
-                    new Unit("KPH", 1.852),
-                    new Unit("MPH", 1.15078)
+                    new Unit(Units.Knots, 1.0),
+                    new Unit(Units.KPH, 1.852),
+                    new Unit(Units.MPH, 1.15078),
                 }
             };
-            Speed.SelectedUnit = Preferences.Get("SpeedUnit", "Knots");
+            Speed.SelectedUnit = Preferences.Get("SpeedUnit", Units.Knots);
             WindSpeed = new UnitOfMeasure
             {
                 Name = "Wind Speed",
-                Internal = "Knots",
+                Internal = Units.Knots,
                 UnitList = new List<Unit>
                 {
-                    new Unit("Knots", 1.0),
-                    new Unit("KPH", 1.852),
-                    new Unit("MPH", 1.15078)
+                    new Unit(Units.Knots, 1.0),
+                    new Unit(Units.KPH, 0.539957),
+                    new Unit(Units.MPH, 0.868976),
+                    new Unit(Units.MPS, 1.94384)
                 }
             };
             WindSpeed.SelectedUnit = Preferences.Get("WindSpeedUnit", "Mph");

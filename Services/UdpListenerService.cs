@@ -39,6 +39,7 @@ namespace SailMonitor.Services
             }
 
             isInitialized = true;
+            Record = new Record();
 
             if (OperatingSystem.IsAndroid())
             {

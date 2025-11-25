@@ -16,8 +16,8 @@
 
         private double _panStartX;
 
-        // public ObservableCollection<ContentView> DisplayedPage { get; set; }
         public List<ContentView> PageViews { get; set; }
+
         private int currentIndex = 1;
 
         public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService, Setup setup)
@@ -25,13 +25,14 @@
             try
             {
                 InitializeComponent();
-                if (OperatingSystem.IsAndroid())
+                /*if (OperatingSystem.IsAndroid())
                 {
                     if (MainLayout.Children.Contains(ButtonHzStack))
                     {
                         MainLayout.Children.Remove(ButtonHzStack);
                     }
-                }
+                }*/
+
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
                 SizeChanged += OnSizeChanged;
@@ -44,15 +45,15 @@
                 fieldData = new List<FieldData>();
 
                 dataPointDisplays = new List<DataPointDisplay>();
-                dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed"));
-                dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir"));
-                dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed"));
-                dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir"));
-                dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth"));
-                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass"));
-                dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground"));
-                dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water"));
-                dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading"));
+                dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed", setup.WindSpeed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed", setup.WindSpeed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth", setup.Depth.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground", setup.Speed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water", setup.Speed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading", "°"));
 
                 PageViews = new List<ContentView>
                 {
@@ -63,11 +64,10 @@
                 foreach (var item in dataPointDisplays)
                 {
                     PageViews.Add(new SingleDataPoint(item));
-                    fieldData.Add(new FieldData(item.Name));
+                    fieldData.Add(new FieldData(item.Name, item.unitOfMeasure));
                 }
 
                 PageViews.Add(new Page3());
-                PageViews.Add(new Page4());
 
                 SetColorScheme(_setup);
 
@@ -128,7 +128,7 @@
                                                                             record = n2krecord.Copy();
                                                                             UpdateDataDisplayRecord("AWS", record.windAppSpeed.displayValue);
                                                                             UpdateDataDisplayRecord("AWD", record.windAppDir);
-                                                                            UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
+                                                                            UpdateDataDisplayRecord("TWS", record.windTrueSpeed.displayValue);
                                                                             UpdateDataDisplayRecord("TWD", record.windTrueDir);
                                                                             UpdateDataDisplayRecord("DPT", record.depth);
                                                                             UpdateDataDisplayRecord("SOG", record.SOG);
@@ -173,7 +173,6 @@
                 SetColorsRecursively(newView, _setup);
                 if (newView is IContentViewHost host)
                 {
-
                     host.OnSetupChanged(_setup);
                 }
             }
@@ -191,13 +190,13 @@
                 SetColorsRecursively(newView, _setup);
                 if (newView is IContentViewHost host)
                 {
-
                     host.OnSetupChanged(_setup);
                 }
             }
         }
 
         private void Next_Clicked(object sender, EventArgs e) => NextPage();
+
         private void Prev_Clicked(object sender, EventArgs e) => PrevPage();
 
         private void RaiseEventToCurrentView(string eventName, Record data)
@@ -219,6 +218,7 @@
                     break;
 
                 case Button btn:
+
                     btn.BackgroundColor = Colors.DarkBlue;
                     if (setup.Night)
                     {
@@ -254,16 +254,18 @@
                     swtch.BackgroundColor = setup.backColor;
                     break;
 
-                    case CollectionView collectionView:
+                case CollectionView collectionView:
                     collectionView.BackgroundColor = setup.backColor;
-                    
+
                     break;
 
                 case Border border:
                     border.BackgroundColor = setup.backColor;
                     border.Stroke = setup.foreColor;
                     break;
+                    
             }
+            
 
             // Now recurse if it’s a layout or content view
             if (view is Layout layout)
@@ -297,8 +299,14 @@
             }
         }
 
-        private void OnSwipeLeft(object sender, SwipedEventArgs e) => NextPage();
+        private void OnSwipeLeft(object sender, SwipedEventArgs e)
+        {
+            NextPage();
+        }
 
-        private void OnSwipeRight(object sender, SwipedEventArgs e) => PrevPage();
+        private void OnSwipeRight(object sender, SwipedEventArgs e)
+        {
+            PrevPage();
+        }
     }
 }

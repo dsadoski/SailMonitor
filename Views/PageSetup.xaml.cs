@@ -43,18 +43,16 @@ public partial class PageSetup : ContentView
         var selected = items.FirstOrDefault(i => i == unitOfMeasure.SelectedUnit);
         collectionView.SelectedItem = selected;
         collectionView.IsVisible = false;
-
-
     }
 
     public void SaveButtonClicked(object sender, EventArgs e)
     {
-       Save();
+        Save();
     }
 
     public void Save()
     {
-        if(loading) return;
+        if (loading) return;
         int.TryParse(Port.Text, out setup.Port);
         int.TryParse(SaveFrequency.Text, out setup.saveFrequency);
         setup.Night = Night.IsChecked;
@@ -148,7 +146,6 @@ public partial class PageSetup : ContentView
         }
     }
 
-
     public void Speedbutton_Clicked(object sender, EventArgs e)
     {
         if (SpeedList.IsVisible)
@@ -173,6 +170,7 @@ public partial class PageSetup : ContentView
             Speedbutton.IsVisible = true;
         }
     }
+
     private void OnItemLabelLoadedDepth(object sender, EventArgs e)
     {
         if (sender is Label lbl)
@@ -183,7 +181,7 @@ public partial class PageSetup : ContentView
                 lbl.BackgroundColor = setup.foreColor;
             }
             else
-            { 
+            {
                 lbl.TextColor = setup.foreColor;
                 lbl.BackgroundColor = setup.backColor;
             }

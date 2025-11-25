@@ -7,6 +7,7 @@
         public string name { get; set; } = string.Empty;
 
         public double Max { get; set; }
+
         public double Min { get; set; }
 
         public double Current;
@@ -15,11 +16,14 @@
 
         private Setup setup { get; set; }
 
-        public FieldData(string Name)
+        public string Unit;
+
+        public FieldData(string Name, string unit)
         {
             name = Name;
             DataPoints = new List<SingleDataPoint>();
             setup = new Setup();
+            Unit = unit;
         }
 
         public void AddDataPoint(double value)

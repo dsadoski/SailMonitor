@@ -11,7 +11,7 @@ public class DataPointDisplay : IDrawable
     public Label TopRight;
     public Label BottomRight;
     public Label Center;
-    public GraphicsView GraphicsView;
+    public GraphicsView graphicsView;
     public string Description;
     private Setup setup;
     public double Width;
@@ -21,13 +21,15 @@ public class DataPointDisplay : IDrawable
     private List<Microsoft.Maui.Graphics.Font> fonts;
     private ICanvas canvas;
     private RectF DirtyRect;
+    public string unitOfMeasure;
 
-    public DataPointDisplay(string Name, string Precision, string Description)
+    public DataPointDisplay(string Name, string Precision, string Description, string UnitofMeasure)
     {
         this.Name = Name;
         precision = Precision;
         this.Description = Description;
-        FieldData = new FieldData(Name);
+        unitOfMeasure = UnitofMeasure;
+        FieldData = new FieldData(Name, unitOfMeasure);
         fonts = new List<Microsoft.Maui.Graphics.Font>();
         setup = new Setup();
         fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansRegular"));
@@ -42,15 +44,6 @@ public class DataPointDisplay : IDrawable
         double height = element.Height;
         var window = element.GetVisualElementWindow();
         Rect rect = new Rect(window.X, window.Y, window.Width, window.Height);
-
-        /*Element parent = element.Parent;
-        while (parent is VisualElement parentView)
-        {
-            window = parentView.GetVisualElementWindow();
-            rect = new Rect(window.X, window.Y, window.Width, window.Height);
-            parent = parentView.Parent;
-        }*/
-
         if (rect.X < 0)
         {
             rect.X = 0;
@@ -155,7 +148,6 @@ public class DataPointDisplay : IDrawable
             }
 
             float MinY = (float)FieldData.Min * 0.9f;
-
 
             float yMult = (float)(position.Bottom - position.Top) / MaxY;
 

@@ -16,7 +16,7 @@
         public double COG;
         public double SOW;
         public double windTrueDir;
-        public double windTrueSpeed;
+        public IOVariable windTrueSpeed;
         public double windTrueCompass;
         public double windAppDir;
         public IOVariable windAppSpeed;
@@ -27,7 +27,7 @@
         public string ErrMessage;
         public Location location;
 
-        public void RecordNew()
+        public Record()
         {
             ErrMessage = string.Empty;
 
@@ -45,10 +45,10 @@
             COG = 0;
             SOW = 0;
             windTrueDir = 0;
-            windTrueSpeed = 0;
+            windTrueSpeed = new IOVariable(Units.Knots, "Wind Speed");
             windTrueCompass = 0;
             windAppDir = 0;
-            windAppSpeed = new IOVariable("KPH", "Wind Speed");
+            windAppSpeed = new IOVariable(Units.Knots, "Wind Speed");
             VPWSPD = 0;
             POLARDATA = 0;
             waterTemp = 0;
@@ -76,11 +76,12 @@
             P.windTrueSpeed = windTrueSpeed;
             P.windTrueCompass = windTrueCompass;
             P.windAppDir = windAppDir;
-            P.windAppSpeed = windAppSpeed;
+            P.windAppSpeed = windAppSpeed.Copy();
             P.VPWSPD = VPWSPD;
             P.ErrMessage = ErrMessage;
             P.waterTemp = waterTemp;
             P.voltage = voltage;
+
             if (location != null)
             {
                 P.location = new Location(location);

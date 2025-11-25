@@ -57,7 +57,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 };
 
                 // Add a background GraphicsView (fills the whole cell)
-                display.GraphicsView = new GraphicsView
+                display.graphicsView = new GraphicsView
                 {
                     Drawable = display,
                     HorizontalOptions = LayoutOptions.Fill,
@@ -95,7 +95,7 @@ public partial class Page2 : ContentView, IContentViewHost
                 display.Center = new Label { Text = "Center", HorizontalOptions = LayoutOptions.Center, FontSize = 36, VerticalOptions = LayoutOptions.Center };
 
                 // Add elements — GraphicsView first (so it's behind)
-                cellGrid.Children.Add(display.GraphicsView);
+                cellGrid.Children.Add(display.graphicsView);
                 cellGrid.Children.Add(display.TopLeft);
                 cellGrid.Children.Add(display.BottomLeft);
                 cellGrid.Children.Add(display.BottomRight);

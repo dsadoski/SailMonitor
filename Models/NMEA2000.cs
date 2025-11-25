@@ -5,6 +5,7 @@
     public class NMEA2000
     {
         public long PGN { get; set; } = 0;
+
         public string Raw { get; set; } = string.Empty;
 
         public List<string> Source { get; set; } = new List<string>();
@@ -12,6 +13,7 @@
         public List<string> Data { get; set; } = new List<string>();
 
         public byte[] byteArray { get; set; } = Array.Empty<byte>();
+
         public NMEA2000(string raw)
         {
             Raw = raw;

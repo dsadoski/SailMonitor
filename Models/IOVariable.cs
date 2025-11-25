@@ -2,7 +2,6 @@
 {
     public class IOVariable
     {
-
         public double displayValue;
         public double internalValue;
         public string uom;
@@ -16,6 +15,12 @@
             internaluom = Internaluom;
         }
 
-
+        public IOVariable Copy()
+        {
+            IOVariable copy = new IOVariable(this.internaluom, this.uom);
+            copy.displayValue = this.displayValue;
+            copy.internalValue = this.internalValue;
+            return copy;
+        }
     }
 }

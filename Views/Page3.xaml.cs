@@ -7,6 +7,7 @@ namespace SailMonitor;
 public partial class Page3 : ContentView, IContentViewHost
 {
     private Record record = new Record();
+
     public Page3()
     {
         InitializeComponent();

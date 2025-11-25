@@ -6,6 +6,7 @@
     {
         private CancellationTokenSource? _cts;
         private bool _isRunning;
+
         public event Action<Location>? OnLocationReceived;
 
         public async Task Start()

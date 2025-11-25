@@ -29,7 +29,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         try
         {
             // Add a background GraphicsView (fills the whole cell)
-            dataPoint.GraphicsView = new GraphicsView
+            dataPoint.graphicsView = new GraphicsView
             {
                 Drawable = dataPoint,
                 HorizontalOptions = LayoutOptions.Fill,
@@ -38,8 +38,10 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
                 AnchorY = 0,
                 WidthRequest = screenWidth,
                 HeightRequest = screenHeight,
+                
             };
-            MainLayout.Children.Add(dataPoint.GraphicsView);
+            
+            MainLayout.Children.Add(dataPoint.graphicsView);
         }
         catch (Exception ex)
         {
@@ -58,7 +60,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         dataPoint.Height = MainLayout.Height;
 
         dataPoint.FieldData = point;
-        dataPoint.GraphicsView.Invalidate();
+        dataPoint.graphicsView.Invalidate();
     }
 
     public void OnReSize()
