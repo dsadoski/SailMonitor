@@ -4,7 +4,7 @@
              x:Class="SailMonitor.MainPage">
     
     
-    <VerticalStackLayout x:Name="MainLayout" Padding="10" Spacing="10" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+    <VerticalStackLayout x:Name="MainLayout" Padding="10" Spacing="10" HorizontalOptions="Fill" VerticalOptions="FillAndExpand">
         <VerticalStackLayout.GestureRecognizers>
 
             <SwipeGestureRecognizer Direction="Left"
@@ -21,8 +21,8 @@
 
 
         <ContentView x:Name="content"
-             HorizontalOptions="FillAndExpand"
-             VerticalOptions="FillAndExpand" >
+             HorizontalOptions="Fill"
+             VerticalOptions="Fill" >
 
             <ContentView.GestureRecognizers>
                 <SwipeGestureRecognizer Direction="Left"

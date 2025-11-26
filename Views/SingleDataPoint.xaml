@@ -5,8 +5,8 @@
 
     <VerticalStackLayout x:Name="MainLayout"
                 Padding="10"
-                HorizontalOptions="FillAndExpand"
-VerticalOptions="FillAndExpand" >
+                HorizontalOptions="Fill"
+VerticalOptions="Fill" >
 
         <VerticalStackLayout.GestureRecognizers>
 

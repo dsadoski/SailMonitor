@@ -5,17 +5,21 @@
 
     <ScrollView Orientation="Vertical"
             VerticalScrollBarVisibility="Always">
-        <VerticalStackLayout>
+        
         <Grid
     ColumnSpacing="10"
     RowSpacing="16"
     HorizontalOptions="Center"
-    VerticalOptions="Start">
+            
+    VerticalOptions="Start"
+            
+           HeightRequest="2000">
 
             <Grid.ColumnDefinitions>
                 <!-- Left column: auto width -->
                 <ColumnDefinition Width="Auto" />
                 <!-- Right column: auto width unless it's a text entry -->
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -45,12 +49,13 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0"
+            <HorizontalStackLayout  Grid.Row="0" Grid.Column="0">
+                <Label 
            Text="Port:"
            HorizontalOptions="Start"
            VerticalOptions="Center" />
 
-                <HorizontalStackLayout  Grid.Row="0" Grid.Column="1">
+                
             <Entry 
            x:Name="Port"
            Keyboard="Numeric"
@@ -61,44 +66,53 @@
                 </HorizontalStackLayout>
 
                 <!-- Row 1: Night Mode -->
-            <Label Grid.Row="1" Grid.Column="0"
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
+
+                <Label 
            Text="Night Mode:"
            VerticalOptions="Center" />
 
-            <CheckBox Grid.Row="1" Grid.Column="1"
+                <CheckBox 
               x:Name="Night"
               CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
+            </HorizontalStackLayout>
 
-            <!-- Row 2: Keep Active -->
-            <Label Grid.Row="2" Grid.Column="0"
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                <Label 
            Text="Keep Active:"
            VerticalOptions="Center"/>
 
-            <CheckBox Grid.Row="2" Grid.Column="1"
+                <CheckBox
               x:Name="KeepActive"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
+            </HorizontalStackLayout>
 
             <!-- Row 3: Use GPS POS -->
-            <Label Grid.Row="3" Grid.Column="0"
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
+                <Label 
            Text="Use GPS POS:"
            VerticalOptions="Center"/>
 
-            <CheckBox Grid.Row="3" Grid.Column="1"
+                <CheckBox 
               x:Name="UseGPSPOS"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
+            </HorizontalStackLayout>
 
             <!-- Row 4: Use GPS HEADING -->
-            <Label Grid.Row="4" Grid.Column="0"
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+
+                <Label 
            Text="Use GPS HEADING:"
            VerticalOptions="Center"/>
 
-            <CheckBox Grid.Row="4" Grid.Column="1"
+                <CheckBox 
               x:Name="UseGPSHEADING"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
+            </HorizontalStackLayout>
 
             <!-- Row 5: Use GPS SOG -->
             <Label Grid.Row="5" Grid.Column="0"
@@ -227,6 +241,6 @@ Padding="0">
             HorizontalOptions="Center"
             Clicked="SaveButtonClicked"/>
         </Grid>
-        </VerticalStackLayout>
+        
     </ScrollView>
 </ContentView>
