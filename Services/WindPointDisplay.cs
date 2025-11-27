@@ -1,5 +1,6 @@
 ﻿namespace SailMonitor.Services
 {
+    using Microsoft.Maui.Controls;
     using SailMonitor.Models;
 
     public class WindPointDisplay
@@ -7,7 +8,7 @@
         public Label title;
         public Label fieldDir;
         public Label fieldSpd;
-        public Label statsDir;
+        public Label speedUofM;
         public Label statsSpd;
         public string name1;
         public string name2;
@@ -19,16 +20,20 @@
         private int column;
         private int row;
         private string description;
+        public Setup setup;
+        public string UofM;
 
-        public WindPointDisplay(string name1, string name2, Grid owner, Setup setup, int row, int column, string precision, string description)
+        public WindPointDisplay(string name1, string name2, Grid owner, Setup _setup, int row, int column, string precision, string description, string uofm)
         {
+            setup = _setup;
             this.description = description;
             this.column = column;
             this.row = row;
             this.name1 = name1;
             this.name2 = name2;
             this.precision = precision;
-            fieldDataDir = new FieldData(this.name1);
+            UofM = uofm;
+            fieldDataDir = new FieldData(this.name1, UofM);
             grid = owner;
             verticalStackLayout = new VerticalStackLayout();
             title = new Label();
@@ -40,21 +45,28 @@
             fieldSpd = new Label();
 
             // fieldSpd.FontSize = 36;
-            statsDir = new Label();
-            statsDir.FontSize = 12;
+            speedUofM = new Label();
+            speedUofM.FontSize = 12;
             statsSpd = new Label();
             statsSpd.FontSize = 12;
 
             title.TextColor = setup.foreColor;
             fieldDir.TextColor = setup.foreColor;
             fieldSpd.TextColor = setup.foreColor;
-            statsDir.TextColor = setup.foreColor;
+            fieldSpd.FontAttributes = FontAttributes.Bold;
+            fieldDir.FontAttributes = FontAttributes.Bold;
+            speedUofM.TextColor = setup.foreColor;
             statsSpd.TextColor = setup.foreColor;
 
             verticalStackLayout.Add(title);
             verticalStackLayout.Add(fieldDir);
-            verticalStackLayout.Add(statsDir);
-            verticalStackLayout.Add(fieldSpd);
+            speedUofM.VerticalOptions = LayoutOptions.End;
+            var horizontalStackLayout = new HorizontalStackLayout();
+            horizontalStackLayout.VerticalOptions = LayoutOptions.Fill;
+            horizontalStackLayout.Add(fieldSpd);
+            horizontalStackLayout.Add(speedUofM);
+            verticalStackLayout.Add(horizontalStackLayout);
+
             verticalStackLayout.Add(statsSpd);
 
             grid.Children.Add(verticalStackLayout);
@@ -79,6 +91,7 @@
                 var current = fieldDataDir.Current;
 
                 string txt = string.Empty;
+                title.Text = description + " " + fieldDataDir.Min.ToString($"{precision}") + " - " + fieldDataDir.Average.ToString($"{precision}") + " -" + fieldDataDir.Max.ToString($"{precision}");
                 if (name1 == "AWD")
                 {
                     txt = fieldDataDir.Current.ToString($"{precision}") + "°";
@@ -86,11 +99,13 @@
                     {
                         current = 360 - current;
                         fieldDir.TextColor = Colors.Red;
+                        fieldSpd.TextColor = Colors.Red;
                         txt = current.ToString($"{precision}") + "°" + "P";
                     }
                     else
                     {
                         fieldDir.TextColor = Colors.Green;
+                        fieldSpd.TextColor = Colors.Green;
                         txt = current.ToString($"{precision}") + "°" + "S";
                     }
                 }
@@ -100,7 +115,7 @@
                 }
 
                 fieldDir.Text = txt;
-                statsDir.Text = fieldDataDir.Min.ToString($"{precision}") + " - " + fieldDataDir.Average.ToString($"{precision}") + " -" + fieldDataDir.Max.ToString($"{precision}");
+                speedUofM.Text = UofM;
             }
 
             fieldDataSpd = dataPoints.FirstOrDefault(d => d.name == name2);
@@ -116,17 +131,20 @@
             double baseSize = Math.Min(width, height);
 
             double headerSize = baseSize * 0.012; // e.g., "Heading"
-            double valueSize = baseSize * 0.072; // e.g., "123.45"
+            double valueSize = baseSize * 0.120; // e.g., "123.45"
 
             title.FontSize = headerSize;
             fieldSpd.FontSize = valueSize;
             statsSpd.FontSize = headerSize;
             fieldDir.FontSize = valueSize;
-            statsDir.FontSize = headerSize;
+            speedUofM.FontSize = headerSize;
+            fieldDir.FontAttributes = FontAttributes.Bold;
+            fieldSpd.FontAttributes = FontAttributes.Bold;
         }
 
         public void OnSetupChanged(Setup settings)
         {
+            setup = settings;
             title.TextColor = settings.foreColor;
             fieldDir.TextColor = settings.foreColor;
         }

@@ -25,6 +25,7 @@ public partial class Page1 : ContentView, IContentViewHost
         var setup = new Setup();
         compassGraphic = new GraphicsView();
 
+
         // this.BackgroundColor = Colors.White;
         SizeChanged += Page1_SizeChanged;
         CompassDrawable = new CompassDrawable();
@@ -192,12 +193,12 @@ public partial class Page1 : ContentView, IContentViewHost
             MainGrid.SetColumn(compassGraphic, 0);
             MainGrid.SetRowSpan(compassGraphic, 4);
 
-            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 1, "F0", "Heading"));
-            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 2, "F1", "Depth"));
-            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 1, "F1", "Speed Ground"));
-            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 2, "F1", "Speed Water"));
-            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 1, "F0", "Apparent"));
-            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 2, "F0", "True"));
+            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 1, "F0", "Heading", "°"));
+            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 2, "F1", "Depth", setup.Depth.SelectedUnit));
+            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 1, "F1", "Speed Ground", setup.Speed.SelectedUnit));
+            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 2, "F1", "Speed Water", setup.Speed.SelectedUnit));
+            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 1, "F0", "Apparent", setup.WindSpeed.SelectedUnit));
+            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 2, "F0", "True", setup.WindSpeed.SelectedUnit));
         }
         else
         {
@@ -210,12 +211,12 @@ public partial class Page1 : ContentView, IContentViewHost
             MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1.25, GridUnitType.Star) });
             MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(5, GridUnitType.Star) });
 
-            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 0, "F0", "Heading"));
-            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 1, "F1", "Depth"));
-            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 0, "F1", "Speed Water"));
-            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 1, "F1", "Speed Ground"));
-            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 0, "F0", "Apparent"));
-            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 1, "F0", "True"));
+            fieldDisplays.Add(new FieldDisplay("HDG", MainGrid, setup, 0, 0, "F0", "Heading", "°"));
+            fieldDisplays.Add(new FieldDisplay("DPT", MainGrid, setup, 0, 1, "F1", "Depth", setup.Depth.SelectedUnit));
+            fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 1, 0, "F1", "Speed Water", setup.Speed.SelectedUnit));
+            fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 1, 1, "F1", "Speed Ground", setup.Speed.SelectedUnit));
+            windPointDisplays.Add(new WindPointDisplay("AWD", "AWS", MainGrid, setup, 2, 0, "F0", "Apparent", setup.WindSpeed.SelectedUnit));
+            windPointDisplays.Add(new WindPointDisplay("WTC", "TWS", MainGrid, setup, 2, 1, "F0", "True", setup.WindSpeed.SelectedUnit));
             MainGrid.Children.Add(compassGraphic);
             MainGrid.SetRow(compassGraphic, 3);
             MainGrid.SetColumn(compassGraphic, 0);
@@ -243,5 +244,18 @@ public partial class Page1 : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
+        
+    }
+
+    private void OnSwipeLeft(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.NextPage();
+    }
+
+    private void OnSwipeRight(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.PrevPage();
     }
 }

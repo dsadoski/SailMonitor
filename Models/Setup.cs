@@ -11,6 +11,9 @@
         public Color foreColor;
         public Color backColor;
         public int saveFrequency;
+        public UnitOfMeasure Depth;
+        public UnitOfMeasure Speed;
+        public UnitOfMeasure WindSpeed;
 
         public Setup()
         {
@@ -22,6 +25,43 @@
             UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
             saveFrequency = Preferences.Get("saveFrequency", 15);
             SetColor();
+            Depth = new UnitOfMeasure
+            {
+                Name = "Depth",
+                Internal = Units.Meters,
+                UnitList = new List<Unit>
+                {
+                    new Unit(Units.Meters, 1.0),
+                    new Unit(Units.Feet, 0.3048),
+                    new Unit(Units.Fathoms, 1.8288)
+                }
+            };
+            Depth.SelectedUnit = Preferences.Get("DepthUnit", Units.Feet);
+            Speed = new UnitOfMeasure
+            {
+                Name = "Speed",
+                Internal = Units.Knots,
+                UnitList = new List<Unit>
+                {
+                    new Unit(Units.Knots, 1.0),
+                    new Unit(Units.KPH, 1.852),
+                    new Unit(Units.MPH, 1.15078),
+                }
+            };
+            Speed.SelectedUnit = Preferences.Get("SpeedUnit", Units.Knots);
+            WindSpeed = new UnitOfMeasure
+            {
+                Name = "Wind Speed",
+                Internal = Units.Knots,
+                UnitList = new List<Unit>
+                {
+                    new Unit(Units.Knots, 1.0),
+                    new Unit(Units.KPH, 0.539957),
+                    new Unit(Units.MPH, 0.868976),
+                    new Unit(Units.MPS, 1.94384)
+                }
+            };
+            WindSpeed.SelectedUnit = Preferences.Get("WindSpeedUnit", "Mph");
         }
 
         public void Save()
@@ -34,6 +74,9 @@
             Preferences.Set("UseGPSHEADING", UseGPSHEADING);
             Preferences.Set("UseGPSSOG", UseGPSSOG);
             Preferences.Set("saveFrequency", saveFrequency);
+            Preferences.Set("DepthUnit", Depth.SelectedUnit);
+            Preferences.Set("SpeedUnit", Speed.SelectedUnit);
+            Preferences.Set("WindSpeedUnit", WindSpeed.SelectedUnit);
 
             SetColor();
         }

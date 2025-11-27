@@ -5,7 +5,7 @@ namespace SailMonitor.Services
 
     public class NmeaService
     {
-        private Setup _setup;
+        public Setup _setup;
         public Boolean CalcWind;
 
         // public Record record;
@@ -138,11 +138,11 @@ namespace SailMonitor.Services
             {
                 if (stray[i + 1] == "f")
                 {
-                    double T = DoubleGet(stray[i]);
+                    /*double T = DoubleGet(stray[i]);
                     if (T > 0)
                     {
                         record.depth = T;
-                    }
+                    }*/
                 }
             }
 
@@ -211,7 +211,24 @@ namespace SailMonitor.Services
                 record.windTrueDir = DoubleGet(stray[1]);
 
                 // D.WTRU.D.DIRMAG = DoubleGet(stray[3]);
-                record.windTrueSpeed = DoubleGet(stray[5]);
+                double T = DoubleGet(stray[5]);
+                char U = stray[6][0];
+                string UOM = Units.MPS; // default
+                switch (U)
+                {
+                    case 'K':
+                        UOM = Units.KPH;
+                        break;
+                    case 'N':
+                        UOM = Units.Knots;
+                        break;
+                    case 'S':
+                        UOM = Units.MPS;
+                        break;
+                }
+                record.windTrueSpeed.internalValue = _setup.WindSpeed.ConvertToInternal(UOM, T);
+
+                record.windTrueSpeed.displayValue = _setup.WindSpeed.ConvertToDisplay(record.windTrueSpeed.internalValue);
             }
 
             return record.Copy();
@@ -249,17 +266,29 @@ namespace SailMonitor.Services
 
             record.windAppDir = DoubleGet(stray[1]);
 
-            record.windAppSpeed = DoubleGet(stray[3]);
+            double T = DoubleGet(stray[3]);
+            char U = stray[4][0];
+            string UOM = Units.MPS; // default
+            switch (U)
+            {
+                case 'K':
+                    UOM = Units.KPH;
+                    break;
+                case 'N':
+                    UOM = Units.Knots;
+                    break;
+                case 'S':
+                    UOM = Units.MPS;
+                    break;
+            }
+
+            record.windAppSpeed.internalValue = _setup.WindSpeed.ConvertToInternal(UOM, T);
+            record.windAppSpeed.displayValue = _setup.WindSpeed.ConvertToDisplay(record.windAppSpeed.internalValue);
 
             // sending radians, so testing
-            double T = DoubleGet(stray[6]);
+            T = DoubleGet(stray[6]);
 
             record.windAppDir = T;
-
-            if (stray[4] == "M")
-            {
-                record.windAppSpeed = record.windAppSpeed * 1.94384; // m/s to knots
-            }
 
             CalcWind = true;
             return record.Copy();
@@ -444,8 +473,12 @@ namespace SailMonitor.Services
             double T = DoubleGet(stray[1]);
             if (T >= 0)
             {
-                record.depth = T;
-                record.depth = record.depth * 3.281;
+
+                record.depth.internalValue = _setup.Depth.ConvertToInternal(Units.Meters, T);
+
+                record.depth.displayValue = _setup.Depth.ConvertToDisplay(record.depth.internalValue);
+                /*record.depth = T;
+                record.depth = record.depth * 3.281;*/
             }
 
             return record.Copy();
@@ -457,12 +490,10 @@ namespace SailMonitor.Services
             return record.Copy();
         }
 
-        public Record NMEA_SPD(string[] stray, Record record)
-        {
+        public Record NMEA_SPD(string[] stray, Record record) =>
             // record.SOG = DoubleGet(stray[1]);
             // record.SOG = 5;
-            return record.Copy();
-        }
+            record.Copy();
 
         public Record NMEA_BAT(string[] stray, Record record)
         {
@@ -476,8 +507,8 @@ namespace SailMonitor.Services
 
             // convert AWA (from) to "to" direction for velocity vector
             double thetaA = (record.windAppDir + 180.0) * deg2rad;
-            double Va_x = record.windAppSpeed * Math.Cos(thetaA); // forward
-            double Va_y = record.windAppSpeed * Math.Sin(thetaA); // starboard
+            double Va_x = record.windAppSpeed.internalValue * Math.Cos(thetaA); // forward
+            double Va_y = record.windAppSpeed.internalValue * Math.Sin(thetaA); // starboard
             double Vb_x = 0;
             if (record.SOG != 0)
             {
@@ -503,7 +534,8 @@ namespace SailMonitor.Services
 
             double TWDFrom = (thetaTto + 180.0) % 360.0;
 
-            record.windTrueSpeed = TWS;
+            record.windTrueSpeed.internalValue = TWS;
+            record.windTrueSpeed.displayValue = _setup.WindSpeed.ConvertToDisplay(TWS);
             record.windTrueDir = TWDFrom;
             record.windTrueCompass = (record.headingMag + TWDFrom) % 360;
 

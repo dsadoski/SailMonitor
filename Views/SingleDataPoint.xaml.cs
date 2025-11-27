@@ -29,7 +29,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         try
         {
             // Add a background GraphicsView (fills the whole cell)
-            dataPoint.GraphicsView = new GraphicsView
+            dataPoint.graphicsView = new GraphicsView
             {
                 Drawable = dataPoint,
                 HorizontalOptions = LayoutOptions.Fill,
@@ -39,7 +39,30 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
                 WidthRequest = screenWidth,
                 HeightRequest = screenHeight,
             };
-            MainLayout.Children.Add(dataPoint.GraphicsView);
+
+            dataPoint.graphicsView.GestureRecognizers.Add(new SwipeGestureRecognizer
+            {
+                Direction = SwipeDirection.Left,
+                Command = new Command(() =>
+                {
+                    GetParentPage()?.NextPage();
+                })
+            });
+
+            // Swipe right
+            dataPoint.graphicsView.GestureRecognizers.Add(new SwipeGestureRecognizer
+            {
+                Direction = SwipeDirection.Right,
+                Command = new Command(() =>
+                {
+                    GetParentPage()?.PrevPage();
+                })
+            });
+
+
+
+
+            MainLayout.Children.Add(dataPoint.graphicsView);
         }
         catch (Exception ex)
         {
@@ -58,7 +81,7 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
         dataPoint.Height = MainLayout.Height;
 
         dataPoint.FieldData = point;
-        dataPoint.GraphicsView.Invalidate();
+        dataPoint.graphicsView.Invalidate();
     }
 
     public void OnReSize()
@@ -67,5 +90,29 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
+        this.dataPoint.UpdateSetup(settings);
+    }
+
+    private MainPage? GetParentPage()
+    {
+        Element? parent = this;
+        while (parent != null && parent is not MainPage)
+        {
+            parent = parent.Parent;
+        }
+
+        return parent as MainPage;
+    }
+
+    private void OnSwipeLeft(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.NextPage();
+    }
+
+    private void OnSwipeRight(object sender, SwipedEventArgs e)
+    {
+        var mainPage = GetParentPage();
+        mainPage?.PrevPage();
     }
 }

@@ -16,8 +16,8 @@
 
         private double _panStartX;
 
-        // public ObservableCollection<ContentView> DisplayedPage { get; set; }
         public List<ContentView> PageViews { get; set; }
+
         private int currentIndex = 1;
 
         public MainPage(UdpListenerService udpService, GPSService gpsService, NmeaService nmeaService, Setup setup)
@@ -25,13 +25,21 @@
             try
             {
                 InitializeComponent();
-                /*if (OperatingSystem.IsAndroid())
+                if (OperatingSystem.IsAndroid())
                 {
                     if (MainLayout.Children.Contains(ButtonHzStack))
                     {
                         MainLayout.Children.Remove(ButtonHzStack);
                     }
-                }*/
+                }
+
+                if (OperatingSystem.IsWindows())
+                {
+
+                }
+
+
+
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
                 SizeChanged += OnSizeChanged;
@@ -40,37 +48,33 @@
                 _gpsService = gpsService;
                 _nmeaService = nmeaService;
                 _setup = setup;
-                DeviceDisplay.KeepScreenOn = true;
+                DeviceDisplay.KeepScreenOn = setup.KeepActive;
                 fieldData = new List<FieldData>();
 
                 dataPointDisplays = new List<DataPointDisplay>();
-                dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed"));
-                dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir"));
-                dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed"));
-                dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir"));
-                dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth"));
-                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass"));
-                dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground"));
-                dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water"));
-                dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading"));
+                dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed", setup.WindSpeed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("TWS", "F1", "True Wind Speed", setup.WindSpeed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("TWD", "F1", "True Wind Dir", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("DPT", "F1", "Depth", setup.Depth.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("WTC", "F1", "Wind True Compass", string.Empty));
+                dataPointDisplays.Add(new DataPointDisplay("SOG", "F1", "Speed Over Ground", setup.Speed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("SOW", "F1", "Speed -> Water", setup.Speed.SelectedUnit));
+                dataPointDisplays.Add(new DataPointDisplay("HDG", "F1", "Heading", "°"));
 
                 PageViews = new List<ContentView>
                 {
                     new PageSetup(_setup),
                     new Page1(),
-                    /*new Page2(dataPointDisplays),
-                    new Page3(),
-                    new Page4(),*/
                 };
 
                 foreach (var item in dataPointDisplays)
                 {
                     PageViews.Add(new SingleDataPoint(item));
-                    fieldData.Add(new FieldData(item.Name));
+                    fieldData.Add(new FieldData(item.Name, item.unitOfMeasure));
                 }
 
                 PageViews.Add(new Page3());
-                PageViews.Add(new Page4());
 
                 SetColorScheme(_setup);
 
@@ -94,6 +98,8 @@
             this.BackgroundColor = setup.backColor;
             PrevButton.BackgroundColor = Colors.DarkBlue;
             NextButton.BackgroundColor = Colors.DarkBlue;
+            _nmeaService._setup = setup;
+            _udpService.setup = setup;
 
             if (setup.Night)
             {
@@ -110,6 +116,7 @@
             {
                 SetColorsRecursively(view, setup);
             }
+            
         }
 
         protected override void OnDisappearing()
@@ -120,35 +127,34 @@
             DeviceDisplay.KeepScreenOn = false;
         }
 
-        private async Task InitializeAsync()
-        {
-            await _gpsService.Start();
-        }
+        private async Task InitializeAsync() => await _gpsService.Start();
 
         private void HandleUdpMessage(Record n2krecord)
         {
             MainThread.BeginInvokeOnMainThread(() =>
-            {
-                try
-                {
-                    record = n2krecord.Copy();
-                    UpdateDataDisplayRecord("AWS", record.windAppSpeed);
-                    UpdateDataDisplayRecord("AWD", record.windAppDir);
-                    UpdateDataDisplayRecord("TWS", record.windTrueSpeed);
-                    UpdateDataDisplayRecord("TWD", record.windTrueDir);
-                    UpdateDataDisplayRecord("DPT", record.depth);
-                    UpdateDataDisplayRecord("SOG", record.SOG);
-                    UpdateDataDisplayRecord("SOW", record.SOW);
-                    UpdateDataDisplayRecord("HDG", record.headingMag);
-                    UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+           {
 
-                    RaiseEventToCurrentView("UDPUpdate", record);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
-                }
-            });
+
+               try
+               {
+
+                   record = n2krecord.Copy();
+                   UpdateDataDisplayRecord("AWS", record.windAppSpeed.displayValue);
+                   UpdateDataDisplayRecord("AWD", record.windAppDir);
+                   UpdateDataDisplayRecord("TWS", record.windTrueSpeed.displayValue);
+                   UpdateDataDisplayRecord("TWD", record.windTrueDir);
+                   UpdateDataDisplayRecord("DPT", record.depth.displayValue);
+                   UpdateDataDisplayRecord("SOG", record.SOG);
+                   UpdateDataDisplayRecord("SOW", record.SOW);
+                   UpdateDataDisplayRecord("HDG", record.headingMag);
+                   UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+                   RaiseEventToCurrentView("UDPUpdate", record);
+               }
+               catch (Exception ex)
+               {
+                   Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
+               }
+           });
         }
 
         public void UpdateDataDisplayRecord(string name, double value)
@@ -164,33 +170,49 @@
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                // record = _udpService.record.Copy();
                 _udpService.Record.location = new Location(location);
                 _udpService.HasLocation = true;
+
             });
         }
 
-        private void NextPage()
+        public void NextPage()
         {
             if (currentIndex < PageViews.Count - 1)
             {
                 currentIndex++;
-                content.Content = PageViews[currentIndex];
-                SetColorsRecursively(content.Content, _setup);
+
+                var newView = PageViews[currentIndex];
+
+                content.Content = newView;
+
+                SetColorsRecursively(newView, _setup);
+                if (newView is IContentViewHost host)
+                {
+                    host.OnSetupChanged(_setup);
+                }
             }
         }
 
-        private void PrevPage()
+        public void PrevPage()
         {
             if (currentIndex > 0)
             {
                 currentIndex--;
-                content.Content = PageViews[currentIndex];
-                SetColorsRecursively(content.Content, _setup);
+                var newView = PageViews[currentIndex];
+
+                content.Content = newView;
+
+                SetColorsRecursively(newView, _setup);
+                if (newView is IContentViewHost host)
+                {
+                    host.OnSetupChanged(_setup);
+                }
             }
         }
 
         private void Next_Clicked(object sender, EventArgs e) => NextPage();
+
         private void Prev_Clicked(object sender, EventArgs e) => PrevPage();
 
         private void RaiseEventToCurrentView(string eventName, Record data)
@@ -212,6 +234,7 @@
                     break;
 
                 case Button btn:
+
                     btn.BackgroundColor = Colors.DarkBlue;
                     if (setup.Night)
                     {
@@ -225,7 +248,7 @@
                     break;
 
                 case Entry entry:
-                    entry.BackgroundColor = setup.backColor;
+                    entry.BackgroundColor = Colors.DarkGray;
                     entry.TextColor = setup.foreColor;
                     break;
 
@@ -246,7 +269,19 @@
                 case Microsoft.Maui.Controls.Switch swtch:
                     swtch.BackgroundColor = setup.backColor;
                     break;
+
+                case CollectionView collectionView:
+                    collectionView.BackgroundColor = setup.backColor;
+
+                    break;
+
+                case Border border:
+                    border.BackgroundColor = setup.backColor;
+                    border.Stroke = setup.foreColor;
+                    break;
+
             }
+
 
             // Now recurse if it’s a layout or content view
             if (view is Layout layout)
@@ -267,6 +302,12 @@
                 var content = scrollView.Content;
                 SetColorsRecursively(content, setup);
             }
+
+            if (view is Border border1)
+            {
+                var content = border1.Content;
+                SetColorsRecursively(content, setup);
+            }
         }
 
         private void OnSizeChanged(object sender, EventArgs e)
@@ -280,34 +321,14 @@
             }
         }
 
-        private void Content_PanUpdated(object sender, PanUpdatedEventArgs e)
+        private void OnSwipeLeft(object sender, SwipedEventArgs e)
         {
-            switch (e.StatusType)
-            {
-                case GestureStatus.Started:
-                    _panStartX = e.TotalX;
-                    break;
+            NextPage();
+        }
 
-                case GestureStatus.Running:
-                    // Optional: you could move the content visually here for a "dragging" effect
-                    break;
-
-                case GestureStatus.Completed:
-                case GestureStatus.Canceled:
-                    double deltaX = e.TotalX - _panStartX;
-
-                    // Detect swipe thresholds
-                    if (deltaX < -50) // swipe left → next
-                    {
-                        NextPage();
-                    }
-                    else if (deltaX > 50) // swipe right → previous
-                    {
-                        PrevPage();
-                    }
-
-                    break;
-            }
+        private void OnSwipeRight(object sender, SwipedEventArgs e)
+        {
+            PrevPage();
         }
     }
 }

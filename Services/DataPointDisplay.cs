@@ -6,12 +6,7 @@ public class DataPointDisplay : IDrawable
 {
     public FieldData FieldData;
     public string Name = string.Empty;
-    public Label TopLeft;
-    public Label BottomLeft;
-    public Label TopRight;
-    public Label BottomRight;
-    public Label Center;
-    public GraphicsView GraphicsView;
+    public GraphicsView graphicsView;
     public string Description;
     private Setup setup;
     public double Width;
@@ -21,13 +16,15 @@ public class DataPointDisplay : IDrawable
     private List<Microsoft.Maui.Graphics.Font> fonts;
     private ICanvas canvas;
     private RectF DirtyRect;
+    public string unitOfMeasure;
 
-    public DataPointDisplay(string Name, string Precision, string Description)
+    public DataPointDisplay(string Name, string Precision, string Description, string UnitofMeasure)
     {
         this.Name = Name;
         precision = Precision;
         this.Description = Description;
-        FieldData = new FieldData(Name);
+        unitOfMeasure = UnitofMeasure;
+        FieldData = new FieldData(Name, unitOfMeasure);
         fonts = new List<Microsoft.Maui.Graphics.Font>();
         setup = new Setup();
         fonts.Add(new Microsoft.Maui.Graphics.Font("OpenSansRegular"));
@@ -42,15 +39,6 @@ public class DataPointDisplay : IDrawable
         double height = element.Height;
         var window = element.GetVisualElementWindow();
         Rect rect = new Rect(window.X, window.Y, window.Width, window.Height);
-
-        /*Element parent = element.Parent;
-        while (parent is VisualElement parentView)
-        {
-            window = parentView.GetVisualElementWindow();
-            rect = new Rect(window.X, window.Y, window.Width, window.Height);
-            parent = parentView.Parent;
-        }*/
-
         if (rect.X < 0)
         {
             rect.X = 0;
@@ -156,7 +144,6 @@ public class DataPointDisplay : IDrawable
 
             float MinY = (float)FieldData.Min * 0.9f;
 
-
             float yMult = (float)(position.Bottom - position.Top) / MaxY;
 
             canvas.StrokeColor = Colors.DarkGray;
@@ -241,22 +228,8 @@ public class DataPointDisplay : IDrawable
         }
     }
 
-    public void UpdateUI()
+    public void UpdateSetup(Setup settings)
     {
-        var displayInfo = DeviceDisplay.MainDisplayInfo;
-
-        // width & height are in raw pixels
-        double width = displayInfo.Width / displayInfo.Density;
-        double height = displayInfo.Height / displayInfo.Density;
-
-        AbsoluteLayout.SetLayoutBounds(Center, new Rect(width * .4, height * .4, -1, -1));
-
-        AbsoluteLayout.SetLayoutBounds(TopLeft, new Rect(1, 1, -1, -1));
-
-        TopLeft.Text = Name;
-
-        BottomLeft.Text = string.Format($"{{0:{precision}}}", FieldData.Min);
-        BottomRight.Text = string.Format($"{{0:{precision}}}", FieldData.Max);
-        Center.Text = string.Format($"{{0:{precision}}}", FieldData.Current);
+        setup = settings;
     }
 }
