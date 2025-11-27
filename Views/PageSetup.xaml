@@ -49,7 +49,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-            <HorizontalStackLayout  Grid.Row="0" Grid.Column="0">
+            <HorizontalStackLayout  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                 <Label 
            Text="Port:"
            HorizontalOptions="Start"
@@ -89,47 +89,51 @@
               HorizontalOptions="End"/>
             </HorizontalStackLayout>
 
-            <!-- Row 3: Use GPS POS -->
-            <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
-                <Label 
-           Text="Use GPS POS:"
-           VerticalOptions="Center"/>
-
-                <CheckBox 
-              x:Name="UseGPSPOS"
-                      CheckedChanged="ToggleCheckBox"
-              HorizontalOptions="End"/>
-            </HorizontalStackLayout>
+           
 
             <!-- Row 4: Use GPS HEADING -->
             <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
 
-                <Label Grid.Row="4" Grid.Column="0"
+                <Label 
            Text="Use GPS HEADING:"
            VerticalOptions="Center"/>
 
-            <CheckBox Grid.Row="4" Grid.Column="1"
+            <CheckBox 
               x:Name="UseGPSHEADING"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
                 </HorizontalStackLayout>
 
-            <!-- Row 5: Use GPS SOG -->
-            <Label Grid.Row="5" Grid.Column="0"
-           Text="Use GPS SOG:"
-           VerticalOptions="Center"/>
+            <!-- Row 3: Use GPS POS -->
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
+                <Label 
+                    Text="Use GPS POS:"
+                    VerticalOptions="Center"/>
 
-            <CheckBox Grid.Row="5" Grid.Column="1"
+                                    <CheckBox 
+                       x:Name="UseGPSPOS"
+                               CheckedChanged="ToggleCheckBox"
+                       HorizontalOptions="End"/>
+            </HorizontalStackLayout>
+
+            <!-- Row 5: Use GPS SOG -->
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" >
+                <Label 
+               Text="Use GPS SOG:"
+               VerticalOptions="Center"/>   
+
+            <CheckBox 
               x:Name="UseGPSSOG"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
+                </HorizontalStackLayout>
 
             <!-- Row 6: Save Frequency -->
-            <Label Grid.Row="6" Grid.Column="0"
+            <Label Grid.Row="3" Grid.Column="0"
            Text="Save Frequency:"
            VerticalOptions="Center"/>
 
-            <Entry Grid.Row="6" Grid.Column="1"
+            <Entry Grid.Row="3" Grid.Column="1"
            x:Name="SaveFrequency"
            Keyboard="Numeric"
            Placeholder="Enter frequency"
@@ -137,19 +141,15 @@
            HorizontalOptions="End"/>
 
             <!-- Row 7: Wind Speed -->
-                <Label Grid.Row="7" Grid.Column="0"
+                <Label Grid.Row="4" Grid.Column="0"
                 Text="Depth:"
                 VerticalOptions="Center"/>
 
-                <VerticalStackLayout Grid.Row="7" Grid.Column="1">
-                    <Button  x:Name="Depthbutton"
-             Text="Unit"
-             
-             Clicked="Depthbutton_Clicked"
-                  HorizontalOptions="End"/>
+                <VerticalStackLayout Grid.Row="4" Grid.Column="1">
+                    
                     
                     <Border Stroke="Red"  
-                    StrokeThickness="2" 
+                    StrokeThickness="1" 
                     StrokeShape="Rectangle"
                     Padding="0">
                         <CollectionView x:Name="DepthList"
@@ -159,39 +159,54 @@
                           WidthRequest="200">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="10">
-                                        <Label Text="{Binding}"
-                                           Loaded="OnItemLabelLoadedDepth"/>
-                                    </Grid>
+                                    <Grid Padding="2">
+                                    <Label Text="{Binding}"
+                                           Loaded="OnItemLabelLoadedDepth">
+
+                                    <!--    <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroupList>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="TextColor" Value="Black" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+
+                                                    <VisualState x:Name="Selected">
+                                                        <VisualState.Setters>
+                                                            <Setter Property="TextColor" Value="Red" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateGroupList>
+                                        </VisualStateManager.VisualStateGroups> -->
+                                    </Label>
+                                </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                     </Border>
                 </VerticalStackLayout>
 
-                <Label Grid.Row="8" Grid.Column="0"
+                <Label Grid.Row="5" Grid.Column="0"
                     Text="Speed:"
                     VerticalOptions="Center"/>
 
-                <VerticalStackLayout Grid.Row="8" Grid.Column="1">
-                    <Button  x:Name="Speedbutton"
-             Text="Unit"
-             
-             Clicked="Speedbutton_Clicked"
-                  HorizontalOptions="End"/>
+                <VerticalStackLayout Grid.Row="5" Grid.Column="1">
+                    
                     <Border Stroke="Red"  
-StrokeThickness="2" 
-StrokeShape="Rectangle"
-Padding="0">
+                        StrokeThickness="1" 
+                        StrokeShape="RoundRectangle"
+                        Padding="0">
 
                         <CollectionView x:Name="SpeedList"
-     SelectionMode="Single"
+                        SelectionMode="Single"
                          HorizontalOptions="End"
                           SelectionChanged ="SpeedChanged"
                           WidthRequest="200">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="10">
+                                    <Grid Padding="2">
                                         <Label Text="{Binding}" 
                                            Loaded="OnItemLabelLoadedSpeed"/>
                                     </Grid>
@@ -201,29 +216,25 @@ Padding="0">
                     </Border>
                 </VerticalStackLayout>
 
-                <Label Grid.Row="9" Grid.Column="0"
+                <Label Grid.Row="6" Grid.Column="0"
            Text="Wind Speed:"
            VerticalOptions="Center"/>
             
-                <VerticalStackLayout Grid.Row="9" Grid.Column="1">
-                    <Button  x:Name="WindSpeedbutton"
-                        Text="Unit"
-                        
-                        Clicked="WindSpeedbutton_Clicked"
-                             HorizontalOptions="End"/>
-                    <Border Stroke="Red"  
-StrokeThickness="2" 
-StrokeShape="Rectangle"
-Padding="0">
+                <VerticalStackLayout Grid.Row="6" Grid.Column="1">
 
-                        <CollectionView x:Name="WindSpeedList"
+                <Border Stroke="Red"  
+                    StrokeThickness="1" 
+                    StrokeShape="Rectangle"
+                    Padding="0">
+
+                    <CollectionView x:Name="WindSpeedList"
                 SelectionMode="Single"
                                     HorizontalOptions="End"
                                      SelectionChanged ="WindSpeedChanged"
                                      WidthRequest="200">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="10">
+                                    <Grid Padding="2">
                                         <Label Text="{Binding}" 
                                            Loaded="OnItemLabelLoadedWindSpeed"/>
                                     </Grid>
@@ -236,7 +247,7 @@ Padding="0">
             <!-- You can add controls on right side here later -->
 
             <!-- Row 8: Save Button -->
-            <Button Grid.Row="10" Grid.ColumnSpan="2"
+            <Button Grid.Row="7" Grid.ColumnSpan="2"
             Text="Save"
             HorizontalOptions="Center"
             Clicked="SaveButtonClicked"/>

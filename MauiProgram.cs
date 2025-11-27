@@ -27,7 +27,7 @@
 #endif
             builder.ConfigureLifecycleEvents(events =>
             {
-                #if WINDOWS
+                /*#if WINDOWS
                     events.AddWindows(w =>
                     {
                         w.OnWindowCreated(window =>
@@ -39,7 +39,7 @@
                             _appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
                         });
                     });
-                #endif
+                #endif*/
             });
             try
             {

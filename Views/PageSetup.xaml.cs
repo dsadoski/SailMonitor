@@ -24,9 +24,8 @@ public partial class PageSetup : ContentView
         UseGPSHEADING.IsChecked = setup.UseGPSHEADING;
         UseGPSSOG.IsChecked = setup.UseGPSSOG;
         SaveFrequency.Text = setup.saveFrequency.ToString();
-        WindSpeedbutton.Text = setup.WindSpeed.SelectedUnit;
-        Depthbutton.Text = setup.Depth.SelectedUnit;
-        Speedbutton.Text = setup.Speed.SelectedUnit;
+        
+        
         BindCollectionView(WindSpeedList, setup.WindSpeed);
         BindCollectionView(DepthList, setup.Depth);
         BindCollectionView(SpeedList, setup.Speed);
@@ -45,7 +44,7 @@ public partial class PageSetup : ContentView
         collectionView.ItemsSource = items;
         var selected = items.FirstOrDefault(i => i == unitOfMeasure.SelectedUnit);
         collectionView.SelectedItem = selected;
-        collectionView.IsVisible = false;
+        //collectionView.IsVisible = false;
     }
 
     public void SaveButtonClicked(object sender, EventArgs e)
@@ -99,18 +98,6 @@ public partial class PageSetup : ContentView
         mainPage?.PrevPage();
     }
 
-    public void WindSpeedbutton_Clicked(object sender, EventArgs e)
-    {
-        if (WindSpeedList.IsVisible)
-        {
-            WindSpeedList.IsVisible = false;
-        }
-        else
-        {
-            WindSpeedList.IsVisible = true;
-            WindSpeedbutton.IsVisible = false;
-        }
-    }
 
     private void WindSpeedChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -118,47 +105,26 @@ public partial class PageSetup : ContentView
         if (selectedItem != null)
         {
             setup.WindSpeed.SelectedUnit = selectedItem;
-            WindSpeedbutton.Text = selectedItem;
-            WindSpeedList.IsVisible = false;
-            WindSpeedbutton.IsVisible = true;
+            
+            
         }
     }
 
-    public void Depthbutton_Clicked(object sender, EventArgs e)
-    {
-        if (DepthList.IsVisible)
-        {
-            DepthList.IsVisible = false;
-        }
-        else
-        {
-            DepthList.IsVisible = true;
-            Depthbutton.IsVisible = false;
-        }
-    }
 
     private void DepthChanged(object sender, SelectionChangedEventArgs e)
     {
         var selectedItem = e.CurrentSelection.FirstOrDefault() as string;
+        var collectionView = sender as CollectionView;
         if (selectedItem != null)
         {
             setup.Depth.SelectedUnit = selectedItem;
-            Depthbutton.Text = selectedItem;
-            DepthList.IsVisible = false;
-            Depthbutton.IsVisible = true;
-        }
-    }
+            collectionView.SelectedItem = selectedItem;
 
-    public void Speedbutton_Clicked(object sender, EventArgs e)
-    {
-        if (SpeedList.IsVisible)
-        {
-            SpeedList.IsVisible = false;
         }
-        else
+
+        if (sender is Label lbl)
         {
-            SpeedList.IsVisible = true;
-            Speedbutton.IsVisible = false;
+            int i = 0;
         }
     }
 
@@ -168,9 +134,8 @@ public partial class PageSetup : ContentView
         if (selectedItem != null)
         {
             setup.Speed.SelectedUnit = selectedItem;
-            Speedbutton.Text = selectedItem;
-            SpeedList.IsVisible = false;
-            Speedbutton.IsVisible = true;
+            
+           
         }
     }
 
