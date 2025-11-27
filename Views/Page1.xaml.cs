@@ -244,6 +244,7 @@ public partial class Page1 : ContentView, IContentViewHost
 
     public void OnSetupChanged(Setup settings)
     {
+        
     }
 
     private void OnSwipeLeft(object sender, SwipedEventArgs e)

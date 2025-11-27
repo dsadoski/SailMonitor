@@ -138,11 +138,11 @@ namespace SailMonitor.Services
             {
                 if (stray[i + 1] == "f")
                 {
-                    double T = DoubleGet(stray[i]);
+                    /*double T = DoubleGet(stray[i]);
                     if (T > 0)
                     {
                         record.depth = T;
-                    }
+                    }*/
                 }
             }
 
@@ -473,8 +473,12 @@ namespace SailMonitor.Services
             double T = DoubleGet(stray[1]);
             if (T >= 0)
             {
-                record.depth = T;
-                record.depth = record.depth * 3.281;
+
+                record.depth.internalValue = _setup.Depth.ConvertToInternal(Units.Meters, T);
+
+                record.depth.displayValue = _setup.Depth.ConvertToDisplay(record.depth.internalValue);
+                /*record.depth = T;
+                record.depth = record.depth * 3.281;*/
             }
 
             return record.Copy();

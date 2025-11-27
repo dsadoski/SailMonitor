@@ -25,20 +25,20 @@
             try
             {
                 InitializeComponent();
-                /*if (OperatingSystem.IsAndroid())
+                if (OperatingSystem.IsAndroid())
                 {
                     if (MainLayout.Children.Contains(ButtonHzStack))
                     {
                         MainLayout.Children.Remove(ButtonHzStack);
                     }
-                }*/
+                }
 
-                if(OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows())
                 {
 
                 }
 
-                
+
 
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
@@ -116,6 +116,7 @@
             {
                 SetColorsRecursively(view, setup);
             }
+            
         }
 
         protected override void OnDisappearing()
@@ -142,7 +143,7 @@
                    UpdateDataDisplayRecord("AWD", record.windAppDir);
                    UpdateDataDisplayRecord("TWS", record.windTrueSpeed.displayValue);
                    UpdateDataDisplayRecord("TWD", record.windTrueDir);
-                   UpdateDataDisplayRecord("DPT", record.depth);
+                   UpdateDataDisplayRecord("DPT", record.depth.displayValue);
                    UpdateDataDisplayRecord("SOG", record.SOG);
                    UpdateDataDisplayRecord("SOW", record.SOW);
                    UpdateDataDisplayRecord("HDG", record.headingMag);
@@ -299,6 +300,12 @@
             if (view is ScrollView scrollView)
             {
                 var content = scrollView.Content;
+                SetColorsRecursively(content, setup);
+            }
+
+            if (view is Border border1)
+            {
+                var content = border1.Content;
                 SetColorsRecursively(content, setup);
             }
         }

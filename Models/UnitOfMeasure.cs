@@ -27,11 +27,11 @@ namespace SailMonitor.Models
 
         public double ConvertToDisplay(double value)
         {
-            var from = UnitList.Find(u => u.Name == Internal);
+            
             var to = UnitList.Find(u => u.Name == SelectedUnit);
-            if (from != null && to != null)
+            if (to != null )
             {
-                return value / from.Conversion;
+                return value / to.Conversion;
             }
             return value;
         }

@@ -4,10 +4,10 @@
     using Microsoft.Maui.LifecycleEvents;
     using SailMonitor.Models;
     using SailMonitor.Services;
-    #if WINDOWS
+#if WINDOWS
     using Microsoft.UI;
     using Microsoft.UI.Windowing;
-    #endif
+#endif
 
     public static class MauiProgram
     {

@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.PageSetup">
 
-    <ScrollView Orientation="Vertical"
-            VerticalScrollBarVisibility="Always">
+    
         
         <Grid
     ColumnSpacing="10"
@@ -14,6 +13,15 @@
     VerticalOptions="Start"
             
            HeightRequest="2000">
+
+            <Grid.GestureRecognizers>
+
+                <SwipeGestureRecognizer Direction="Left"
+                            Swiped="OnSwipeLeft" />
+
+                <SwipeGestureRecognizer Direction="Right"
+                            Swiped="OnSwipeRight" />
+            </Grid.GestureRecognizers>
 
             <Grid.ColumnDefinitions>
                 <!-- Left column: auto width -->
@@ -87,12 +95,7 @@
               x:Name="KeepActive"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
-            </HorizontalStackLayout>
-
-           
-
-            <!-- Row 4: Use GPS HEADING -->
-            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+          
 
                 <Label 
            Text="Use GPS HEADING:"
@@ -151,41 +154,10 @@
                     <Border Stroke="Red"  
                     StrokeThickness="1" 
                     StrokeShape="Rectangle"
-                    Padding="0">
-                        <CollectionView x:Name="DepthList"
-                            SelectionMode="Single"
-                         HorizontalOptions="End"
-                          SelectionChanged ="DepthChanged"
-                          WidthRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="2">
-                                    <Label Text="{Binding}"
-                                           Loaded="OnItemLabelLoadedDepth">
-
-                                    <!--    <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroupList>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal">
-                                                        <VisualState.Setters>
-                                                            <Setter Property="TextColor" Value="Black" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-
-                                                    <VisualState x:Name="Selected">
-                                                        <VisualState.Setters>
-                                                            <Setter Property="TextColor" Value="Red" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateGroupList>
-                                        </VisualStateManager.VisualStateGroups> -->
-                                    </Label>
-                                </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Border>
+                    Padding="0"
+                            InputTransparent="True">
+                    <VerticalStackLayout x:Name="DepthGrid"/>
+                </Border>
                 </VerticalStackLayout>
 
                 <Label Grid.Row="5" Grid.Column="0"
@@ -197,23 +169,11 @@
                     <Border Stroke="Red"  
                         StrokeThickness="1" 
                         StrokeShape="RoundRectangle"
-                        Padding="0">
+                        Padding="0"
+                            InputTransparent="True">
+                    <VerticalStackLayout x:Name="SpeedGrid"/>
 
-                        <CollectionView x:Name="SpeedList"
-                        SelectionMode="Single"
-                         HorizontalOptions="End"
-                          SelectionChanged ="SpeedChanged"
-                          WidthRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="2">
-                                        <Label Text="{Binding}" 
-                                           Loaded="OnItemLabelLoadedSpeed"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Border>
+                </Border>
                 </VerticalStackLayout>
 
                 <Label Grid.Row="6" Grid.Column="0"
@@ -225,22 +185,10 @@
                 <Border Stroke="Red"  
                     StrokeThickness="1" 
                     StrokeShape="Rectangle"
-                    Padding="0">
+                    Padding="0"
+                        InputTransparent="True">
 
-                    <CollectionView x:Name="WindSpeedList"
-                SelectionMode="Single"
-                                    HorizontalOptions="End"
-                                     SelectionChanged ="WindSpeedChanged"
-                                     WidthRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="2">
-                                        <Label Text="{Binding}" 
-                                           Loaded="OnItemLabelLoadedWindSpeed"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                    <VerticalStackLayout x:Name="WindSpeedGrid"/>
                     </Border>
                 </VerticalStackLayout> 
 
@@ -253,5 +201,5 @@
             Clicked="SaveButtonClicked"/>
         </Grid>
         
-    </ScrollView>
+
 </ContentView>

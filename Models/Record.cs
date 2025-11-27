@@ -9,7 +9,7 @@
         public double longitude;
         public long gpsTicks;
         public long time;
-        public double depth;
+        public IOVariable depth;
         public double headingMag;
         public double headingTrue;
         public double SOG;
@@ -38,7 +38,7 @@
             longitude = 0;
             gpsTicks = 0;
             time = 0;
-            depth = 0;
+            depth = new IOVariable(Units.Meters, "Depth");
             headingMag = 0;
             headingTrue = 0;
             SOG = 0;

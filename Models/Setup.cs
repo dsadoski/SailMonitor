@@ -32,8 +32,8 @@
                 UnitList = new List<Unit>
                 {
                     new Unit(Units.Meters, 1.0),
-                    new Unit(Units.Feet, 3.28084),
-                    new Unit(Units.Fathoms, 0.546807)
+                    new Unit(Units.Feet, 0.3048),
+                    new Unit(Units.Fathoms, 1.8288)
                 }
             };
             Depth.SelectedUnit = Preferences.Get("DepthUnit", Units.Feet);
