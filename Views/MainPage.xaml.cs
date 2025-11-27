@@ -33,6 +33,13 @@
                     }
                 }*/
 
+                if(OperatingSystem.IsWindows())
+                {
+
+                }
+
+                
+
                 HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
                 WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
                 SizeChanged += OnSizeChanged;
@@ -121,28 +128,33 @@
 
         private async Task InitializeAsync() => await _gpsService.Start();
 
-        private void HandleUdpMessage(Record n2krecord) => MainThread.BeginInvokeOnMainThread(() =>
-                                                                    {
-                                                                        try
-                                                                        {
-                                                                            record = n2krecord.Copy();
-                                                                            UpdateDataDisplayRecord("AWS", record.windAppSpeed.displayValue);
-                                                                            UpdateDataDisplayRecord("AWD", record.windAppDir);
-                                                                            UpdateDataDisplayRecord("TWS", record.windTrueSpeed.displayValue);
-                                                                            UpdateDataDisplayRecord("TWD", record.windTrueDir);
-                                                                            UpdateDataDisplayRecord("DPT", record.depth);
-                                                                            UpdateDataDisplayRecord("SOG", record.SOG);
-                                                                            UpdateDataDisplayRecord("SOW", record.SOW);
-                                                                            UpdateDataDisplayRecord("HDG", record.headingMag);
-                                                                            UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+        private void HandleUdpMessage(Record n2krecord)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+           {
 
-                                                                            RaiseEventToCurrentView("UDPUpdate", record);
-                                                                        }
-                                                                        catch (Exception ex)
-                                                                        {
-                                                                            Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
-                                                                        }
-                                                                    });
+
+               try
+               {
+
+                   record = n2krecord.Copy();
+                   UpdateDataDisplayRecord("AWS", record.windAppSpeed.displayValue);
+                   UpdateDataDisplayRecord("AWD", record.windAppDir);
+                   UpdateDataDisplayRecord("TWS", record.windTrueSpeed.displayValue);
+                   UpdateDataDisplayRecord("TWD", record.windTrueDir);
+                   UpdateDataDisplayRecord("DPT", record.depth);
+                   UpdateDataDisplayRecord("SOG", record.SOG);
+                   UpdateDataDisplayRecord("SOW", record.SOW);
+                   UpdateDataDisplayRecord("HDG", record.headingMag);
+                   UpdateDataDisplayRecord("WTC", record.windTrueCompass);
+                   RaiseEventToCurrentView("UDPUpdate", record);
+               }
+               catch (Exception ex)
+               {
+                   Debug.WriteLine($"Error in Handle UDP: {ex.Message}");
+               }
+           });
+        }
 
         public void UpdateDataDisplayRecord(string name, double value)
         {
@@ -153,12 +165,15 @@
             }
         }
 
-        private void HandleGpsLocation(Location location) => MainThread.BeginInvokeOnMainThread(() =>
-                                                                      {
-                                                                          // record = _udpService.record.Copy();
-                                                                          _udpService.Record.location = new Location(location);
-                                                                          _udpService.HasLocation = true;
-                                                                      });
+        private void HandleGpsLocation(Location location)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _udpService.Record.location = new Location(location);
+                _udpService.HasLocation = true;
+
+            });
+        }
 
         public void NextPage()
         {
@@ -263,9 +278,9 @@
                     border.BackgroundColor = setup.backColor;
                     border.Stroke = setup.foreColor;
                     break;
-                    
+
             }
-            
+
 
             // Now recurse if it’s a layout or content view
             if (view is Layout layout)

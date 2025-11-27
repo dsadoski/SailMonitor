@@ -102,17 +102,17 @@
             </HorizontalStackLayout>
 
             <!-- Row 4: Use GPS HEADING -->
-            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
 
-                <Label 
+                <Label Grid.Row="4" Grid.Column="0"
            Text="Use GPS HEADING:"
            VerticalOptions="Center"/>
 
-                <CheckBox 
+            <CheckBox Grid.Row="4" Grid.Column="1"
               x:Name="UseGPSHEADING"
                       CheckedChanged="ToggleCheckBox"
               HorizontalOptions="End"/>
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
 
             <!-- Row 5: Use GPS SOG -->
             <Label Grid.Row="5" Grid.Column="0"

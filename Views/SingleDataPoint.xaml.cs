@@ -38,9 +38,30 @@ public partial class SingleDataPoint : ContentView, IContentViewHost
                 AnchorY = 0,
                 WidthRequest = screenWidth,
                 HeightRequest = screenHeight,
-                
             };
-            
+
+            dataPoint.graphicsView.GestureRecognizers.Add(new SwipeGestureRecognizer
+            {
+                Direction = SwipeDirection.Left,
+                Command = new Command(() =>
+                {
+                    GetParentPage()?.NextPage();
+                })
+            });
+
+            // Swipe right
+            dataPoint.graphicsView.GestureRecognizers.Add(new SwipeGestureRecognizer
+            {
+                Direction = SwipeDirection.Right,
+                Command = new Command(() =>
+                {
+                    GetParentPage()?.PrevPage();
+                })
+            });
+
+
+
+
             MainLayout.Children.Add(dataPoint.graphicsView);
         }
         catch (Exception ex)

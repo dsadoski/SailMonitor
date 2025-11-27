@@ -1,4 +1,5 @@
 
+
 using SailMonitor.Models;
 
 namespace SailMonitor;
@@ -31,6 +32,8 @@ public partial class PageSetup : ContentView
         BindCollectionView(SpeedList, setup.Speed);
         loading = false;
     }
+
+
 
     public void BindCollectionView(CollectionView collectionView, UnitOfMeasure unitOfMeasure)
     {

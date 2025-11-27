@@ -24,7 +24,7 @@ public partial class Page1 : ContentView, IContentViewHost
         var fieldData = mainPage?.fieldData;
         var setup = new Setup();
         compassGraphic = new GraphicsView();
-        
+
 
         // this.BackgroundColor = Colors.White;
         SizeChanged += Page1_SizeChanged;

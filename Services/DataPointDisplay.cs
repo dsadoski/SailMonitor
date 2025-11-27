@@ -6,11 +6,6 @@ public class DataPointDisplay : IDrawable
 {
     public FieldData FieldData;
     public string Name = string.Empty;
-    public Label TopLeft;
-    public Label BottomLeft;
-    public Label TopRight;
-    public Label BottomRight;
-    public Label Center;
     public GraphicsView graphicsView;
     public string Description;
     private Setup setup;
@@ -231,25 +226,6 @@ public class DataPointDisplay : IDrawable
         {
             Console.WriteLine($"Error in DataPointDisplay.Draw: {ex.Message}");
         }
-    }
-
-    public void UpdateUI()
-    {
-        var displayInfo = DeviceDisplay.MainDisplayInfo;
-
-        // width & height are in raw pixels
-        double width = displayInfo.Width / displayInfo.Density;
-        double height = displayInfo.Height / displayInfo.Density;
-
-        AbsoluteLayout.SetLayoutBounds(Center, new Rect(width * .4, height * .4, -1, -1));
-
-        AbsoluteLayout.SetLayoutBounds(TopLeft, new Rect(1, 1, -1, -1));
-
-        TopLeft.Text = Name;
-
-        BottomLeft.Text = string.Format($"{{0:{precision}}}", FieldData.Min);
-        BottomRight.Text = string.Format($"{{0:{precision}}}", FieldData.Max);
-        Center.Text = string.Format($"{{0:{precision}}}", FieldData.Current);
     }
 
     public void UpdateSetup(Setup settings)
