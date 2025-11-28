@@ -9,6 +9,7 @@
         public Record record = new Record();
         public Setup _setup;
         public List<DataPointDisplay> dataPointDisplays;
+        public List<WindDisplay> windDisplays;
         public List<FieldData> fieldData;
         private readonly UdpListenerService _udpService;
         private readonly GPSService _gpsService;
@@ -51,6 +52,10 @@
                 DeviceDisplay.KeepScreenOn = setup.KeepActive;
                 fieldData = new List<FieldData>();
 
+                windDisplays = new List<WindDisplay>();
+                windDisplays.Add(new WindDisplay("AWS", "AWD", "F0", "Apparent Wind", setup.WindSpeed.SelectedUnit, "°"));
+                windDisplays.Add(new WindDisplay("TWS", "WTC", "F0", "True Wind", setup.WindSpeed.SelectedUnit, "°"));
+
                 dataPointDisplays = new List<DataPointDisplay>();
                 dataPointDisplays.Add(new DataPointDisplay("AWS", "F1", "App Wind Speed", setup.WindSpeed.SelectedUnit));
                 dataPointDisplays.Add(new DataPointDisplay("AWD", "F1", "App Wind Dir", string.Empty));
@@ -67,6 +72,13 @@
                     new PageSetup(_setup),
                     new Page1(),
                 };
+                foreach(var wind in windDisplays)
+                {
+                    PageViews.Add(new WindData(wind));
+                    fieldData.Add(new FieldData(wind.speedName, setup.WindSpeed.SelectedUnit));
+                    fieldData.Add(new FieldData(wind.dirName, string.Empty));
+                }
+
 
                 foreach (var item in dataPointDisplays)
                 {

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SailMonitor.WindData">
+    <Grid x:Name="MainLayout">
+        <!-- MAIN DRAWING AREA -->
+        <GraphicsView
+            x:Name="WindGraphics"
+            Drawable="{Binding WindDrawable}"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill" >
+            <GraphicsView.GestureRecognizers>
+                <SwipeGestureRecognizer Direction="Left"
+                                Swiped="OnSwipeLeft" />
+                <SwipeGestureRecognizer Direction="Right"
+                                Swiped="OnSwipeRight" />
+            </GraphicsView.GestureRecognizers>
+        </GraphicsView>
+
+        <!-- OVERLAY CHECKBOXES (TOP-RIGHT) -->
+        <VerticalStackLayout
+            Padding="10"
+            Spacing="6"
+            HorizontalOptions="End"
+            VerticalOptions="Start"
+             >
+
+            <HorizontalStackLayout InputTransparent="False">
+                <Label Text="Raw" VerticalOptions="Center"/>
+                <CheckBox x:Name="Box1" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout InputTransparent="False">
+                <Label Text="Smoothed" VerticalOptions="Center"/>
+                <CheckBox x:Name="Box2" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout InputTransparent="False">
+                <Label Text="Averaged" VerticalOptions="Center"/>
+                <CheckBox x:Name="Box3" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- GESTURES APPLY TO WHOLE SURFACE 
+        <Grid.GestureRecognizers>
+            <SwipeGestureRecognizer Direction="Left"
+                                    Swiped="OnSwipeLeft" />
+            <SwipeGestureRecognizer Direction="Right"
+                                    Swiped="OnSwipeRight" />
+        </Grid.GestureRecognizers> -->
+    </Grid>
+</ContentView>
