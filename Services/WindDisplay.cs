@@ -2,7 +2,7 @@
 
 using Microsoft.Maui.Graphics.Platform;
 using SailMonitor.Models;
-
+using System.ComponentModel.Design;
 
 public class WindDisplay : IDrawable
 {
@@ -102,12 +102,12 @@ public class WindDisplay : IDrawable
         canvas.FontSize = 24;
         var textSize = canvas.GetStringSize("M", fonts[0], 18);
         if (drawXAxis)
-        {
+        {   
             canvas.DrawString(Description, 1, textSize.Height, HorizontalAlignment.Left);
         }
 
         canvas.FontSize = 64;
-
+        canvas.FontColor = darkline;
         if (drawXAxis)
         {
             txt = this.SpeedData.Current.ToString($"{precision}") + " " + unitOfMeasureSpeed;
@@ -115,7 +115,6 @@ public class WindDisplay : IDrawable
         }
         else
         {
-            
             txt = DirData.Current.ToString($"{precision}") + unitOfMeasureDir;
             textSize = canvas.GetStringSize(txt, fonts[0], 64);
             canvas.DrawString(txt, (float)(Width / 2), (float)(Height * .05) + (float)(textSize.Height * 1.2f), HorizontalAlignment.Center);
@@ -297,7 +296,7 @@ public class WindDisplay : IDrawable
 
 
         long lastTicks = data.DataPoints[xStep].dateTime.Ticks;
-
+        canvas.FontColor = setup.foreColor;
         for (i = xStep; i < data.DataPoints.Count; i += xStep)
         {
             float curX = i * xMult;
