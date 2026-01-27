@@ -155,11 +155,14 @@ namespace SailMonitor.Services
                 return record.Copy();
             }
 
-            ;
+            
 
-            // if (S.UseGPSHEADING == false) 
-            record.headingMag = DoubleGet(stray[1]);
-            CalcWind = true;
+            var T=DoubleGet(stray[1]);
+            if (T >= 0 && T <= 360)
+            {
+                record.headingMag = T;
+                CalcWind = true;
+            }
             return record.Copy();
         }
 
@@ -172,7 +175,7 @@ namespace SailMonitor.Services
 
             double T = DoubleGet(stray[1]);
 
-            if (T != 0)
+            if (T >= 0 && T <= 360)
             {
                 record.headingMag = T;// * .0001 * (180.0 / Math.PI);
 
@@ -483,7 +486,11 @@ namespace SailMonitor.Services
 
         public Record NMEA_HDG(string[] stray, Record record)
         {
-            record.headingTrue = DoubleGet(stray[1]);
+            var T = DoubleGet(stray[1]);
+            if (T > 0 && T <= 360)
+            {
+                record.headingTrue = T;
+            }
             return record.Copy();
         }
 
