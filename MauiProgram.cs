@@ -1,12 +1,16 @@
 ﻿namespace SailMonitor
 {
     using Microsoft.Extensions.Logging;
+    using Microsoft.Maui;
+    using Microsoft.Maui.Hosting;
     using Microsoft.Maui.LifecycleEvents;
     using SailMonitor.Models;
     using SailMonitor.Services;
 #if WINDOWS
     using Microsoft.UI;
     using Microsoft.UI.Windowing;
+    using Microsoft.Maui.Controls.Hosting;
+
 #endif
 
     public static class MauiProgram

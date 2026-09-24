@@ -138,11 +138,10 @@ namespace SailMonitor.Services
             {
                 if (stray[i + 1] == "f")
                 {
-                    /*double T = DoubleGet(stray[i]);
-                    if (T > 0)
-                    {
-                        record.depth = T;
-                    }*/
+                    double T = DoubleGet(stray[i]);
+                    record.depth.internalValue = _setup.Depth.ConvertToInternal(Units.Feet, T);
+
+                    record.depth.displayValue = _setup.Depth.ConvertToDisplay(record.depth.internalValue);
                 }
             }
 
@@ -156,11 +155,14 @@ namespace SailMonitor.Services
                 return record.Copy();
             }
 
-            ;
+            
 
-            // if (S.UseGPSHEADING == false) 
-            record.headingMag = DoubleGet(stray[1]);
-            CalcWind = true;
+            var T=DoubleGet(stray[1]);
+            if (T >= 0 && T <= 360)
+            {
+                record.headingMag = T;
+                CalcWind = true;
+            }
             return record.Copy();
         }
 
@@ -173,7 +175,7 @@ namespace SailMonitor.Services
 
             double T = DoubleGet(stray[1]);
 
-            if (T != 0)
+            if (T >= 0 && T <= 360)
             {
                 record.headingMag = T;// * .0001 * (180.0 / Math.PI);
 
@@ -477,8 +479,6 @@ namespace SailMonitor.Services
                 record.depth.internalValue = _setup.Depth.ConvertToInternal(Units.Meters, T);
 
                 record.depth.displayValue = _setup.Depth.ConvertToDisplay(record.depth.internalValue);
-                /*record.depth = T;
-                record.depth = record.depth * 3.281;*/
             }
 
             return record.Copy();
@@ -486,7 +486,11 @@ namespace SailMonitor.Services
 
         public Record NMEA_HDG(string[] stray, Record record)
         {
-            record.headingTrue = DoubleGet(stray[1]);
+            var T = DoubleGet(stray[1]);
+            if (T > 0 && T <= 360)
+            {
+                record.headingTrue = T;
+            }
             return record.Copy();
         }
 

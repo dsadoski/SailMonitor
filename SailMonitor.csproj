@@ -74,6 +74,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\WindData.xaml.cs">
+	    <DependentUpon>WindData.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\SingleDataPoint.xaml.cs">
 	    <DependentUpon>SingleDataPoint.xaml</DependentUpon>
 	  </Compile>
@@ -87,6 +90,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\Page1.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\WindData.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\SingleDataPoint.xaml">
