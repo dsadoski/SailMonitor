@@ -51,7 +51,7 @@ public partial class Page1 : ContentView, IContentViewHost
         MainGrid.RowDefinitions.Clear();
         MainGrid.ColumnDefinitions.Clear();
         MainGrid.Children.Clear();
-        MainGrid.Padding = new Thickness(4);
+        MainGrid.Padding = new Thickness(4, 2, 4, 4);
         MainGrid.RowSpacing = 2;
         MainGrid.ColumnSpacing = 2;
 
@@ -86,10 +86,11 @@ public partial class Page1 : ContentView, IContentViewHost
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
             MainGrid.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
 
-            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1.0, GridUnitType.Star)));
-            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1.0, GridUnitType.Star)));
-            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1.15, GridUnitType.Star)));
-            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(3.5, GridUnitType.Star)));
+            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(0.90, GridUnitType.Star)));
+            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(0.90, GridUnitType.Star)));
+            // Give the two wind cards enough vertical room for both Min/Avg/Max rows.
+            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(1.65, GridUnitType.Star)));
+            MainGrid.RowDefinitions.Add(new RowDefinition(new GridLength(3.05, GridUnitType.Star)));
 
             fieldDisplays.Add(new FieldDisplay("SOG", MainGrid, setup, 0, 0, "F1", "SOG", setup.Speed.SelectedUnit));
             fieldDisplays.Add(new FieldDisplay("SOW", MainGrid, setup, 0, 1, "F1", "SOW", setup.Speed.SelectedUnit));

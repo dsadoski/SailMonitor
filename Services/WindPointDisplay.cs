@@ -84,7 +84,7 @@ namespace SailMonitor.Services
             verticalStackLayout = new VerticalStackLayout
             {
                 Spacing = 0,
-                Padding = new Thickness(8, 5),
+                Padding = new Thickness(6, 3),
                 VerticalOptions = LayoutOptions.Fill,
                 HorizontalOptions = LayoutOptions.Fill
             };
@@ -147,12 +147,13 @@ namespace SailMonitor.Services
         public void Resize(double width, double height)
         {
             double baseSize = Math.Min(width, height);
-            title.FontSize = Math.Clamp(baseSize * 0.019, 12, 22);
-            fieldDir.FontSize = Math.Clamp(baseSize * 0.070, 30, 64);
-            fieldSpd.FontSize = Math.Clamp(baseSize * 0.070, 30, 64);
-            speedUofM.FontSize = Math.Clamp(baseSize * 0.018, 11, 20);
-            dirStats.FontSize = Math.Clamp(baseSize * 0.014, 10, 17);
-            statsSpd.FontSize = Math.Clamp(baseSize * 0.014, 10, 17);
+            bool portrait = height > width;
+            title.FontSize = Math.Clamp(baseSize * (portrait ? 0.017 : 0.019), 11, 22);
+            fieldDir.FontSize = Math.Clamp(baseSize * (portrait ? 0.058 : 0.070), 26, 64);
+            fieldSpd.FontSize = Math.Clamp(baseSize * (portrait ? 0.058 : 0.070), 26, 64);
+            speedUofM.FontSize = Math.Clamp(baseSize * 0.016, 10, 20);
+            dirStats.FontSize = Math.Clamp(baseSize * (portrait ? 0.012 : 0.014), 9, 17);
+            statsSpd.FontSize = Math.Clamp(baseSize * (portrait ? 0.012 : 0.014), 9, 17);
         }
 
         public void ApplyTheme(Setup settings)
