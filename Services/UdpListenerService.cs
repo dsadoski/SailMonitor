@@ -1,4 +1,3 @@
-﻿
 namespace SailMonitor.Services
 {
     using System.Net;
@@ -8,154 +7,197 @@ namespace SailMonitor.Services
 
     public class UdpListenerService
     {
-        private readonly int port;
+        private readonly object syncRoot = new();
         private UdpClient? udpClient;
         private CancellationTokenSource? cts;
+        private Task? receiveTask;
+        private bool isInitialized;
+        private readonly NmeaService nmeaService;
 
         public event Action<Record>? OnMessageReceived;
 
         public Setup setup;
         public Record Record;
-
-        public bool HasLocation = false;
-
-        private bool isInitialized = false;
-        private NmeaService nmeaService;
+        public bool HasLocation;
 
         public UdpListenerService(Setup setup, NmeaService nmeaService)
         {
             this.setup = setup;
-            port = this.setup.Port;
-            Record = new Record();
-            this.setup = setup;
             this.nmeaService = nmeaService;
+            Record = new Record();
         }
 
         public void Start()
         {
-            if (isInitialized == true)
+            lock (syncRoot)
             {
-                return;
-            }
+                if (isInitialized)
+                {
+                    return;
+                }
 
-            isInitialized = true;
-            Record = new Record();
+                CleanupResources();
 
-            if (OperatingSystem.IsAndroid())
-            {
                 try
                 {
-                    // Clean up if called twice or after a crash/reload
-                    udpClient?.Close();
-                    udpClient?.Dispose();
-                    udpClient = null;
+                    cts = new CancellationTokenSource();
+                    udpClient = CreateUdpClient(setup.Port);
+                    Record = new Record();
+                    HasLocation = false;
+                    isInitialized = true;
+                    receiveTask = ReceiveLoopAsync(udpClient, cts.Token);
                 }
-                catch
+                catch (SocketException ex)
                 {
-                }
-            }
-
-            try
-            {
-                cts = new CancellationTokenSource();
-                if (OperatingSystem.IsAndroid())
-                {
-                    var endpoint = new IPEndPoint(IPAddress.Any, port);
-                    var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                    // Allow immediate rebinding even if the OS still thinks it’s in use
-                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-                    udpClient = new UdpClient();
-                    udpClient.Client = socket;
-                    udpClient.Client.Bind(endpoint);
-                }
-                else
-                {
-                    udpClient = new UdpClient(port);
-                }
-            }
-            catch (SocketException ex)
-            {
-                Console.WriteLine($"Socket bind failed: {ex.Message}");
-                return;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"UDP Listener Initialization Error: {ex.Message}");
-                return;
-            }
-
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    while (!cts.IsCancellationRequested)
-                    {
-                        var result = await udpClient.ReceiveAsync();
-                        var message = Encoding.UTF8.GetString(result.Buffer);
-
-                        Record = nmeaService.ParseSentence(message, Record);
-                        if (HasLocation == true)
-                        {
-                            ParseLocation();
-                        }
-
-                        OnMessageReceived?.Invoke(Record);
-                    }
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Normal when stopping the listener
+                    Console.WriteLine($"Socket bind failed: {ex.Message}");
+                    CleanupResources();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"UDP Listener Error: {ex.Message}");
+                    Console.WriteLine($"UDP Listener Initialization Error: {ex.Message}");
+                    CleanupResources();
                 }
-            });
+            }
+        }
+
+        private static UdpClient CreateUdpClient(int port)
+        {
+            if (!OperatingSystem.IsAndroid())
+            {
+                return new UdpClient(port);
+            }
+
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            try
+            {
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                socket.Bind(new IPEndPoint(IPAddress.Any, port));
+                return new UdpClient { Client = socket };
+            }
+            catch
+            {
+                socket.Dispose();
+                throw;
+            }
+        }
+
+        private async Task ReceiveLoopAsync(UdpClient client, CancellationToken cancellationToken)
+        {
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    var result = await client.ReceiveAsync(cancellationToken).ConfigureAwait(false);
+                    var message = Encoding.UTF8.GetString(result.Buffer);
+                    Record snapshot;
+
+                    lock (syncRoot)
+                    {
+                        Record = nmeaService.ParseSentence(message, Record);
+                        if (HasLocation)
+                        {
+                            ParseLocationCore();
+                        }
+
+                        snapshot = Record.Copy();
+                    }
+
+                    OnMessageReceived?.Invoke(snapshot);
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Normal shutdown.
+            }
+            catch (ObjectDisposedException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Normal shutdown.
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"UDP Listener Error: {ex.Message}");
+            }
+            finally
+            {
+                lock (syncRoot)
+                {
+                    if (ReferenceEquals(udpClient, client))
+                    {
+                        isInitialized = false;
+                    }
+                }
+            }
+        }
+
+        public void SetLocation(Location location)
+        {
+            lock (syncRoot)
+            {
+                Record.location = new Location(location);
+                HasLocation = true;
+            }
         }
 
         public void ParseLocation()
         {
-            Record.latitude = Record.location.Latitude;
-            Record.longitude = Record.location.Longitude;
-            Record.SOG = (Record.location.Speed ?? 0.0) * 1.94384; // m/s → knots
-            Record.COG = Record.location.Course ?? 0.0;
-            Record = nmeaService.CalculateWind(Record);
-            if (Record.location != null)
+            lock (syncRoot)
             {
-                // can we calc COG/SOG from  2 points?
-                TimeSpan timeSpan = new TimeSpan(Record.location.Timestamp.Ticks - Record.gpsTicks);
+                ParseLocationCore();
+            }
+        }
 
-                // can we calc COG/SOG from  2 points?
-                if (Math.Abs(timeSpan.TotalSeconds) > setup.saveFrequency)
+        private void ParseLocationCore()
+        {
+            if (Record.location == null)
+            {
+                Record.location = new Location();
+                HasLocation = false;
+                return;
+            }
+
+            var timeSpan = Record.gpsTicks == 0
+                ? TimeSpan.Zero
+                : TimeSpan.FromTicks(Record.location.Timestamp.Ticks - Record.gpsTicks);
+
+            Record.SOG = (Record.location.Speed ?? 0.0) * 1.94384;
+            Record.COG = Record.location.Course ?? 0.0;
+
+            if (Record.gpsTicks != 0 && Math.Abs(timeSpan.TotalSeconds) > setup.saveFrequency)
+            {
+                double distance = nmeaService.CalcDistanceNM(Record);
+                if (distance > 0)
                 {
-                    double distance = nmeaService.CalcDistanceNM(Record); // in nautical miles
-                    if (distance > 0)
-                    {
-                        Record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0); // knots
-                        double bearing = nmeaService.CalcBearing(Record);
-                        Record.headingTrue = bearing;
-                        Record.COG = bearing;
-                        Record.latitude = Record.location.Latitude;
-                        Record.longitude = Record.location.Longitude;
-                        Record.gpsTicks = Record.location.Timestamp.Ticks;
-                    }
+                    Record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0);
+                    double bearing = nmeaService.CalcBearing(Record);
+                    Record.headingTrue = bearing;
+                    Record.COG = bearing;
                 }
             }
-            else
-            {
-                Record.location = new Location(Record.location);
-            }
 
+            Record.latitude = Record.location.Latitude;
+            Record.longitude = Record.location.Longitude;
+            Record.gpsTicks = Record.location.Timestamp.Ticks;
+            Record = nmeaService.CalculateWind(Record);
             HasLocation = false;
         }
 
         public void Stop()
         {
+            lock (syncRoot)
+            {
+                isInitialized = false;
+                CleanupResources();
+                receiveTask = null;
+            }
+        }
+
+        private void CleanupResources()
+        {
             cts?.Cancel();
-            udpClient?.Close();
             udpClient?.Dispose();
+            cts?.Dispose();
+            udpClient = null;
+            cts = null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SailMonitor.Services;
+namespace SailMonitor.Services;
 
 using Microsoft.Maui.Graphics.Platform;
 using SailMonitor.Models;
@@ -95,14 +95,13 @@ public class WindDisplay : IDrawable
 
     public void DrawdataSetup(ICanvas Canvas, RectF DirtyRect, FieldData data, Color darkline, Color lightline, bool drawXAxis)
     {
-        // Not used canvas.FontSize = 18;
         var position = this.DirtyRect;
         string txt = string.Empty;
 
         canvas.FontSize = 24;
         var textSize = canvas.GetStringSize("M", fonts[0], 18);
         if (drawXAxis)
-        {   
+        {
             canvas.DrawString(Description, 1, textSize.Height, HorizontalAlignment.Left);
         }
 
@@ -111,7 +110,7 @@ public class WindDisplay : IDrawable
         if (drawXAxis)
         {
             txt = this.SpeedData.Current.ToString($"{precision}") + " " + unitOfMeasureSpeed;
-            canvas.DrawString(txt, (float)(Width / 2), (float)(Height * .05) , HorizontalAlignment.Center);
+            canvas.DrawString(txt, (float)(Width / 2), (float)(Height * .05), HorizontalAlignment.Center);
         }
         else
         {
@@ -119,219 +118,121 @@ public class WindDisplay : IDrawable
             textSize = canvas.GetStringSize(txt, fonts[0], 64);
             canvas.DrawString(txt, (float)(Width / 2), (float)(Height * .05) + (float)(textSize.Height * 1.2f), HorizontalAlignment.Center);
         }
-        textSize = canvas.GetStringSize("M", fonts[0], 72);
 
+        textSize = canvas.GetStringSize("M", fonts[0], 72);
         canvas.FontSize = 18;
         txt = data.Min.ToString($"{precision}") + " - " + data.Max.ToString($"{precision}");
         if (drawXAxis)
-        {
-            canvas.DrawString(txt, (float)( Width / 2), (float)((Height * .2) + textSize.Height), HorizontalAlignment.Center);
-        }
+            canvas.DrawString(txt, (float)(Width / 2), (float)((Height * .2) + textSize.Height), HorizontalAlignment.Center);
         else
-        {
-            canvas.DrawString(txt, (float)( Width / 2), (float)((Height * .2) + textSize.Height * 2 ), HorizontalAlignment.Center);
-        }
+            canvas.DrawString(txt, (float)(Width / 2), (float)((Height * .2) + textSize.Height * 2), HorizontalAlignment.Center);
 
-
-        if (data.DataPoints.Count < 2 || data.Max == data.Min)
-        {
-            // Not enough data to draw
-            canvas.ResetState();
+        if (data.DataPoints.Count < 2)
             return;
-        }
 
-        // canvas.FillColor = Colors.White;
-        canvas.FillColor = new Color(0, 0, 0, 0.3f);
-
-        float MaxYSpd = (float)data.Max * 1.1f;
-        int MYSpd = (int)MaxYSpd;
-        int scaleMultSpd = 0;
-
-        // scaling the Y axis
-        if (MYSpd == 0)
+        // Direction is circular. Convert the plotted series to an unwrapped angle so
+        // crossing North (359 -> 0 or 0 -> 359) follows the shortest path instead of
+        // drawing a false line across the entire graph. Numeric readouts remain 0..360.
+        var plotValues = new double[data.DataPoints.Count];
+        plotValues[0] = data.DataPoints[0].value;
+        if (!drawXAxis)
         {
-            MYSpd = 1;
+            double previousRaw = data.DataPoints[0].value;
+            for (int n = 1; n < data.DataPoints.Count; n++)
+            {
+                double raw = data.DataPoints[n].value;
+                double delta = raw - previousRaw;
+                if (delta > 180.0) delta -= 360.0;
+                else if (delta < -180.0) delta += 360.0;
+                plotValues[n] = plotValues[n - 1] + delta;
+                previousRaw = raw;
+            }
         }
         else
         {
-            while (MYSpd > 10)
-            {
-                MYSpd = MYSpd / 10;
-                scaleMultSpd++;
-            }
-
-            if (MYSpd < 5)
-            {
-                MYSpd++;
-            }
-            else
-            {
-                MYSpd = 10;
-                if (scaleMultSpd > 1)
-                {
-                    scaleMultSpd--;
-                }
-            }
-
-            if (scaleMultSpd > 0)
-            {
-                MYSpd = (int)Math.Pow(10, scaleMultSpd) * MYSpd;
-                MaxYSpd = MYSpd;
-            }
-            else
-            {
-                MaxYSpd = MYSpd;
-            }
+            for (int n = 1; n < data.DataPoints.Count; n++)
+                plotValues[n] = data.DataPoints[n].value;
         }
 
-        bool invertY = false;
-        if (speedName == "DPT")
-        {
-            invertY = true;
-        }
+        bool invertY = speedName == "DPT";
+        double rawMin = plotValues.Min();
+        double rawMax = plotValues.Max();
+        double range = rawMax - rawMin;
+        if (range < 0.001) range = drawXAxis ? Math.Max(1.0, Math.Abs(rawMax) * .1) : 20.0;
 
-        float MinY = (float)data.Min * 0.9f;
+        double pad = range * .10;
+        double yMin = drawXAxis ? Math.Min(0, rawMin - pad) : rawMin - pad;
+        double yMax = rawMax + pad;
+        if (yMax <= yMin) yMax = yMin + 1;
 
-        float yMult = (float)(position.Bottom - position.Top) / MaxYSpd;
+        float graphHeight = position.Bottom - position.Top;
+        float yMult = graphHeight / (float)(yMax - yMin);
 
+        // Horizontal grid: labels reflect the continuous/unwrapped scale for direction.
         canvas.StrokeColor = Colors.DarkGray;
-        int yStep = MYSpd / (int)Math.Pow(10, scaleMultSpd);
-
-        if (scaleMultSpd > 1)
-        {
-            yStep = yStep * (int)Math.Pow(10, scaleMultSpd - 1);
-        }
-
-        if (yStep == MYSpd / (int)Math.Pow(10, scaleMultSpd) && yStep > 10)
-        {
-            yStep = yStep / 10;
-        }
-
-        canvas.StrokeSize = 2;
-        int i;
-
-        List<PointF> points = new List<PointF>();
+        canvas.StrokeSize = 1;
         canvas.FontColor = darkline;
-        for (i = 0; i <= MaxYSpd; i = i + yStep)
+        const int gridLines = 5;
+        for (int g = 0; g <= gridLines; g++)
         {
-            canvas.DrawLine(0, position.Bottom - ((float)i * yMult), (float)position.Right, position.Bottom - ((float)i * yMult));
-            if (invertY)
-            {
-                if (drawXAxis)
-                {
-                    canvas.DrawString(i.ToString(), 0, (float)i * yMult, HorizontalAlignment.Left);
-                }
-                else
-                {
-                    canvas.DrawString(i.ToString(), position.Right - 20, (float)i * yMult, HorizontalAlignment.Right);
-                }
-            }
-            else
-            {
-                if(drawXAxis)
-                {
-                    canvas.DrawString(i.ToString(), 0, position.Bottom - ((float)i * yMult), HorizontalAlignment.Left);
-                    
-                }
-                else
-                {
-                    canvas.DrawString(i.ToString(), position.Right -20, position.Bottom - ((float)i * yMult), HorizontalAlignment.Right);
-                }
-                    
-            }
+            double value = yMin + ((yMax - yMin) * g / gridLines);
+            float y = invertY
+                ? position.Top + (float)((value - yMin) * yMult)
+                : position.Bottom - (float)((value - yMin) * yMult);
+            canvas.DrawLine(0, y, position.Right, y);
+            string label = drawXAxis ? Math.Round(value).ToString() : $"{Math.Round(value)}°";
+            if (drawXAxis) canvas.DrawString(label, 0, y, HorizontalAlignment.Left);
+            else canvas.DrawString(label, position.Right - 20, y, HorizontalAlignment.Right);
         }
 
+        int count = data.DataPoints.Count;
+        int xStep = 1;
+        while (count > Math.Max(1, (position.Right - position.Left) * xStep)) xStep++;
+        float xMult = (position.Right - position.Left) / Math.Max(1f, count - 1f);
+
+        TimeSpan timeSpan = data.DataPoints[^1].dateTime - data.DataPoints[0].dateTime;
+        int minutes = timeSpan.TotalHours > 1 ? 10 : timeSpan.TotalMinutes > 15 ? 5 : 1;
+
+        float MapY(double value) => invertY
+            ? position.Top + (float)((value - yMin) * yMult)
+            : position.Bottom - (float)((value - yMin) * yMult);
+
+        var points = new List<PointF>();
+        float lastX = 0;
+        float lastY = MapY(plotValues[0]);
+        points.Add(new PointF(lastX, lastY));
+
+        long lastTicks = data.DataPoints[Math.Min(xStep, count - 1)].dateTime.Ticks;
         canvas.StrokeColor = darkline;
         canvas.StrokeSize = 6;
-
-        int xStep = 1;
-
-        if (position.Right - position.Left > data.DataPoints.Count)
-        {
-            while (data.DataPoints.Count > (position.Right - position.Left) * xStep)
-            {
-                xStep++;
-            }
-        }
-
-        float xMult = (float)(position.Right - position.Left) / (float)(data.DataPoints.Count() - 1);
-
-        //////////////// X axis grid lines and labels
-        ///// 
-        TimeSpan timeSpan = TimeSpan.FromTicks(data.DataPoints[data.DataPoints.Count - 1].dateTime.Ticks - data.DataPoints[0].dateTime.Ticks);
-        int Minutes = 1;
-
-        if (drawXAxis)
-        {
-            if (timeSpan.TotalHours > 1)
-            {
-                Minutes = 10;
-            }
-            else if (timeSpan.TotalMinutes > 15)
-            {
-                Minutes = 5;
-            }
-        }
-        /////////////// 
-        
-
-        float lastY = 0;
-
-        if (!invertY)
-        {
-            lastY = (float)(position.Bottom - ((float)data.DataPoints[0].value * yMult) + position.Top);
-
-        }
-        else
-        {
-            lastY = ((float)(data.DataPoints[0].value - MinY) * yMult) + (float)position.Top;
-        }
-
-
-
-        float lastX = 0;
-        points.Add(new PointF(lastX, lastY));
-        float curY;
-
-
-
-        long lastTicks = data.DataPoints[xStep].dateTime.Ticks;
         canvas.FontColor = setup.foreColor;
-        for (i = xStep; i < data.DataPoints.Count; i += xStep)
+
+        for (int i = xStep; i < count; i += xStep)
         {
             float curX = i * xMult;
-            if (!invertY)
-            {
-                curY = (float)(position.Bottom - ((float)data.DataPoints[i].value * yMult) + position.Top);
-            }
-            else
-            {
-                curY = (float)(data.DataPoints[i].value - MinY) * yMult;
-            }
-            if (drawRaw)
-            {
-                canvas.DrawLine(lastX, lastY, curX, curY);
-            }
+            float curY = MapY(plotValues[i]);
+            if (drawRaw) canvas.DrawLine(lastX, lastY, curX, curY);
             points.Add(new PointF(curX, curY));
+
             if (drawXAxis)
             {
                 timeSpan = TimeSpan.FromTicks(data.DataPoints[i].dateTime.Ticks - lastTicks);
-                if (timeSpan.TotalMinutes >= Minutes)
+                if (timeSpan.TotalMinutes >= minutes)
                 {
                     canvas.StrokeColor = Colors.DarkGray;
                     canvas.StrokeSize = 1;
-                    canvas.DrawLine(curX, (float)position.Top, curX, (float)position.Bottom);
+                    canvas.DrawLine(curX, position.Top, curX, position.Bottom);
                     canvas.DrawString(data.DataPoints[i].dateTime.ToShortTimeString(), curX, position.Bottom - 20, HorizontalAlignment.Center);
                     lastTicks = data.DataPoints[i].dateTime.Ticks;
                     canvas.StrokeColor = darkline;
                     canvas.StrokeSize = 6;
                 }
             }
+
             lastX = curX;
             lastY = curY;
         }
 
-       
         if (drawSmoothed)
         {
             var smooth = CreateSmoothQuadSpline(points);
@@ -344,7 +245,6 @@ public class WindDisplay : IDrawable
             var spline = GaussianSmoothedPath(points);
             canvas.StrokeColor = darkline;
             canvas.StrokeSize = 5;
-
             canvas.DrawPath(spline);
         }
     }

@@ -70,7 +70,7 @@
                 PageViews = new List<ContentView>
                 {
                     new PageSetup(_setup),
-                    new Page1(),
+                    new Page1(_setup),
                 };
                 foreach(var wind in windDisplays)
                 {
@@ -108,21 +108,20 @@
         {
             _setup = setup;
             this.BackgroundColor = setup.backColor;
-            PrevButton.BackgroundColor = Colors.DarkBlue;
-            NextButton.BackgroundColor = Colors.DarkBlue;
+            var actionColor = setup.Night ? Color.FromArgb("#7A1F1F") : Colors.DarkBlue;
+            var actionText = setup.Night ? Color.FromArgb("#FFD0D0") : Colors.White;
+
+            PrevButton.BackgroundColor = actionColor;
+            NextButton.BackgroundColor = actionColor;
+            PrevButton.TextColor = actionText;
+            NextButton.TextColor = actionText;
+
+            NightModeButton.Text = setup.Night ? "☀ Day" : "☾ Night";
+            NightModeButton.BackgroundColor = actionColor;
+            NightModeButton.TextColor = actionText;
+
             _nmeaService._setup = setup;
             _udpService.setup = setup;
-
-            if (setup.Night)
-            {
-                PrevButton.TextColor = setup.foreColor;
-                NextButton.TextColor = setup.foreColor;
-            }
-            else
-            {
-                PrevButton.TextColor = Colors.White;
-                NextButton.TextColor = Colors.White;
-            }
 
             foreach (ContentView view in PageViews)
             {
@@ -182,8 +181,7 @@
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                _udpService.Record.location = new Location(location);
-                _udpService.HasLocation = true;
+                _udpService.SetLocation(location);
 
             });
         }
@@ -246,17 +244,8 @@
                     break;
 
                 case Button btn:
-
-                    btn.BackgroundColor = Colors.DarkBlue;
-                    if (setup.Night)
-                    {
-                        btn.TextColor = setup.foreColor;
-                    }
-                    else
-                    {
-                        btn.TextColor = Colors.White;
-                    }
-
+                    btn.BackgroundColor = setup.Night ? Color.FromArgb("#7A1F1F") : Colors.DarkBlue;
+                    btn.TextColor = setup.Night ? Color.FromArgb("#FFD0D0") : Colors.White;
                     break;
 
                 case Entry entry:
@@ -330,6 +319,18 @@
                 content.Content.HeightRequest = Height;
 
                 activeView.OnReSize();
+            }
+        }
+
+        private void NightMode_Clicked(object sender, EventArgs e)
+        {
+            _setup.Night = !_setup.Night;
+            _setup.Save();
+            SetColorScheme(_setup);
+
+            if (content.Content is IContentViewHost host)
+            {
+                host.OnSetupChanged(_setup);
             }
         }
 

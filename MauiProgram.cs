@@ -47,12 +47,10 @@
             });
             try
             {
-                builder.Services.AddSingleton(sp => new Setup());
-                Setup setup = new Setup();
-                builder.Services.AddSingleton(sp => new NmeaService(setup));
-                NmeaService nmeaService = new NmeaService(setup);
-                builder.Services.AddSingleton(sp => new UdpListenerService(setup, nmeaService));
-                builder.Services.AddSingleton(sp => new GPSService());
+                builder.Services.AddSingleton<Setup>();
+                builder.Services.AddSingleton<NmeaService>();
+                builder.Services.AddSingleton<UdpListenerService>();
+                builder.Services.AddSingleton<GPSService>();
             }
             catch (Exception ex)
             {

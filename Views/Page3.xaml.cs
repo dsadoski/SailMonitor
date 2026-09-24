@@ -28,7 +28,7 @@ public partial class Page3 : ContentView, IContentViewHost
     {
         latitudeLabel.Text = $"{record.latitude:F6} °";
         longitudeLabel.Text = $"{record.longitude:F6} °";
-        DepthLabel.Text = $"{record.depth:F2} ft";
+        DepthLabel.Text = $"{record.depth.displayValue:F2} {record.depth.uom}";
         HeadingMagLabel.Text = $"{record.headingMag:F0} °";
         headingTrueLabel.Text = $"{record.headingTrue:F0} °";
         SOGLabel.Text = $"{record.SOG:F2}";

@@ -66,18 +66,19 @@
             P.longitude = longitude;
             P.gpsTicks = gpsTicks;
             P.time = time;
-            P.depth = depth;
+            P.depth = depth.Copy();
             P.headingMag = headingMag;
             P.headingTrue = headingTrue;
             P.SOG = SOG;
             P.COG = COG;
             P.SOW = SOW;
             P.windTrueDir = windTrueDir;
-            P.windTrueSpeed = windTrueSpeed;
+            P.windTrueSpeed = windTrueSpeed.Copy();
             P.windTrueCompass = windTrueCompass;
             P.windAppDir = windAppDir;
             P.windAppSpeed = windAppSpeed.Copy();
             P.VPWSPD = VPWSPD;
+            P.POLARDATA = POLARDATA;
             P.ErrMessage = ErrMessage;
             P.waterTemp = waterTemp;
             P.voltage = voltage;
@@ -88,7 +89,7 @@
             }
             else
             {
-                location = new Location();
+                P.location = new Location();
             }
 
             return P;

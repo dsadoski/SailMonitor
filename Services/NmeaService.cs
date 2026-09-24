@@ -1,6 +1,7 @@
 ﻿
 namespace SailMonitor.Services
 {
+    using System.Globalization;
     using SailMonitor.Models;
 
     public class NmeaService
@@ -21,35 +22,27 @@ namespace SailMonitor.Services
         {
             CalcWind = false;
             record.ErrMessage = string.Empty;
-            if (message.Length < 4)
+            message = message.Trim();
+            if (message.Length < 4 || message[0] != '$' || !HasValidChecksum(message))
             {
                 return record.Copy();
             }
 
-            if (message[0] != '$')
+            int checksumSeparator = message.IndexOf('*');
+            string sentence = checksumSeparator >= 0 ? message[..checksumSeparator] : message;
+            string[] NSTR = sentence.Split(',');
+
+            if (NSTR.Length < 2 || NSTR[0].Length < 4)
             {
                 return record.Copy();
             }
 
-            int i;
+            string txt = NSTR[0][3..];
 
-            var splitMessage = message.Split('*');// remove checksum
-
-            string[] NSTR = new StringParser().CommaListToString(splitMessage[0]);
-
-            if (NSTR.Length < 2)
+            try
             {
-                return record.Copy();
-            }
-
-            string txt = string.Empty;
-            for (i = 3; i < NSTR[0].Length; i++)
-            {
-                txt += NSTR[0][i];
-            }
-
-            switch (txt)
-            {
+                switch (txt)
+                {
                 case "BAT":
                     record = NMEA_BAT(NSTR, record);
                     break;
@@ -104,6 +97,12 @@ namespace SailMonitor.Services
                 default:
                     record.ErrMessage = txt;
                     break;
+                }
+            }
+            catch (Exception ex) when (ex is FormatException || ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
+            {
+                record.ErrMessage = $"Invalid NMEA {txt}";
+                return record.Copy();
             }
 
             if (CalcWind)
@@ -317,6 +316,30 @@ namespace SailMonitor.Services
             return record.Copy();
         }
 
+        private static bool HasValidChecksum(string message)
+        {
+            int separator = message.IndexOf('*');
+            if (separator < 0)
+            {
+                // Some sources omit the optional checksum; retain compatibility with them.
+                return true;
+            }
+
+            if (separator + 2 >= message.Length ||
+                !byte.TryParse(message.AsSpan(separator + 1, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte expected))
+            {
+                return false;
+            }
+
+            byte actual = 0;
+            for (int i = 1; i < separator; i++)
+            {
+                actual ^= (byte)message[i];
+            }
+
+            return actual == expected;
+        }
+
         public double DoubleGet(string msg)
         {
             if (msg.Length < 1)
@@ -324,13 +347,13 @@ namespace SailMonitor.Services
                 return 0;
             }
 
-            double T = double.Parse(msg);
-            if (double.IsInfinity(T) || double.IsNaN(T))
+            if (!double.TryParse(msg, NumberStyles.Float, CultureInfo.InvariantCulture, out double value) ||
+                double.IsInfinity(value) || double.IsNaN(value))
             {
                 return 0;
             }
 
-            return T;
+            return value;
         }
 
         public Record NMEA_VPW(string[] stray, Record record)
