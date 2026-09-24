@@ -22,7 +22,9 @@
             KeepActive = Preferences.Get("KeepActive", true);
             UseGPSPOS = Preferences.Get("UseGPSPOS", true);
             UseGPSHEADING = Preferences.Get("UseGPSHEADING", true);
-            UseGPSSOG = Preferences.Get("UseGPSSPOG", true);
+            UseGPSSOG = Preferences.ContainsKey("UseGPSSOG")
+                ? Preferences.Get("UseGPSSOG", true)
+                : Preferences.Get("UseGPSSPOG", true);
             saveFrequency = Preferences.Get("saveFrequency", 15);
             SetColor();
             Depth = new UnitOfMeasure
@@ -44,8 +46,8 @@
                 UnitList = new List<Unit>
                 {
                     new Unit(Units.Knots, 1.0),
-                    new Unit(Units.KPH, 1.852),
-                    new Unit(Units.MPH, 1.15078),
+                    new Unit(Units.KPH, 0.539957),
+                    new Unit(Units.MPH, 0.868976),
                 }
             };
             Speed.SelectedUnit = Preferences.Get("SpeedUnit", Units.Knots);
@@ -90,8 +92,8 @@
             }
             else
             {
-                foreColor = Colors.Red;
-                backColor = Colors.Black;
+                foreColor = Color.FromArgb("#D94A4A");
+                backColor = Color.FromArgb("#050505");
             }
         }
     }

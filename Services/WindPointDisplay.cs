@@ -1,6 +1,6 @@
-﻿namespace SailMonitor.Services
+namespace SailMonitor.Services
 {
-    using Microsoft.Maui.Controls;
+    using Microsoft.Maui.Controls.Shapes;
     using SailMonitor.Models;
 
     public class WindPointDisplay
@@ -13,140 +13,165 @@
         public string name1;
         public string name2;
         public VerticalStackLayout verticalStackLayout;
-        private Grid grid;
-        private FieldData fieldDataDir;
-        private FieldData fieldDataSpd;
-        private string precision;
-        private int column;
-        private int row;
-        private string description;
         public Setup setup;
         public string UofM;
 
-        public WindPointDisplay(string name1, string name2, Grid owner, Setup _setup, int row, int column, string precision, string description, string uofm)
+        private readonly string precision;
+        private readonly string description;
+        private readonly Border card;
+        private readonly Label dirStats;
+        private readonly HorizontalStackLayout speedRow;
+
+        public WindPointDisplay(string name1, string name2, Grid owner, Setup setup, int row, int column, string precision, string description, string uofm)
         {
-            setup = _setup;
+            this.setup = setup;
             this.description = description;
-            this.column = column;
-            this.row = row;
             this.name1 = name1;
             this.name2 = name2;
             this.precision = precision;
             UofM = uofm;
-            fieldDataDir = new FieldData(this.name1, UofM);
-            grid = owner;
-            verticalStackLayout = new VerticalStackLayout();
-            title = new Label();
-            title.Text = this.description;
-            title.FontSize = 16;
-            fieldDir = new Label();
 
-            // fieldDir.FontSize = 36;
-            fieldSpd = new Label();
+            title = new Label
+            {
+                Text = description + " Wind",
+                FontAttributes = FontAttributes.Bold,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
 
-            // fieldSpd.FontSize = 36;
-            speedUofM = new Label();
-            speedUofM.FontSize = 12;
-            statsSpd = new Label();
-            statsSpd.FontSize = 12;
+            fieldDir = new Label
+            {
+                Text = "---°",
+                FontAttributes = FontAttributes.Bold,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
 
-            title.TextColor = setup.foreColor;
-            fieldDir.TextColor = setup.foreColor;
-            fieldSpd.TextColor = setup.foreColor;
-            fieldSpd.FontAttributes = FontAttributes.Bold;
-            fieldDir.FontAttributes = FontAttributes.Bold;
-            speedUofM.TextColor = setup.foreColor;
-            statsSpd.TextColor = setup.foreColor;
+            dirStats = new Label
+            {
+                Text = "Dir  Min --   Avg --   Max --",
+                HorizontalTextAlignment = TextAlignment.Center,
+                LineBreakMode = LineBreakMode.NoWrap
+            };
 
+            fieldSpd = new Label
+            {
+                Text = "--",
+                FontAttributes = FontAttributes.Bold,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+
+            speedUofM = new Label
+            {
+                Text = UofM,
+                VerticalTextAlignment = TextAlignment.End,
+                Margin = new Thickness(3, 0, 0, 4)
+            };
+
+            speedRow = new HorizontalStackLayout
+            {
+                HorizontalOptions = LayoutOptions.Center,
+                Spacing = 0
+            };
+            speedRow.Add(fieldSpd);
+            speedRow.Add(speedUofM);
+
+            statsSpd = new Label
+            {
+                Text = "Spd  Min --   Avg --   Max --",
+                HorizontalTextAlignment = TextAlignment.Center,
+                LineBreakMode = LineBreakMode.NoWrap
+            };
+
+            verticalStackLayout = new VerticalStackLayout
+            {
+                Spacing = 0,
+                Padding = new Thickness(8, 5),
+                VerticalOptions = LayoutOptions.Fill,
+                HorizontalOptions = LayoutOptions.Fill
+            };
             verticalStackLayout.Add(title);
             verticalStackLayout.Add(fieldDir);
-            speedUofM.VerticalOptions = LayoutOptions.End;
-            var horizontalStackLayout = new HorizontalStackLayout();
-            horizontalStackLayout.VerticalOptions = LayoutOptions.Fill;
-            horizontalStackLayout.Add(fieldSpd);
-            horizontalStackLayout.Add(speedUofM);
-            verticalStackLayout.Add(horizontalStackLayout);
-
+            verticalStackLayout.Add(dirStats);
+            verticalStackLayout.Add(speedRow);
             verticalStackLayout.Add(statsSpd);
 
-            grid.Children.Add(verticalStackLayout);
-            grid.SetRow(verticalStackLayout, this.row);
-            grid.SetColumn(verticalStackLayout, this.column);
-        }
+            card = new Border
+            {
+                Content = verticalStackLayout,
+                StrokeThickness = 1,
+                StrokeShape = new RoundRectangle { CornerRadius = 12 },
+                Margin = new Thickness(4),
+                Padding = 0,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill
+            };
 
-        public void OnAppEvent(string eventName, Record record, List<FieldData> dataPoints)
-        {
-            fieldDataDir = dataPoints.FirstOrDefault(d => d.name == name1);
-            fieldDir.Text = fieldDataDir.Current.ToString($"{precision}") + "°";
-
-            fieldDataSpd = dataPoints.FirstOrDefault(d => d.name == name2);
-            fieldSpd.Text = fieldDataSpd.Current.ToString($"{precision}");
+            owner.Children.Add(card);
+            Grid.SetRow(card, row);
+            Grid.SetColumn(card, column);
+            ApplyTheme(setup);
         }
 
         public void Update(List<FieldData> dataPoints)
         {
-            fieldDataDir = dataPoints.FirstOrDefault(d => d.name == name1);
-            if (fieldDataDir != null)
+            var dir = dataPoints.FirstOrDefault(d => d.name == name1);
+            if (dir != null)
             {
-                var current = fieldDataDir.Current;
+                double shown = dir.Current;
+                string suffix = string.Empty;
 
-                string txt = string.Empty;
-                title.Text = description + " " + fieldDataDir.Min.ToString($"{precision}") + " - " + fieldDataDir.Average.ToString($"{precision}") + " -" + fieldDataDir.Max.ToString($"{precision}");
                 if (name1 == "AWD")
                 {
-                    txt = fieldDataDir.Current.ToString($"{precision}") + "°";
-                    if (current > 180)
+                    if (shown > 180)
                     {
-                        current = 360 - current;
-                        fieldDir.TextColor = Colors.Red;
-                        fieldSpd.TextColor = Colors.Red;
-                        txt = current.ToString($"{precision}") + "°" + "P";
+                        shown = 360 - shown;
+                        suffix = " P";
                     }
                     else
                     {
-                        fieldDir.TextColor = Colors.Green;
-                        fieldSpd.TextColor = Colors.Green;
-                        txt = current.ToString($"{precision}") + "°" + "S";
+                        suffix = " S";
                     }
                 }
-                else
-                {
-                    txt = fieldDataDir.Current.ToString($"{precision}") + "°";
-                }
 
-                fieldDir.Text = txt;
-                speedUofM.Text = UofM;
+                fieldDir.Text = $"{shown.ToString(precision)}°{suffix}";
+                dirStats.Text = $"Dir  Min {dir.Min.ToString(precision)}°   Avg {dir.Average.ToString(precision)}°   Max {dir.Max.ToString(precision)}°";
             }
 
-            fieldDataSpd = dataPoints.FirstOrDefault(d => d.name == name2);
-            if (fieldDataSpd != null)
+            var spd = dataPoints.FirstOrDefault(d => d.name == name2);
+            if (spd != null)
             {
-                fieldSpd.Text = fieldDataSpd.Current.ToString($"{precision}");
-                statsSpd.Text = fieldDataSpd.Min.ToString($"{precision}") + " - " + fieldDataSpd.Average.ToString($"{precision}") + " -" + fieldDataSpd.Max.ToString($"{precision}");
+                fieldSpd.Text = spd.Current.ToString(precision);
+                statsSpd.Text = $"Spd  Min {spd.Min.ToString(precision)}   Avg {spd.Average.ToString(precision)}   Max {spd.Max.ToString(precision)}";
             }
         }
 
         public void Resize(double width, double height)
         {
             double baseSize = Math.Min(width, height);
-
-            double headerSize = baseSize * 0.012; // e.g., "Heading"
-            double valueSize = baseSize * 0.120; // e.g., "123.45"
-
-            title.FontSize = headerSize;
-            fieldSpd.FontSize = valueSize;
-            statsSpd.FontSize = headerSize;
-            fieldDir.FontSize = valueSize;
-            speedUofM.FontSize = headerSize;
-            fieldDir.FontAttributes = FontAttributes.Bold;
-            fieldSpd.FontAttributes = FontAttributes.Bold;
+            title.FontSize = Math.Clamp(baseSize * 0.019, 12, 22);
+            fieldDir.FontSize = Math.Clamp(baseSize * 0.070, 30, 64);
+            fieldSpd.FontSize = Math.Clamp(baseSize * 0.070, 30, 64);
+            speedUofM.FontSize = Math.Clamp(baseSize * 0.018, 11, 20);
+            dirStats.FontSize = Math.Clamp(baseSize * 0.014, 10, 17);
+            statsSpd.FontSize = Math.Clamp(baseSize * 0.014, 10, 17);
         }
 
-        public void OnSetupChanged(Setup settings)
+        public void ApplyTheme(Setup settings)
         {
             setup = settings;
+            var muted = settings.Night ? Color.FromArgb("#C77A7A") : Color.FromArgb("#52627A");
+            var border = settings.Night ? Color.FromArgb("#3A2020") : Color.FromArgb("#D9E2EE");
+            var cardColor = settings.Night ? Color.FromArgb("#0C0C0C") : Color.FromArgb("#FBFCFE");
+
             title.TextColor = settings.foreColor;
             fieldDir.TextColor = settings.foreColor;
+            fieldSpd.TextColor = settings.foreColor;
+            speedUofM.TextColor = muted;
+            dirStats.TextColor = muted;
+            statsSpd.TextColor = muted;
+            card.BackgroundColor = cardColor;
+            card.Stroke = border;
         }
+
+        public void OnSetupChanged(Setup settings) => ApplyTheme(settings);
     }
 }

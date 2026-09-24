@@ -2,204 +2,99 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.PageSetup">
-
-    
-        
-        <Grid
-    ColumnSpacing="10"
-    RowSpacing="16"
-    HorizontalOptions="Center"
-            
-    VerticalOptions="Start"
-            
-           HeightRequest="2000">
-
+    <ScrollView x:Name="SetupScroll" HorizontalScrollBarVisibility="Never">
+        <Grid x:Name="SetupRoot" Padding="12" RowSpacing="12" ColumnSpacing="12">
             <Grid.GestureRecognizers>
-
-                <SwipeGestureRecognizer Direction="Left"
-                            Swiped="OnSwipeLeft" />
-
-                <SwipeGestureRecognizer Direction="Right"
-                            Swiped="OnSwipeRight" />
+                <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft" />
+                <SwipeGestureRecognizer Direction="Right" Swiped="OnSwipeRight" />
             </Grid.GestureRecognizers>
 
             <Grid.ColumnDefinitions>
-                <!-- Left column: auto width -->
-                <ColumnDefinition Width="Auto" />
-                <!-- Right column: auto width unless it's a text entry -->
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="0" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 0 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 1 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 2 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 3 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 4 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 5 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 6 -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Row 7 -->
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-            <HorizontalStackLayout  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                <Label 
-           Text="Port:"
-           HorizontalOptions="Start"
-           VerticalOptions="Center" />
-
-                
-            <Entry 
-           x:Name="Port"
-           Keyboard="Numeric"
-           Placeholder="Enter port"
-           HorizontalOptions="End"
-           WidthRequest="150"/>
-                    <Label Text="Changing requires save and restart" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-
-                <!-- Row 1: Night Mode -->
-            <HorizontalStackLayout Grid.Row="1" Grid.Column="0">
-
-                <Label 
-           Text="Night Mode:"
-           VerticalOptions="Center" />
-
-                <CheckBox 
-              x:Name="Night"
-              CheckedChanged="ToggleCheckBox"
-              HorizontalOptions="End"/>
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
-                <Label 
-           Text="Keep Active:"
-           VerticalOptions="Center"/>
-
-                <CheckBox
-              x:Name="KeepActive"
-                      CheckedChanged="ToggleCheckBox"
-              HorizontalOptions="End"/>
-          
-
-                <Label 
-           Text="Use GPS HEADING:"
-           VerticalOptions="Center"/>
-
-            <CheckBox 
-              x:Name="UseGPSHEADING"
-                      CheckedChanged="ToggleCheckBox"
-              HorizontalOptions="End"/>
-                </HorizontalStackLayout>
-
-            <!-- Row 3: Use GPS POS -->
-            <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
-                <Label 
-                    Text="Use GPS POS:"
-                    VerticalOptions="Center"/>
-
-                                    <CheckBox 
-                       x:Name="UseGPSPOS"
-                               CheckedChanged="ToggleCheckBox"
-                       HorizontalOptions="End"/>
-            </HorizontalStackLayout>
-
-            <!-- Row 5: Use GPS SOG -->
-            <HorizontalStackLayout Grid.Row="2" Grid.Column="1" >
-                <Label 
-               Text="Use GPS SOG:"
-               VerticalOptions="Center"/>   
-
-            <CheckBox 
-              x:Name="UseGPSSOG"
-                      CheckedChanged="ToggleCheckBox"
-              HorizontalOptions="End"/>
-                </HorizontalStackLayout>
-
-            <!-- Row 6: Save Frequency -->
-            <Label Grid.Row="3" Grid.Column="0"
-           Text="Save Frequency:"
-           VerticalOptions="Center"/>
-
-            <Entry Grid.Row="3" Grid.Column="1"
-           x:Name="SaveFrequency"
-           Keyboard="Numeric"
-           Placeholder="Enter frequency"
-           WidthRequest="150"
-           HorizontalOptions="End"/>
-
-            <!-- Row 7: Wind Speed -->
-                <Label Grid.Row="4" Grid.Column="0"
-                Text="Depth:"
-                VerticalOptions="Center"/>
-
-                <VerticalStackLayout Grid.Row="4" Grid.Column="1">
-                    
-                    
-                    <Border Stroke="Red"  
-                    StrokeThickness="1" 
-                    StrokeShape="Rectangle"
-                    Padding="0"
-                            InputTransparent="True">
-                    <VerticalStackLayout x:Name="DepthGrid"/>
-                </Border>
+            <Border x:Name="NetworkCard" Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="NMEA / UDP" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="Listen for NMEA 0183 data from your navigation system or NMEA gateway." FontSize="12" Opacity="0.72" />
+                    <Grid ColumnDefinitions="*,150" ColumnSpacing="12">
+                        <Label Text="Listen Port" VerticalOptions="Center" />
+                        <Entry x:Name="Port" Grid.Column="1" Keyboard="Numeric" HorizontalTextAlignment="End" />
+                    </Grid>
+                    <Label Text="Changing the port requires Save Settings and an app restart." FontSize="11" Opacity="0.65" />
                 </VerticalStackLayout>
+            </Border>
 
-                <Label Grid.Row="5" Grid.Column="0"
-                    Text="Speed:"
-                    VerticalOptions="Center"/>
-
-                <VerticalStackLayout Grid.Row="5" Grid.Column="1">
-                    
-                    <Border Stroke="Red"  
-                        StrokeThickness="1" 
-                        StrokeShape="RoundRectangle"
-                        Padding="0"
-                            InputTransparent="True">
-                    <VerticalStackLayout x:Name="SpeedGrid"/>
-
-                </Border>
+            <Border x:Name="UnitsCard" Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Units" FontSize="18" FontAttributes="Bold" />
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,170" RowSpacing="8" ColumnSpacing="12">
+                        <Label Grid.Row="0" Text="Depth" VerticalOptions="Center" />
+                        <Picker x:Name="DepthPicker" Grid.Row="0" Grid.Column="1" SelectedIndexChanged="UnitPickerChanged" />
+                        <Label Grid.Row="1" Text="Speed" VerticalOptions="Center" />
+                        <Picker x:Name="SpeedPicker" Grid.Row="1" Grid.Column="1" SelectedIndexChanged="UnitPickerChanged" />
+                        <Label Grid.Row="2" Text="Wind Speed" VerticalOptions="Center" />
+                        <Picker x:Name="WindSpeedPicker" Grid.Row="2" Grid.Column="1" SelectedIndexChanged="UnitPickerChanged" />
+                    </Grid>
                 </VerticalStackLayout>
+            </Border>
 
-                <Label Grid.Row="6" Grid.Column="0"
-           Text="Wind Speed:"
-           VerticalOptions="Center"/>
-            
-                <VerticalStackLayout Grid.Row="6" Grid.Column="1">
+            <Border x:Name="DisplayCard" Grid.Row="2" Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Display" FontSize="18" FontAttributes="Bold" />
+                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="10">
+                        <VerticalStackLayout Grid.Row="0" Spacing="1">
+                            <Label Text="Night Mode" />
+                            <Label Text="Marine red theme for low-light use" FontSize="11" Opacity="0.65" />
+                        </VerticalStackLayout>
+                        <Switch x:Name="Night" Grid.Row="0" Grid.Column="1" Toggled="ToggleSwitch" />
+                        <VerticalStackLayout Grid.Row="1" Spacing="1">
+                            <Label Text="Keep Screen Awake" />
+                            <Label Text="Prevents the display from sleeping while SailMonitor is running" FontSize="11" Opacity="0.65" />
+                        </VerticalStackLayout>
+                        <Switch x:Name="KeepActive" Grid.Row="1" Grid.Column="1" Toggled="ToggleSwitch" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
-                <Border Stroke="Red"  
-                    StrokeThickness="1" 
-                    StrokeShape="Rectangle"
-                    Padding="0"
-                        InputTransparent="True">
+            <Border x:Name="GpsCard" Grid.Row="3" Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="GPS Options" FontSize="18" FontAttributes="Bold" />
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="10">
+                        <Label Grid.Row="0" Text="Use GPS Position" VerticalOptions="Center" />
+                        <Switch x:Name="UseGPSPOS" Grid.Row="0" Grid.Column="1" Toggled="ToggleSwitch" />
+                        <Label Grid.Row="1" Text="Use GPS Heading" VerticalOptions="Center" />
+                        <Switch x:Name="UseGPSHEADING" Grid.Row="1" Grid.Column="1" Toggled="ToggleSwitch" />
+                        <Label Grid.Row="2" Text="Use GPS SOG" VerticalOptions="Center" />
+                        <Switch x:Name="UseGPSSOG" Grid.Row="2" Grid.Column="1" Toggled="ToggleSwitch" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
-                    <VerticalStackLayout x:Name="WindSpeedGrid"/>
-                    </Border>
-                </VerticalStackLayout> 
+            <Border x:Name="LoggingCard" Grid.Row="4" Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Data Logging" FontSize="18" FontAttributes="Bold" />
+                    <Grid ColumnDefinitions="*,150" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="1">
+                            <Label Text="Save Frequency" />
+                            <Label Text="Seconds between saved samples" FontSize="11" Opacity="0.65" />
+                        </VerticalStackLayout>
+                        <Entry x:Name="SaveFrequency" Grid.Column="1" Keyboard="Numeric" HorizontalTextAlignment="End" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
 
-            <!-- You can add controls on right side here later -->
-
-            <!-- Row 8: Save Button -->
-            <Button Grid.Row="7" Grid.ColumnSpan="2"
-            Text="Save"
-            HorizontalOptions="Center"
-            Clicked="SaveButtonClicked"/>
+            <Button x:Name="SaveButton" Grid.Row="5" Grid.Column="0" Text="Save Settings" FontAttributes="Bold"
+                    HeightRequest="50" CornerRadius="10" Clicked="SaveButtonClicked" />
         </Grid>
-        
-
+    </ScrollView>
 </ContentView>

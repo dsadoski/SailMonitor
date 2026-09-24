@@ -1,41 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SailMonitor.MainPage">
-    
-    
-    <VerticalStackLayout x:Name="MainLayout" Padding="10" Spacing="10" HorizontalOptions="Fill" VerticalOptions="FillAndExpand">
-        <VerticalStackLayout.GestureRecognizers>
+    <Grid x:Name="MainLayout" Padding="10" RowSpacing="8" RowDefinitions="Auto,*">
+        <Grid.GestureRecognizers>
+            <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft" />
+            <SwipeGestureRecognizer Direction="Right" Swiped="OnSwipeRight" />
+        </Grid.GestureRecognizers>
 
-            <SwipeGestureRecognizer Direction="Left"
-                                    Swiped="OnSwipeLeft" />
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <HorizontalStackLayout x:Name="ButtonHzStack" Grid.Column="0" HorizontalOptions="Start" Spacing="12">
+                <Button x:Name="PrevButton" Text="◀ Prev" Clicked="Prev_Clicked" />
+                <Button x:Name="NextButton" Text="Next ▶" Clicked="Next_Clicked" />
+            </HorizontalStackLayout>
 
-            <SwipeGestureRecognizer Direction="Right"
-                                    Swiped="OnSwipeRight" />
-        </VerticalStackLayout.GestureRecognizers>
-        <!-- Navigation buttons -->
-        <HorizontalStackLayout x:Name="ButtonHzStack" HorizontalOptions="Center" Spacing="20">
-            <Button x:Name="PrevButton" Text="◀ Prev" Clicked="Prev_Clicked" />
-            <Button x:Name="NextButton" Text="Next ▶" Clicked="Next_Clicked" />
-        </HorizontalStackLayout>
+            <!-- Always available, including Android where the Prev/Next buttons are hidden. -->
+            <Button x:Name="NightModeButton" Grid.Column="1" HorizontalOptions="End"
+                    Clicked="NightMode_Clicked" Padding="14,6" CornerRadius="9" />
+        </Grid>
 
-
-        <ContentView x:Name="content"
-             HorizontalOptions="Fill"
-             VerticalOptions="Fill" >
-
+        <ContentView x:Name="content" Grid.Row="1" HorizontalOptions="Fill" VerticalOptions="Fill">
             <ContentView.GestureRecognizers>
-                <SwipeGestureRecognizer Direction="Left"
-                     Swiped="OnSwipeLeft" />
-                <SwipeGestureRecognizer Direction="Right"
-                     Swiped="OnSwipeRight" />
+                <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft" />
+                <SwipeGestureRecognizer Direction="Right" Swiped="OnSwipeRight" />
             </ContentView.GestureRecognizers>
         </ContentView>
-
-
-
-
-
-    </VerticalStackLayout>
-
+    </Grid>
 </ContentPage>

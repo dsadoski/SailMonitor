@@ -8,170 +8,32 @@
 
         public string[] TildaListToStrings(string txt)
         {
-            int i;
-            string tmp = string.Empty;
-            int count = 0;
-            string[] array;
-
-            if (txt.Length == 1 && txt[0] == ' ')
+            if (txt == " ")
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
 
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == '~')
-                {
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0)
-            {
-                count++;
-            }
-
-            array = new string[count];
-            tmp = string.Empty;
-            count = 0;
-
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == '~')
-                {
-                    array[count] = tmp;
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0 && count < array.Length)
-            {
-                array[count] = tmp;
-            }
-
-            return array;
+            return txt.Split('~');
         }
 
         public string[] CommaListToString(string txt)
         {
-            int i;
-            string tmp = string.Empty;
-            int count = 0;
-            string[] array;
-
-            if (txt.Length == 1 && txt[0] == ' ')
+            if (txt == " ")
             {
-                return new string[0];
+                return Array.Empty<string>();
             }
 
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == ',')
-                {
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0)
-            {
-                count++;
-            }
-
-            array = new string[count];
-            tmp = string.Empty;
-            count = 0;
-
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == ',')
-                {
-                    array[count] = tmp;
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0 && count < array.Length)
-            {
-                array[count] = tmp;
-            }
-
-            return array;
+            return txt.Split(',');
         }
 
         public List<string> CommaListToStringList(string txt)
         {
-            int i;
-            string tmp = string.Empty;
-            int count = 0;
-
-            List<string> result = new List<string>();
-
-            if (txt.Length == 1 && txt[0] == ' ')
+            if (txt == " ")
             {
                 return new List<string>();
             }
 
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == ',')
-                {
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0)
-            {
-                count++;
-            }
-
-            tmp = string.Empty;
-            count = 0;
-
-            for (i = 0; i < txt.Length; i++)
-            {
-                if (txt[i] == ',')
-                {
-                    result.Add(tmp);
-                    tmp = string.Empty;
-                    count++;
-                }
-                else
-                {
-                    tmp += txt[i];
-                }
-            }
-
-            if (tmp.Length > 0)
-            {
-                result.Add(tmp);
-            }
-
-            return result;
+            return new List<string>(txt.Split(','));
         }
 
         public double[] TildaListToDoubles(string txt)
