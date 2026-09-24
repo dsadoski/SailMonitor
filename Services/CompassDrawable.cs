@@ -76,8 +76,8 @@ namespace SailMonitor.Services
             }
 
             // Wind pointers remain relative to the vessel.
-            DrawWindPointer(canvas, TrueWind, setup.Night ? Color.FromArgb("#B96A6A") : Color.FromArgb("#246FB8"), radius, false);
-            DrawWindPointer(canvas, ApparentWind, setup.Night ? Color.FromArgb("#E54848") : Color.FromArgb("#168A5B"), radius, true);
+            DrawWindPointer(canvas, TrueWind, Color.FromArgb("#18B957"), radius, false);
+            DrawWindPointer(canvas, ApparentWind, Color.FromArgb("#1687E8"), radius, true);
 
             // Simple vessel silhouette: much sharper than a center line.
             var boat = new PathF();
@@ -108,29 +108,29 @@ namespace SailMonitor.Services
         private static void DrawWindPointer(ICanvas canvas, float degrees, Color color, float radius, bool apparent)
         {
             float a = DegToRad(degrees);
-            float r1 = radius * .58f;
-            float r2 = radius * .80f;
+            float r1 = radius * .18f;
+            float r2 = radius * 1.02f;
             float x1 = r1 * MathF.Sin(a);
             float y1 = -r1 * MathF.Cos(a);
             float x2 = r2 * MathF.Sin(a);
             float y2 = -r2 * MathF.Cos(a);
 
             canvas.StrokeColor = color;
-            canvas.StrokeSize = apparent ? 5 : 3;
+            canvas.StrokeSize = apparent ? Math.Max(5, radius * .025f) : Math.Max(4, radius * .021f);
             canvas.StrokeLineCap = LineCap.Round;
             canvas.DrawLine(x1, y1, x2, y2);
 
-            float side = apparent ? radius * .045f : radius * .035f;
+            float side = apparent ? radius * .060f : radius * .052f;
             float back = DegToRad(degrees + 180);
             float left = DegToRad(degrees - 90);
             var arrow = new PathF();
             arrow.MoveTo(x2, y2);
             arrow.LineTo(
-                x2 + radius * .10f * MathF.Sin(back) + side * MathF.Sin(left),
-                y2 - radius * .10f * MathF.Cos(back) - side * MathF.Cos(left));
+                x2 + radius * .14f * MathF.Sin(back) + side * MathF.Sin(left),
+                y2 - radius * .14f * MathF.Cos(back) - side * MathF.Cos(left));
             arrow.LineTo(
-                x2 + radius * .10f * MathF.Sin(back) - side * MathF.Sin(left),
-                y2 - radius * .10f * MathF.Cos(back) + side * MathF.Cos(left));
+                x2 + radius * .14f * MathF.Sin(back) - side * MathF.Sin(left),
+                y2 - radius * .14f * MathF.Cos(back) + side * MathF.Cos(left));
             arrow.Close();
             canvas.FillColor = color;
             canvas.FillPath(arrow);
