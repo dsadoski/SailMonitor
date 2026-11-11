@@ -167,7 +167,7 @@ namespace SailMonitor.Services
                 double distance = nmeaService.CalcDistanceNM(Record);
                 if (distance > 0)
                 {
-                    Record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0);
+                    //Record.SOG = distance / (Math.Abs(timeSpan.TotalSeconds) / 3600.0);
                     double bearing = nmeaService.CalcBearing(Record);
                     Record.headingTrue = bearing;
                     Record.COG = bearing;
