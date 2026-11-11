@@ -5,109 +5,66 @@ namespace SailMonitor.Services
 
     public class WindPointDisplay
     {
-        public Label title;
-        public Label fieldDir;
-        public Label fieldSpd;
-        public Label speedUofM;
-        public Label statsSpd;
-        public string name1;
-        public string name2;
-        public VerticalStackLayout verticalStackLayout;
-        public Setup setup;
-        public string UofM;
-
+        private readonly string name1;
+        private readonly string name2;
         private readonly string precision;
-        private readonly string description;
+        private readonly Label title;
+        private readonly Label fieldDir;
+        private readonly Label fieldSpd;
+        private readonly Label speedUofM;
+        private readonly Grid layout;
+        private readonly Grid speedRow;
         private readonly Border card;
-        private readonly Label dirStats;
-        private readonly HorizontalStackLayout speedRow;
+        private readonly InstrumentStatistics speedStatistics;
+        private readonly InstrumentStatistics directionStatistics;
 
         public WindPointDisplay(string name1, string name2, Grid owner, Setup setup, int row, int column, string precision, string description, string uofm)
         {
-            this.setup = setup;
-            this.description = description;
             this.name1 = name1;
             this.name2 = name2;
             this.precision = precision;
-            UofM = uofm;
-
-            title = new Label
+            title = InstrumentStatistics.CreateLabel(description.ToUpperInvariant() + " WIND");
+            title.FontAttributes = FontAttributes.Bold;
+            fieldSpd = InstrumentStatistics.CreateLabel("--");
+            fieldSpd.FontAttributes = FontAttributes.Bold;
+            speedUofM = InstrumentStatistics.CreateLabel(uofm);
+            fieldDir = InstrumentStatistics.CreateLabel(name1 == "AWD" ? "Angle --°" : "Direction --°");
+            speedStatistics = new InstrumentStatistics();
+            directionStatistics = new InstrumentStatistics();
+            speedRow = new Grid { ColumnDefinitions = new ColumnDefinitionCollection
             {
-                Text = description + " Wind",
-                FontAttributes = FontAttributes.Bold,
-                HorizontalTextAlignment = TextAlignment.Center
-            };
-
-            fieldDir = new Label
+                new ColumnDefinition(new GridLength(3, GridUnitType.Star)),
+                new ColumnDefinition(GridLength.Star)
+            }};
+            speedRow.Add(fieldSpd, 0, 0);
+            speedRow.Add(speedUofM, 1, 0);
+            layout = new Grid
             {
-                Text = "---°",
-                FontAttributes = FontAttributes.Bold,
-                HorizontalTextAlignment = TextAlignment.Center
+                Padding = new Thickness(8, 4),
+                RowDefinitions = new RowDefinitionCollection
+                {
+                    new RowDefinition(new GridLength(0.13, GridUnitType.Star)),
+                    new RowDefinition(new GridLength(0.35, GridUnitType.Star)),
+                    new RowDefinition(new GridLength(0.20, GridUnitType.Star)),
+                    new RowDefinition(new GridLength(0.14, GridUnitType.Star)),
+                    new RowDefinition(new GridLength(0.18, GridUnitType.Star))
+                }
             };
-
-            dirStats = new Label
-            {
-                Text = "Dir  Min --   Avg --   Max --",
-                HorizontalTextAlignment = TextAlignment.Center,
-                LineBreakMode = LineBreakMode.NoWrap
-            };
-
-            fieldSpd = new Label
-            {
-                Text = "--",
-                FontAttributes = FontAttributes.Bold,
-                HorizontalTextAlignment = TextAlignment.Center
-            };
-
-            speedUofM = new Label
-            {
-                Text = UofM,
-                VerticalTextAlignment = TextAlignment.End,
-                Margin = new Thickness(3, 0, 0, 4)
-            };
-
-            speedRow = new HorizontalStackLayout
-            {
-                HorizontalOptions = LayoutOptions.Center,
-                Spacing = 0
-            };
-            speedRow.Add(fieldSpd);
-            speedRow.Add(speedUofM);
-
-            statsSpd = new Label
-            {
-                Text = "Spd  Min --   Avg --   Max --",
-                HorizontalTextAlignment = TextAlignment.Center,
-                LineBreakMode = LineBreakMode.NoWrap
-            };
-
-            verticalStackLayout = new VerticalStackLayout
-            {
-                Spacing = 0,
-                Padding = new Thickness(6, 3),
-                VerticalOptions = LayoutOptions.Fill,
-                HorizontalOptions = LayoutOptions.Fill
-            };
-            verticalStackLayout.Add(title);
-            verticalStackLayout.Add(fieldDir);
-            verticalStackLayout.Add(dirStats);
-            verticalStackLayout.Add(speedRow);
-            verticalStackLayout.Add(statsSpd);
-
+            layout.Add(title, 0, 0);
+            layout.Add(speedRow, 0, 1);
+            layout.Add(speedStatistics, 0, 2);
+            layout.Add(fieldDir, 0, 3);
+            layout.Add(directionStatistics, 0, 4);
             card = new Border
             {
-                Content = verticalStackLayout,
+                Content = layout,
                 StrokeThickness = 1,
                 StrokeShape = new RoundRectangle { CornerRadius = 12 },
-                Margin = new Thickness(4),
-                Padding = 0,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill
+                Margin = new Thickness(3),
+                Padding = 0
             };
-
-            owner.Children.Add(card);
-            Grid.SetRow(card, row);
-            Grid.SetColumn(card, column);
+            owner.Add(card, column, row);
+            layout.SizeChanged += (_, _) => Resize(0, 0);
             ApplyTheme(setup);
         }
 
@@ -118,7 +75,6 @@ namespace SailMonitor.Services
             {
                 double shown = dir.Current;
                 string suffix = string.Empty;
-
                 if (name1 == "AWD")
                 {
                     if (shown > 180)
@@ -131,46 +87,54 @@ namespace SailMonitor.Services
                         suffix = " S";
                     }
                 }
-
-                fieldDir.Text = $"{shown.ToString(precision)}°{suffix}";
-                dirStats.Text = $"Dir  Min {dir.Min.ToString(precision)}°   Avg {dir.Average.ToString(precision)}°   Max {dir.Max.ToString(precision)}°";
+                fieldDir.Text = (name1 == "AWD" ? "Angle " : "Direction ") + shown.ToString(precision) + "°" + suffix;
+                directionStatistics.Update(dir, precision, "°");
             }
-
             var spd = dataPoints.FirstOrDefault(d => d.name == name2);
             if (spd != null)
             {
                 fieldSpd.Text = spd.Current.ToString(precision);
-                statsSpd.Text = $"Spd  Min {spd.Min.ToString(precision)}   Avg {spd.Average.ToString(precision)}   Max {spd.Max.ToString(precision)}";
+                speedStatistics.Update(spd, precision);
             }
+            Resize(0, 0);
         }
 
         public void Resize(double width, double height)
         {
-            double baseSize = Math.Min(width, height);
-            bool portrait = height > width;
-            title.FontSize = Math.Clamp(baseSize * (portrait ? 0.017 : 0.019), 11, 22);
-            fieldDir.FontSize = Math.Clamp(baseSize * (portrait ? 0.058 : 0.070), 26, 64);
-            fieldSpd.FontSize = Math.Clamp(baseSize * (portrait ? 0.058 : 0.070), 26, 64);
-            speedUofM.FontSize = Math.Clamp(baseSize * 0.016, 10, 20);
-            dirStats.FontSize = Math.Clamp(baseSize * (portrait ? 0.012 : 0.014), 9, 17);
-            statsSpd.FontSize = Math.Clamp(baseSize * (portrait ? 0.012 : 0.014), 9, 17);
+            double w = layout.Width - 16;
+            double h = layout.Height - 8;
+            if (w <= 0 || h <= 0)
+            {
+                return;
+            }
+            title.FontSize = InstrumentStatistics.Fit(title.Text, w, h * 0.13, 22);
+            fieldSpd.FontSize = InstrumentStatistics.Fit(fieldSpd.Text, w * 0.75, h * 0.35, 110);
+            speedUofM.FontSize = InstrumentStatistics.Fit(speedUofM.Text, w * 0.25, h * 0.20, 22);
+            fieldDir.FontSize = InstrumentStatistics.Fit(fieldDir.Text, w, h * 0.14, 24);
+            speedStatistics.Resize();
+            directionStatistics.Resize();
         }
 
         public void ApplyTheme(Setup settings)
         {
-            setup = settings;
+            // The same blue/green identity is used by the compass pointers, in both modes.
+            var accent = Color.FromArgb(name1 == "AWD"
+                ? (settings.Night ? "#1687E8" : "#1267C4")
+                : (settings.Night ? "#18B957" : "#087A32"));
             var muted = settings.Night ? Color.FromArgb("#C77A7A") : Color.FromArgb("#52627A");
-            var border = settings.Night ? Color.FromArgb("#3A2020") : Color.FromArgb("#D9E2EE");
-            var cardColor = settings.Night ? Color.FromArgb("#0C0C0C") : Color.FromArgb("#FBFCFE");
-
-            title.TextColor = settings.foreColor;
-            fieldDir.TextColor = settings.foreColor;
-            fieldSpd.TextColor = settings.foreColor;
-            speedUofM.TextColor = muted;
-            dirStats.TextColor = muted;
-            statsSpd.TextColor = muted;
-            card.BackgroundColor = cardColor;
-            card.Stroke = border;
+            card.BackgroundColor = settings.Night ? Color.FromArgb("#0C0C0C") : Color.FromArgb("#FBFCFE");
+            card.Stroke = settings.Night ? Color.FromArgb("#3A2020") : Color.FromArgb("#D9E2EE");
+            layout.BackgroundColor = Colors.Transparent;
+            speedRow.BackgroundColor = Colors.Transparent;
+            foreach (var label in new[] { title, fieldSpd, speedUofM, fieldDir })
+            {
+                label.BackgroundColor = Colors.Transparent;
+                label.TextColor = label == fieldDir ? settings.foreColor : accent;
+            }
+            speedUofM.Text = settings.WindSpeed.SelectedUnit;
+            speedStatistics.ApplyTheme(settings.foreColor, muted);
+            directionStatistics.ApplyTheme(settings.foreColor, muted);
+            Resize(0, 0);
         }
 
         public void OnSetupChanged(Setup settings) => ApplyTheme(settings);

@@ -26,24 +26,7 @@
             try
             {
                 InitializeComponent();
-                if (OperatingSystem.IsAndroid())
-                {
-                    if (MainLayout.Children.Contains(ButtonHzStack))
-                    {
-                        MainLayout.Children.Remove(ButtonHzStack);
-                    }
-                }
-
-                if (OperatingSystem.IsWindows())
-                {
-
-                }
-
-
-
-                HeightRequest = DeviceDisplay.MainDisplayInfo.Height;
-                WidthRequest = DeviceDisplay.MainDisplayInfo.Width;
-                SizeChanged += OnSizeChanged;
+                content.SizeChanged += OnSizeChanged;
 
                 _udpService = udpService;
                 _gpsService = gpsService;
@@ -126,6 +109,10 @@
             foreach (ContentView view in PageViews)
             {
                 SetColorsRecursively(view, setup);
+                if (view is IContentViewHost host)
+                {
+                    host.OnSetupChanged(setup);
+                }
             }
             
         }
@@ -315,9 +302,6 @@
         {
             if (content.Content is IContentViewHost activeView)
             {
-                content.Content.WidthRequest = Width;
-                content.Content.HeightRequest = Height;
-
                 activeView.OnReSize();
             }
         }
